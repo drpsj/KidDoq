@@ -114,7 +114,6 @@
         }
         .patient-badge:hover { background: var(--primary-light); }
 
-        /* Tabs Navigation Layout */
         .tabs-nav {
             display: flex;
             gap: 0.5rem;
@@ -160,23 +159,38 @@
         }
 
         .vaccine-row {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1.2fr;
             align-items: center;
-            padding: 0.75rem 0;
+            padding: 0.85rem 0;
             border-bottom: 1px solid #f1f5f9;
+            gap: 1rem;
+        }
+        @media (max-width: 600px) {
+            .vaccine-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            .date-display-box { text-align: left !important; }
         }
         .vaccine-row:last-child { border-bottom: none; }
 
         .vaccine-info h4 { margin: 0 0 0.25rem 0; font-size: 1rem; }
         .vaccine-meta { font-size: 0.8rem; color: #64748b; }
 
+        .date-display-box {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #475569;
+        }
+        .date-display-box b { color: var(--primary); }
+        .date-display-box .shifted { color: var(--warning); font-weight: 600; }
+
         .date-picker-cell { text-align: right; }
-        .date-picker-cell input { width: 140px; font-size: 0.85rem; padding: 0.25rem; }
+        .date-picker-cell input { width: 100%; max-width: 140px; font-size: 0.85rem; padding: 0.25rem; }
 
         .alert-delayed { color: var(--warning); font-size: 0.75rem; font-weight: bold; margin-top: 0.25rem; }
         
-        /* Dashboard Metric Status Badges */
         .audit-card {
             padding: 1rem;
             border-radius: 8px;
@@ -207,8 +221,8 @@
             .panel, header, .date-picker-cell input, button, .tabs-nav { display: none !important; }
             .container { grid-template-columns: 1fr; margin: 0; padding: 0; }
             .timeline-section { box-shadow: none; padding: 0; }
-            .date-picker-cell::after { content: attr(data-date); font-weight: bold; }
             .tab-content { display: block !important; }
+            .vaccine-row { grid-template-columns: 2fr 2fr; }
         }
     </style>
 </head>
@@ -216,7 +230,7 @@
 
 <header>
     <h1>NIS 2026 Smart OPD Immunization Tracker</h1>
-    <p>Catch-up Logic • Multi-Profile Storage • Clinical Status Audit</p>
+    <p>Adaptive Scheduling • Baseline Verification • Dual-Date System</p>
 </header>
 
 <div class="container">
@@ -255,7 +269,6 @@
             <button onclick="window.print()" class="secondary" style="margin:0; width:auto;">🖨️ Print Card for Parent</button>
         </div>
 
-        <!-- NEW TAB ARCHITECTURE -->
         <div class="tabs-nav">
             <button class="tab-btn active" onclick="switchTab('timelineTab', this)">📅 Adaptive Schedule Calendar</button>
             <button class="tab-btn" onclick="switchTab('auditTab', this)">📋 Patient Status Audit (Dashboard)</button>
@@ -384,13 +397,16 @@
 
         let computedTimeline = {};
 
-        // Pass 1: Compute Dates via Catch-up Rules Engines
         baseVaccineSchema.forEach(v => {
             if(v.condition === "je" && !patient.je) return;
             if(v.condition === "female" && patient.gender !== "female") return;
 
-            let targetDate = new Date(baseDate);
-            targetDate.setDate(targetDate.getDate() + (v.baseOffsetWeeks * 7));
+            // 1. Calculate standard unshifted baseline target date
+            let baselineTargetDate = new Date(baseDate);
+            baselineTargetDate.setDate(baselineTargetDate.getDate() + (v.baseOffsetWeeks * 7));
+
+            // 2. Compute catch-up adjusted date separately
+            let adjustedTargetDate = new Date(baselineTargetDate);
             let alignmentAltered = false;
 
             if(v.dependsOn && computedTimeline[v.dependsOn]) {
@@ -398,32 +414,31 @@
                 const absoluteMinDate = new Date(parentActualAdminDate);
                 absoluteMinDate.setDate(absoluteMinDate.getDate() + (v.minIntervalWeeks * 7));
 
-                if(targetDate < absoluteMinDate) {
-                    targetDate = absoluteMinDate;
+                if(adjustedTargetDate < absoluteMinDate) {
+                    adjustedTargetDate = absoluteMinDate;
                     alignmentAltered = true;
                 }
             }
 
-            // Define Live Status Flag
             let status = "upcoming";
             const actualValue = patient.givenDates[v.id] || "";
             
             if(actualValue !== "") {
                 status = "done";
-            } else if (targetDate < today) {
+            } else if (adjustedTargetDate < today) {
                 status = "overdue";
             }
 
             computedTimeline[v.id] = {
                 ...v,
-                projected: targetDate.toISOString().split('T')[0],
+                baseline: baselineTargetDate.toISOString().split('T')[0],
+                projected: adjustedTargetDate.toISOString().split('T')[0],
                 actual: actualValue,
                 isDelayedByCatchup: alignmentAltered,
                 status: status
             };
         });
 
-        // Pass 2: Group & Render Standard Dynamic Timeline
         let groups = {};
         Object.values(computedTimeline).forEach(item => {
             if(!groups[item.group]) groups[item.group] = [];
@@ -438,14 +453,23 @@
             vaccines.forEach(v => {
                 const row = document.createElement('div');
                 row.className = "vaccine-row";
+                
+                const prettyBaseline = new Date(v.baseline).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
                 const prettyProjected = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
-                const delayWarningMsg = v.isDelayedByCatchup ? `<div class="alert-delayed">⚠️ Adjusted due to spacing rules</div>` : "";
+                const delayWarningMsg = v.isDelayedByCatchup ? `<div class="alert-delayed">⚠️ Delayed due to spacing interval</div>` : "";
+
+                // Display dynamic class if the catch-up layout shifted the date out
+                const adjustedDateStyle = v.isDelayedByCatchup ? 'class="shifted"' : '';
 
                 row.innerHTML = `
                     <div class="vaccine-info">
                         <h4>${v.name}</h4>
-                        <div class="vaccine-meta">Scheduled Window: ${v.window}</div>
+                        <div class="vaccine-meta">UIP Window: ${v.window}</div>
                         ${delayWarningMsg}
+                    </div>
+                    <div class="date-display-box">
+                        <div>Baseline Due: <b>${prettyBaseline}</b></div>
+                        <div>Adjusted Due: <span ${adjustedDateStyle}>${prettyProjected}</span></div>
                     </div>
                     <div class="date-picker-cell" data-date="Target: ${prettyProjected}">
                         <label style="margin:0; font-size:10px; color:#94a3b8;">Administered Date:</label>
@@ -457,7 +481,7 @@
             timelineOutput.appendChild(card);
         }
 
-        // Pass 3: Render Clinical Audit Summary Dashboard Sorting
+        // Dashboard View Construction
         const overdueBox = document.createElement('div');
         overdueBox.innerHTML = "<h4>⚠️ Overdue / Should Have Taken By Now</h4>";
         const doneBox = document.createElement('div');
@@ -465,7 +489,7 @@
         const upcomingBox = document.createElement('div');
         upcomingBox.innerHTML = "<h4>📅 Future Doses Schedule</h4>";
 
-        let totalOverdue = 0, totalDone = 0, totalUpcoming = 0;
+        let totalOverdue = 0, totalDone = 0;
 
         Object.values(computedTimeline).forEach(v => {
             const prettyProj = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
@@ -484,7 +508,6 @@
             } else {
                 card.innerHTML = `<div><b>${v.name}</b> <br><small>Due on: ${prettyProj}</small></div> <span class="status-pill upcoming">Upcoming</span>`;
                 upcomingBox.appendChild(card);
-                totalUpcoming++;
             }
         });
 
