@@ -81,34 +81,35 @@
         .sig-text { font-size: 0.85rem; color: #7f1d1d; font-weight: 500; margin-top: 0.5rem; background: white; padding: 0.5rem; border-radius: 4px; }
         
         .audit-card { padding: 1rem; border-radius: 8px; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; }
+        .audit-card.overdue { background: #fef2f2; border-left: 5px solid var(--danger); }
+        .audit-card.done { background: #f0fdf4; border-left: 5px solid var(--success); }
+        .audit-card.upcoming { background: #f7fee7; border-left: 5px solid #84cc16; }
         .status-pill { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        .status-pill.overdue { background: #fee2e2; color: var(--danger); }
+        .status-pill.done { background: #dcfce7; color: var(--success); }
+        .status-pill.upcoming { background: #ecfccb; color: #4d7c0f; }
+
+        .nis-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 1rem; }
+        .nis-table th, .nis-table td { border: 1px solid #cbd5e1; padding: 0.75rem; text-align: left; }
+        .nis-table th { background-color: var(--primary-light); color: var(--primary); }
+
+        .action-bar { display: flex; gap: 1rem; margin-bottom: 1rem; }
 
         /* THE PRINT ENGINE ARCHITECTURE */
         #printEngine { display: none; }
 
         @media print {
-            /* Hide the entire web app interface */
             body > *:not(#printEngine) { display: none !important; }
-            
-            /* Show only the Print Engine canvas */
             #printEngine { display: block !important; width: 100%; color: black; background: white;}
-            
-            /* Clean Print Typography */
             #printEngine h1, #printEngine h2, #printEngine h3 { color: black !important; border-bottom: 2px solid #000; padding-bottom: 4px;}
             #printEngine .page-break { page-break-after: always; }
-            
-            /* Format Tracker on Print */
             #printEngine .vaccine-row { grid-template-columns: 2fr 1fr; border-bottom: 1px solid #ccc; padding: 8px 0; page-break-inside: avoid;}
             #printEngine .date-picker-cell, #printEngine .action-protocol-card { display: none !important; }
             #printEngine .date-display-box::before { content: "Due: "; font-weight: normal; color: #555; }
-
-            /* Format Prescription on Print */
             #printEngine .rx-pad { border: 2px solid #000; padding: 2rem; border-radius: 12px; margin-top: 2rem; }
             #printEngine .rx-symbol { font-size: 3rem; font-family: serif; font-weight: bold; line-height: 1; margin-bottom: 1rem; }
             #printEngine .rx-drug-name { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;}
             #printEngine .rx-dosage { font-size: 1.8rem; font-weight: bold; border-bottom: 2px dashed #ccc; display: inline-block; padding-bottom: 5px; margin-bottom: 1rem;}
-            
-            /* Format Milestones on Print */
             #printEngine .red-flag-card { border: 2px solid #000; background: none; page-break-inside: avoid; margin-bottom: 10px; padding: 10px;}
         }
     </style>
@@ -152,6 +153,11 @@
                 <option value="female">Female</option>
                 <option value="male">Male</option>
             </select>
+            
+            <div class="checkbox-container">
+                <input type="checkbox" id="jeEndemic">
+                <label for="jeEndemic">JE Endemic Area?</label>
+            </div>
 
             <button class="action" onclick="saveAndRegisterPatient(false)">Save Profile & Load Workspace</button>
             
@@ -184,9 +190,29 @@
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('trackerTimelineSubTab', this)">📅 Tracker Timeline</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('trackerAuditSubTab', this)">📋 Patient Audit</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('trackerGuidelinesSubTab', this)">📘 Official NIS 2026 Rules</button>
                 </div>
                 <div id="trackerTimelineSubTab" class="sub-tab-content active"><div id="timelineOutput"></div></div>
                 <div id="trackerAuditSubTab" class="sub-tab-content"><div class="timeline-section"><h3 class="section-title">Clinical Audit Dashboard</h3><div id="auditOutput"></div></div></div>
+                <div id="trackerGuidelinesSubTab" class="sub-tab-content">
+                    <div class="timeline-section">
+                        <h3 class="section-title">Universal Immunization Programme Standard Matrix (2026)</h3>
+                        <table class="nis-table">
+                            <thead><tr><th>Age Milestone</th><th>Vaccines Mandatory</th><th>Route & Site Location</th></tr></thead>
+                            <tbody>
+                                <tr><td><b>At Birth</b></td><td>BCG, OPV-0, HepB-Birth Dose</td><td>ID Left Upper Arm / Oral / IM Left Thigh</td></tr>
+                                <tr><td><b>6 Weeks</b></td><td>Pentavalent-1, OPV-1, RVV-1, fIPV-1, PCV-1</td><td>IM Right Thigh / Oral / Oral / ID Right Arm / IM Left Thigh</td></tr>
+                                <tr><td><b>10 Weeks</b></td><td>Pentavalent-2, OPV-2, RVV-2</td><td>IM Right Thigh / Oral / Oral</td></tr>
+                                <tr><td><b>14 Weeks</b></td><td>Pentavalent-3, OPV-3, RVV-3, fIPV-2, PCV-2</td><td>IM Right Thigh / Oral / Oral / ID Right Arm / IM Left Thigh</td></tr>
+                                <tr><td><b>9 Months</b></td><td>MR-1, PCV-Booster, JE-1 (Endemic Only), Vit A (Dose 1)</td><td>SC Right Arm / IM Right Thigh / SC Left Arm / Oral</td></tr>
+                                <tr><td><b>16-24 Months</b></td><td>MR-2, DPT-Booster 1, OPV-Booster, JE-2 (Endemic)</td><td>SC Right Arm / IM Left Thigh / Oral / SC Left Arm</td></tr>
+                                <tr><td><b>5-6 Years</b></td><td>DPT-Booster 2</td><td>IM Deltoid Upper Arm</td></tr>
+                                <tr><td><b>9-14 Years</b></td><td>HPV Vaccine (Girls - 2 Dose Campaign Strategy)</td><td>IM Deltoid Upper Arm (0 and 6 Months Interval)</td></tr>
+                                <tr><td><b>10 & 16 Years</b></td><td>Td (Tetanus & adult Diphtheria) Booster</td><td>IM Deltoid Upper Arm</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- 2: DRUG DOSAGE CALCULATOR -->
@@ -221,12 +247,14 @@
                     <button class="sub-tab-btn" onclick="switchSubTab('msCompletedTab', this)">✅ Completed Log</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('msMissedTab', this)">🚨 Missed & Red Flags</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('msUpcomingTab', this)">📅 Upcoming Guidance</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('msReferenceTab', this)">📘 IAP/CDC Standards</button>
                 </div>
                 
                 <div id="msEvalTab" class="sub-tab-content active"><div class="timeline-section"><h3 class="section-title">Current Age Evaluation Checklist</h3><div id="msEvalContainer"></div></div></div>
                 <div id="msCompletedTab" class="sub-tab-content"><div class="timeline-section"><h3 class="section-title">Completed Milestones Log</h3><div id="msCompletedContainer"></div></div></div>
                 <div id="msMissedTab" class="sub-tab-content"><div class="timeline-section"><h3 class="section-title">Missed Milestones & Clinical Significance</h3><div id="msMissedContainer"></div></div></div>
                 <div id="msUpcomingTab" class="sub-tab-content"><div class="timeline-section"><h3 class="section-title">Upcoming Milestones (Guidance)</h3><div id="msUpcomingContainer"></div></div></div>
+                <div id="msReferenceTab" class="sub-tab-content"><div class="timeline-section"><h3 class="section-title">Standard Developmental Milestones (IAP/CDC)</h3><div id="msReferenceContainer"></div></div></div>
             </div>
         </div>
     </div>
@@ -238,25 +266,180 @@
 </div>
 
 <script>
-    // --- DATABASES ---
+    // --- 1. FULL DATABASES ---
+    
     const milestonesDb = {
-        2: [{ id: "m2_1", domain: "Social/Emotional", text: "Social smile.", sig: "Visual deficit, cognitive delay, or early ASD signs." }, { id: "m2_2", domain: "Language", text: "Coos, makes sounds.", sig: "Hearing deficit." }, { id: "m2_3", domain: "Gross Motor", text: "Holds head up steady.", sig: "Hypotonia or CP." }],
-        4: [{ id: "m4_1", domain: "Social/Emotional", text: "Laughs out loud.", sig: "Lack of social engagement." }, { id: "m4_2", domain: "Fine Motor", text: "Reaches for toys.", sig: "Motor delay." }, { id: "m4_3", domain: "Gross Motor", text: "Rolls tummy to back.", sig: "Gross motor delay." }],
-        6: [{ id: "m6_1", domain: "Gross Motor", text: "Sits without support.", sig: "Cerebral Palsy red flag." }, { id: "m6_2", domain: "Language", text: "Babbles with consonants.", sig: "Strong indicator for hearing loss." }, { id: "m6_3", domain: "Fine Motor", text: "Transfers objects hand to hand.", sig: "Hand preference before 1y = hemiplegia risk." }],
-        9: [{ id: "m9_1", domain: "Fine Motor", text: "Uses basic pincer grasp.", sig: "Fine motor delay." }, { id: "m9_2", domain: "Gross Motor", text: "Pulls to stand.", sig: "Lower limb hypotonia." }, { id: "m9_3", domain: "Language", text: "Responds to own name.", sig: "Hearing deficit or ASD." }],
-        12: [{ id: "m12_1", domain: "Language", text: "Says 1 or 2 clear words.", sig: "Expressive speech delay." }, { id: "m12_2", domain: "Gross Motor", text: "Walks holding furniture.", sig: "Motor pathway pathology." }, { id: "m12_3", domain: "Social/Emotional", text: "Points to objects they want.", sig: "Lack of joint attention = ASD indicator." }],
-        18: [{ id: "m18_1", domain: "Gross Motor", text: "Walks independently.", sig: "Absolute indication for neuro workup if absent." }, { id: "m18_2", domain: "Language", text: "Uses 10+ single words.", sig: "Expressive delay." }, { id: "m18_3", domain: "Fine Motor", text: "Uses spoon to eat.", sig: "Coordination delay." }],
-        24: [{ id: "m24_1", domain: "Language", text: "Puts 2 words together.", sig: "Speech therapy assessment needed." }, { id: "m24_2", domain: "Gross Motor", text: "Kicks a ball, runs.", sig: "Gross motor delay." }, { id: "m24_3", domain: "Social", text: "Parallel play.", sig: "Social withdrawal." }]
+        2: [
+            { id: "m2_1", domain: "Social/Emotional", text: "Social smile (smiles back at you).", sig: "Absence may indicate visual deficit, severe cognitive delay, or early signs of ASD." },
+            { id: "m2_2", domain: "Language", text: "Coos, makes sounds other than crying.", sig: "Hearing deficit or profound speech delay." },
+            { id: "m2_3", domain: "Gross Motor", text: "Holds head up steady when held at shoulder.", sig: "Poor head control indicates hypotonia, neuromuscular disorders, or CP." }
+        ],
+        4: [
+            { id: "m4_1", domain: "Social/Emotional", text: "Laughs out loud, looks at you, moves or makes sounds to get attention.", sig: "Lack of social engagement or visual impairment." },
+            { id: "m4_2", domain: "Fine Motor", text: "Brings hands to mouth, reaches for toys.", sig: "Motor delay or visual impairment." },
+            { id: "m4_3", domain: "Gross Motor", text: "Rolls from tummy to back.", sig: "Gross motor delay, hypertonia, or hypotonia." }
+        ],
+        6: [
+            { id: "m6_1", domain: "Gross Motor", text: "Sits without support (tripod/steady).", sig: "Red flag for Cerebral Palsy or global developmental delay." },
+            { id: "m6_2", domain: "Language", text: "Babbles with consonants (da, ba, ga).", sig: "Strong indicator for potential hearing loss. Requires audiology referral." },
+            { id: "m6_3", domain: "Fine Motor", text: "Transfers objects from one hand to another.", sig: "Hand preference before 1 year is a red flag for hemiplegia." }
+        ],
+        9: [
+            { id: "m9_1", domain: "Fine Motor", text: "Uses basic pincer grasp (thumb and index finger).", sig: "Fine motor delay; neurological impairment." },
+            { id: "m9_2", domain: "Gross Motor", text: "Stands holding on to furniture (pulls to stand).", sig: "Gross motor delay; lower limb hypotonia/hypertonia." },
+            { id: "m9_3", domain: "Language", text: "Responds to own name.", sig: "Major red flag for hearing deficit or Autism Spectrum Disorder." }
+        ],
+        12: [
+            { id: "m12_1", domain: "Language", text: "Says 1 or 2 clear words (mama, dada).", sig: "Expressive speech delay; rule out hearing loss." },
+            { id: "m12_2", domain: "Gross Motor", text: "Walks holding on to furniture (cruising) or takes first independent steps.", sig: "If unable to bear weight, indicates severe motor pathway pathology." },
+            { id: "m12_3", domain: "Social/Emotional", text: "Points to objects they want.", sig: "Lack of joint attention is a core early indicator for ASD." }
+        ],
+        18: [
+            { id: "m18_1", domain: "Gross Motor", text: "Walks independently without falling often.", sig: "If not walking by 18m, absolute indication for neurological workup (e.g., Duchenne, CP)." },
+            { id: "m18_2", domain: "Language", text: "Uses at least 10 to 15 single words.", sig: "Expressive language delay." },
+            { id: "m18_3", domain: "Fine Motor", text: "Uses a spoon to eat.", sig: "Fine motor and coordination delay." }
+        ],
+        24: [
+            { id: "m24_1", domain: "Language", text: "Puts 2 words together (e.g., 'more milk').", sig: "Significant language delay. Needs speech therapy assessment." },
+            { id: "m24_2", domain: "Gross Motor", text: "Kicks a ball, runs.", sig: "Gross motor delay." },
+            { id: "m24_3", domain: "Social/Emotional", text: "Parallel play (plays next to, but not with, other children).", sig: "Social withdrawal; monitor for ASD." }
+        ],
+        36: [
+            { id: "m36_1", domain: "Language", text: "Speaks in 3-4 word sentences; mostly understood by strangers.", sig: "Speech articulation or expressive delay." },
+            { id: "m36_2", domain: "Gross Motor", text: "Pedals a tricycle.", sig: "Coordination and gross motor deficits." },
+            { id: "m36_3", domain: "Fine Motor", text: "Copies a circle.", sig: "Visual-motor integration delay." }
+        ]
     };
 
-    const drugDb = { 
-        "antibiotics": [ { name: "Amoxicillin 125mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 }, { name: "Amox+Clav (200/28)mg/5ml", doseMg: 40, doseType: "perDay", div: 2, freq: "BID", conc: 200, vol: 5 }, { name: "Azithromycin 200mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "QD", conc: 200, vol: 5 } ],
-        "antipyretics": [ { name: "Paracetamol 120mg/5ml", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 120, vol: 5 }, { name: "Ibuprofen 100mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H", conc: 100, vol: 5 } ],
-        "antihistamines": [ { name: "Cetirizine 5mg/5ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 5, vol: 5 } ],
-        "git": [ { name: "Ondansetron 4mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID", conc: 4, vol: 5 } ]
+    const drugDb = {
+        "antibiotics": [
+            { name: "Amoxicillin 125mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Amoxicillin 250mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Amox+Clav 62.5mg/ml drops", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 62.5, vol: 1 },
+            { name: "Amox+Clav 156mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 156, vol: 5 },
+            { name: "Amox+Clav (200/28)mg/5ml", doseMg: 40, doseType: "perDay", div: 2, freq: "BID", conc: 200, vol: 5 },
+            { name: "Amox+Clav 312mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 312, vol: 5 },
+            { name: "Amox+Clav (400/57)mg/5ml", doseMg: 40, doseType: "perDay", div: 2, freq: "BID", conc: 400, vol: 5 },
+            { name: "Amox+Clav (600/42.9)mg/5ml", doseMg: 90, doseType: "perDay", div: 2, freq: "BID", conc: 600, vol: 5 },
+            { name: "Cefixime 100mg/5ml", doseMg: 8, doseType: "perDay", div: 2, freq: "BID", conc: 100, vol: 5 },
+            { name: "Cefaclor 125mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Cefaclor 250mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Cefaclor 375mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 375, vol: 5 },
+            { name: "Cefuroxime 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cefuroxime 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Cefdinir 125mg/5ml", doseMg: 14, doseType: "perDay", div: 1, freq: "QD or BID", conc: 125, vol: 5 },
+            { name: "Cefdinir 250mg/5ml", doseMg: 14, doseType: "perDay", div: 1, freq: "QD or BID", conc: 250, vol: 5 },
+            { name: "Cephalexin 125mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Cephalexin 250mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Cefadroxil 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cefadroxil 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Cefadroxil 500mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 500, vol: 5 },
+            { name: "Cephradine 125mg/5ml", doseMg: 25, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cephradine 250mg/5ml", doseMg: 25, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Cefpodoxime 40mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 40, vol: 5 },
+            { name: "Cefpodoxime 50mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 50, vol: 5 },
+            { name: "Cefpodoxime 100mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 100, vol: 5 },
+            { name: "Cefprozil 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cefprozil 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Azithromycin 100mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "QD (3-5 days)", conc: 100, vol: 5 },
+            { name: "Azithromycin 200mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "QD (3-5 days)", conc: 200, vol: 5 },
+            { name: "Erythromycin 200mg/5ml", doseMg: 40, doseType: "perDay", div: 4, freq: "QID", conc: 200, vol: 5 },
+            { name: "Erythromycin 400mg/5ml", doseMg: 40, doseType: "perDay", div: 4, freq: "QID", conc: 400, vol: 5 },
+            { name: "Clarithromycin 125mg/5ml", doseMg: 15, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Clarithromycin 250mg/5ml", doseMg: 15, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Mebendazole 100mg/5ml", doseMg: 100, doseType: "perDose", div: 1, freq: "Stat (Repeat in 2wks) - NOT WEIGHT BASED", conc: 100, vol: 5 },
+            { name: "Metronidazole 125mg/5ml", doseMg: 30, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Metronidazole 200mg/5ml", doseMg: 30, doseType: "perDay", div: 3, freq: "TID", conc: 200, vol: 5 },
+            { name: "Co-trimoxazole (40/200)mg/5ml", doseMg: 8, doseType: "perDay", div: 2, freq: "BID (Dosed on TMP)", conc: 40, vol: 5 }
+        ],
+        "antipyretics": [
+            { name: "Paracetamol 100mg/ml drops", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 100, vol: 1 },
+            { name: "Paracetamol 120mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 120, vol: 5 },
+            { name: "Paracetamol 125mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 125, vol: 5 },
+            { name: "Paracetamol 250mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 250, vol: 5 },
+            { name: "Paracetamol Suppository 80mg", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 80, vol: 1 },
+            { name: "Paracetamol Suppository 120mg", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 120, vol: 1 },
+            { name: "Paracetamol Suppository 250mg", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 250, vol: 1 },
+            { name: "Ibuprofen 40mg/ml drops", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H (with food)", conc: 40, vol: 1 },
+            { name: "Ibuprofen 100mg/5ml susp", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H (with food)", conc: 100, vol: 5 },
+            { name: "Diclofenac Suppository 12.5mg", doseMg: 1, doseType: "perDose", div: 1, freq: "BID or TID", conc: 12.5, vol: 1 },
+            { name: "Diclofenac Suppository 25mg", doseMg: 1, doseType: "perDose", div: 1, freq: "BID or TID", conc: 25, vol: 1 }
+        ],
+        "antihistamines": [
+            { name: "Dimetindene maleate 1mg/ml drops", doseMg: 0.1, doseType: "perDay", div: 3, freq: "TID", conc: 1, vol: 1 },
+            { name: "Dimetindene maleate 0.1mg/ml syrup", doseMg: 0.1, doseType: "perDay", div: 3, freq: "TID", conc: 0.1, vol: 1 },
+            { name: "Chlorpheniramine 2mg/5ml syrup", doseMg: 0.35, doseType: "perDay", div: 4, freq: "Q6H", conc: 2, vol: 5 },
+            { name: "Cetirizine 10mg/ml drops", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 10, vol: 1 },
+            { name: "Cetirizine 1mg/ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 1, vol: 1 },
+            { name: "Cetirizine 5mg/5ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 5, vol: 5 },
+            { name: "Levocetirizine 2.5mg/5ml syrup", doseMg: 0.125, doseType: "perDose", div: 1, freq: "QD", conc: 2.5, vol: 5 },
+            { name: "Loratadine 1mg/ml syrup", doseMg: 0.2, doseType: "perDose", div: 1, freq: "QD", conc: 1, vol: 1 },
+            { name: "Desloratadine 0.5mg/ml syrup", doseMg: 0.1, doseType: "perDose", div: 1, freq: "QD", conc: 0.5, vol: 1 },
+            { name: "Fexofenadine 30mg/5ml susp", doseMg: 2, doseType: "perDay", div: 2, freq: "BID", conc: 30, vol: 5 },
+            { name: "Promethazine 6.25mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 6.25, vol: 5 },
+            { name: "Ketotifen 1mg/5ml syrup", doseMg: 0.05, doseType: "perDose", div: 1, freq: "BID", conc: 1, vol: 5 },
+            { name: "Dexamethasone 0.5mg/5ml syrup", doseMg: 0.3, doseType: "perDose", div: 1, freq: "Stat or QD", conc: 0.5, vol: 5 },
+            { name: "Prednisolone 15mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 2, freq: "BID", conc: 15, vol: 5 }
+        ],
+        "git": [
+            { name: "Domperidone 1mg/ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "TID (Before meals)", conc: 1, vol: 1 },
+            { name: "Metoclopramide 5mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID", conc: 5, vol: 5 },
+            { name: "Ondansetron 4mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID or Stat", conc: 4, vol: 5 },
+            { name: "Simethicone 40mg/ml drops", doseMg: 1, doseType: "perDose", div: 1, freq: "QID (After meals)", conc: 40, vol: 1 },
+            { name: "Hyoscine butylbromide 5mg/5ml", doseMg: 0.5, doseType: "perDose", div: 1, freq: "TID", conc: 5, vol: 5 },
+            { name: "Prifinium bromide 7.5mg/5ml", doseMg: 1, doseType: "perDose", div: 1, freq: "TID", conc: 7.5, vol: 5 },
+            { name: "Loperamide 1mg/5ml syrup", doseMg: 0.1, doseType: "perDose", div: 1, freq: "BID (Avoid <2 yrs)", conc: 1, vol: 5 },
+            { name: "Lactulose 66.7g/100ml syrup", doseMg: 667, doseType: "perDay", div: 2, freq: "BID (Target 1-3ml/kg/day)", conc: 667, vol: 1 },
+            { name: "Glycerin Suppository", doseMg: 1, doseType: "perDose", div: 1, freq: "PRN - NOT WEIGHT BASED", conc: 1, vol: 1 }
+        ],
+        "respiratory": [
+            { name: "Ambroxol 7.5mg/ml drops", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 7.5, vol: 1 },
+            { name: "Ambroxol 15mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 15, vol: 5 },
+            { name: "Ambroxol 30mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 30, vol: 5 },
+            { name: "Bromhexine HCl 4mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 4, vol: 5 },
+            { name: "Butamirate citrate 5mg/ml drops", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 5, vol: 1 },
+            { name: "Butamirate citrate 7.5mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 7.5, vol: 5 },
+            { name: "Carbocisteine 2% (100mg/5ml)", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 100, vol: 5 },
+            { name: "Carbocisteine 5% (250mg/5ml)", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Dextromethorphan 15mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 15, vol: 5 },
+            { name: "Guaifenesin 100mg/5ml syrup", doseMg: 10, doseType: "perDay", div: 4, freq: "QID", conc: 100, vol: 5 },
+            { name: "Terbutaline 1.5mg/5ml syrup", doseMg: 0.05, doseType: "perDose", div: 1, freq: "TID", conc: 1.5, vol: 5 },
+            { name: "Salbutamol 2mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID", conc: 2, vol: 5 },
+            { name: "Montelukast 4mg/5mg/10mg", doseMg: 0.2, doseType: "perDose", div: 1, freq: "QD (Evening)", conc: 4, vol: 1 },
+            { name: "Chlorpheniramine+Dextro (2/15)mg", doseMg: 1, doseType: "perDay", div: 3, freq: "TID (Dosed on Dextro)", conc: 15, vol: 5 },
+            { name: "Chlorphen+Pseudo (2/30)mg", doseMg: 4, doseType: "perDay", div: 3, freq: "TID (Dosed on Pseudoephedrine)", conc: 30, vol: 5 },
+            { name: "PCM+Chlorphen+Pseudo syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "TID (Dosed on PCM)", conc: 125, vol: 5 },
+            { name: "Triprolidine+Pseudo (1.25/30)mg", doseMg: 4, doseType: "perDay", div: 3, freq: "TID (Dosed on Pseudoephedrine)", conc: 30, vol: 5 },
+            { name: "Guai+Tripro+Pseudo syrup", doseMg: 10, doseType: "perDay", div: 3, freq: "TID (Dosed on Guaifenesin)", conc: 100, vol: 5 }
+        ]
     };
 
-    const baseVaccineSchema = [ { id: "bcg", name: "BCG", window: "At Birth", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 0, strategy: "Can be administered up to 1 year of age." }, { id: "penta1", name: "Pentavalent - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6, strategy: "Initiate series." }, { id: "mr1", name: "MR - 1", window: "9 Months", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 39, strategy: "Up to 5 years." }, { id: "hpv1", name: "HPV - 1", window: "9-14 Years", group: "Adolescent", baseOffsetWeeks: 468, condition: "female", strategy: "UIP core expansion for girls." } ]; 
+    const baseVaccineSchema = [
+        { id: "bcg", name: "BCG", window: "At Birth", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 0, strategy: "Can be administered up to 1 year of age if missed at birth." },
+        { id: "opv0", name: "OPV - 0", window: "At Birth", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 0, strategy: "Strict max age limit of 15 days from birth." },
+        { id: "hepb0", name: "Hepatitis B - Birth", window: "At Birth", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 0, strategy: "Must be given within 24 hours of birth." },
+        { id: "penta1", name: "Pentavalent - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6, strategy: "Can be given up to 1 year of age." },
+        { id: "opv1", name: "OPV - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6, strategy: "Can be given up to 5 years of age if missed." },
+        { id: "fipv1", name: "fIPV - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6, strategy: "Fractional dose (0.1 mL). Ensure true ID wheal." },
+        { id: "pcv1", name: "PCV - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6, strategy: "Primary baseline dose. Up to 1 year of age." },
+        { id: "penta2", name: "Pentavalent - 2", window: "10 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 10, dependsOn: "penta1", minIntervalWeeks: 4, strategy: "Minimum gap of 4 weeks from actual Pentavalent-1." },
+        { id: "opv2", name: "OPV - 2", window: "10 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 10, dependsOn: "opv1", minIntervalWeeks: 4, strategy: "Minimum interval of 4 weeks from actual OPV-1." },
+        { id: "penta3", name: "Pentavalent - 3", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "penta2", minIntervalWeeks: 4, strategy: "Minimum 4-week gap from Pentavalent-2. Max age 1 year." },
+        { id: "opv3", name: "OPV - 3", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "opv2", minIntervalWeeks: 4, strategy: "Minimum 4-week gap from OPV-2. Max age 5 years." },
+        { id: "fipv2", name: "fIPV - 2", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "fipv1", minIntervalWeeks: 8, strategy: "Mandatory 8-week minimum gap from fIPV-1." },
+        { id: "pcv2", name: "PCV - 2", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "pcv1", minIntervalWeeks: 8, strategy: "Mandatory 8-week minimum gap from PCV-1." },
+        { id: "mr1", name: "MR - 1", window: "9 Months", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 39, strategy: "Can be given up to 5 years of age." },
+        { id: "pcvBooster", name: "PCV - Booster", window: "9 Months", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 39, dependsOn: "pcv2", minIntervalWeeks: 24, strategy: "Maintain at least a 6-month gap from actual PCV-2." },
+        { id: "je1", name: "JE - 1", window: "9 Months", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 39, condition: "je", strategy: "Endemic districts only. Up to 15 years of age." },
+        { id: "mr2", name: "MR - 2", window: "16-24 Months", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 69, dependsOn: "mr1", minIntervalWeeks: 24, strategy: "Minimum 6-month interval from actual MR-1." },
+        { id: "dptBooster1", name: "DPT - Booster 1", window: "16-24 Months", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 69, dependsOn: "penta3", minIntervalWeeks: 24, strategy: "At least a 6-month interval from actual Pentavalent-3." },
+        { id: "je2", name: "JE - 2", window: "16-24 Months", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 69, condition: "je", dependsOn: "je1", minIntervalWeeks: 24, strategy: "Minimum 6-month interval from actual JE-1." },
+        { id: "dptBooster2", name: "DPT - Booster 2", window: "5-6 Years", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 260, strategy: "Given at 5-6 years. Can be given up to 7 years if missed." },
+        { id: "hpv1", name: "HPV - 1", window: "9-14 Years", group: "Adolescent", baseOffsetWeeks: 468, condition: "female", strategy: "UIP core expansion for girls. Initiate between 9–14 years." },
+        { id: "hpv2", name: "HPV - 2", window: "6 Months Post Dose 1", group: "Adolescent", baseOffsetWeeks: 494, condition: "female", dependsOn: "hpv1", minIntervalWeeks: 24, strategy: "Strict 6-month spacing gap following actual HPV-1." },
+        { id: "td10", name: "Td - 10 Years", window: "10 Years", group: "Adolescent", baseOffsetWeeks: 520, strategy: "Replaces historical TT-10. Tetanus & adult diphtheria coverage." },
+        { id: "td16", name: "Td - 16 Years", window: "16 Years", group: "Adolescent", baseOffsetWeeks: 832, strategy: "Replaces historical TT-16. Booster dosage." }
+    ];
 
     let globalPatientsStore = JSON.parse(localStorage.getItem('nis_patients')) || {};
     let activePatientId = null;
@@ -265,7 +448,7 @@
     // Global variable to store active drug calculation for prescription print
     let activePrescriptionData = null;
 
-    window.onload = function() { renderPatientBadges(); };
+    window.onload = function() { renderPatientBadges(); buildMilestoneReference(); };
 
     // --- NAVIGATION ---
     function switchMainFeature(viewId, el) {
@@ -341,28 +524,52 @@
     function triggerActiveWorkspaceBuild(pId) {
         document.getElementById('emptyStatePlaceholder').style.display = "none";
         document.getElementById('activeWorkspace').style.display = "block";
-        document.getElementById('btnMasterPrint').style.display = "block"; // Reveal master print button
+        document.getElementById('btnMasterPrint').style.display = "block"; 
         calculateAndRenderTimeline(pId); calculateDose(); renderMilestoneDashboard();
     }
     
-    // Condensed Timeline Builder
+    // Timeline Builder
     function calculateAndRenderTimeline(pId) {
         const patient = globalPatientsStore[pId]; const baseDate = new Date(patient.dob || new Date()); const today = new Date();
         const timelineOutput = document.getElementById('timelineOutput'); timelineOutput.innerHTML = "";
+        const auditOutput = document.getElementById('auditOutput'); auditOutput.innerHTML = "";
         let computedTimeline = {};
         baseVaccineSchema.forEach(v => {
+            if(v.condition === "je" && !patient.je) return;
+            if(v.condition === "female" && patient.gender !== "female") return;
             let targetDate = new Date(baseDate); targetDate.setDate(targetDate.getDate() + (v.baseOffsetWeeks * 7));
-            computedTimeline[v.id] = { ...v, projected: targetDate.toISOString().split('T')[0], actual: patient.givenDates[v.id] || "" };
+            let finalDue = new Date(targetDate); let alignmentAltered = false;
+            if(v.dependsOn && computedTimeline[v.dependsOn]) {
+                const parentActualAdminDate = new Date(patient.givenDates[v.dependsOn] || computedTimeline[v.dependsOn].projected);
+                const absoluteMinDate = new Date(parentActualAdminDate);
+                absoluteMinDate.setDate(absoluteMinDate.getDate() + (v.minIntervalWeeks * 7));
+                if(finalDue < absoluteMinDate) { finalDue = absoluteMinDate; alignmentAltered = true; }
+            }
+            let status = "upcoming"; const actualValue = patient.givenDates[v.id] || "";
+            if(actualValue !== "") { status = "done"; } else if (finalDue < today) { status = "overdue"; }
+            computedTimeline[v.id] = { ...v, projected: finalDue.toISOString().split('T')[0], actual: actualValue, isDelayedByCatchup: alignmentAltered, status: status };
         });
         let groups = {}; Object.values(computedTimeline).forEach(item => { if(!groups[item.group]) groups[item.group] = []; groups[item.group].push(item); });
         for (const [groupName, vaccines] of Object.entries(groups)) {
             const card = document.createElement('div'); card.className = "timeline-section"; card.innerHTML = `<h3 class="section-title">${groupName}</h3>`;
             vaccines.forEach(v => {
                 const prettyFinalDue = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
-                card.innerHTML += `<div class="vaccine-row"><div class="vaccine-info"><h4>${v.name}</h4><div class="vaccine-meta">Window: ${v.window}</div></div><div class="date-display-box">${v.actual ? '✅ Completed' : prettyFinalDue}</div><div class="date-picker-cell"><input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}', '${v.id}', this.value)"></div></div>`;
+                const dateDisplayClass = v.isDelayedByCatchup ? "date-display-box shifted" : "date-display-box";
+                card.innerHTML += `<div class="vaccine-row"><div class="vaccine-info"><h4>${v.name}</h4><div class="vaccine-meta" style="margin-bottom:0.4rem;">Window: ${v.window}</div><div class="action-protocol-card"><b>If Missed:</b> ${v.strategy}</div></div><div class="${dateDisplayClass}">${v.actual ? '✅ Completed' : prettyFinalDue}</div><div class="date-picker-cell"><label style="margin:0; font-size:10px; color:#94a3b8;">Administered On:</label><input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}', '${v.id}', this.value)"></div></div>`;
             });
             timelineOutput.appendChild(card);
         }
+        const overdueBox = document.createElement('div'); overdueBox.innerHTML = "<h4>⚠️ Overdue Milestones</h4>";
+        const doneBox = document.createElement('div'); doneBox.innerHTML = "<h4>✅ Completed Doses</h4>";
+        const upcomingBox = document.createElement('div'); upcomingBox.innerHTML = "<h4>📅 Future Doses</h4>";
+        Object.values(computedTimeline).forEach(v => {
+            const prettyProj = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+            const card = document.createElement('div'); card.className = `audit-card ${v.status}`;
+            if(v.status === 'overdue') { card.innerHTML = `<div><b>${v.name}</b><br><small>Target was: ${prettyProj}</small></div> <span class="status-pill overdue">Missed</span>`; overdueBox.appendChild(card); }
+            else if(v.status === 'done') { card.innerHTML = `<div><b>${v.name}</b><br><small>Given on: ${new Date(v.actual).toLocaleDateString()}</small></div> <span class="status-pill done">Given</span>`; doneBox.appendChild(card); }
+            else { card.innerHTML = `<div><b>${v.name}</b><br><small>Due: ${prettyProj}</small></div> <span class="status-pill upcoming">Upcoming</span>`; upcomingBox.appendChild(card); }
+        });
+        auditOutput.appendChild(overdueBox); auditOutput.appendChild(doneBox); auditOutput.appendChild(upcomingBox);
     }
     function updateAdministrationDate(pId, vId, dateStr) { globalPatientsStore[pId].givenDates[vId] = dateStr; localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); calculateAndRenderTimeline(pId); }
 
@@ -373,13 +580,21 @@
         const outputArea = document.getElementById('calcOutputArea'); const resultCard = document.getElementById('doseResultCard');
         if(!weight || !cat || drugIndex === "") { outputArea.style.display = 'none'; activePrescriptionData = null; return; }
         const drug = drugDb[cat][drugIndex];
-        let targetMg = drug.doseType === 'perDay' ? (weight * drug.doseMg) / drug.div : (weight * drug.doseMg);
-        let volMl = (targetMg * drug.vol) / drug.conc;
         
-        // Save for print engine
+        let targetMg = 0;
+        let isFixed = false;
+        if(drug.name.includes("NOT WEIGHT BASED") || drug.name.includes("Mebendazole") || drug.name.includes("Glycerin")) {
+            targetMg = drug.doseMg;
+            isFixed = true;
+        } else {
+            targetMg = drug.doseType === 'perDay' ? (weight * drug.doseMg) / drug.div : (weight * drug.doseMg);
+        }
+        
+        let volMl = (targetMg * drug.vol) / drug.conc;
         activePrescriptionData = { name: drug.name, vol: volMl.toFixed(1), freq: drug.freq, details: `${targetMg.toFixed(1)} mg/dose | ${drug.conc}mg/${drug.vol}mL suspension` };
 
-        resultCard.innerHTML = `<p>Administer Volume (Per Dose):</p><h2>${volMl.toFixed(1)} mL</h2><p style="color:var(--primary); font-weight:bold;">Frequency: ${drug.freq}</p><div style="font-size:0.85rem; color:#64748b; margin-top:1rem; border-top:1px dashed #cbd5e1; padding-top:0.5rem;">[(${weight}kg × ${drug.doseMg}mg) × ${drug.vol}mL] ÷ ${drug.conc}mg</div>`;
+        let mathString = isFixed ? "Fixed standard dose" : `[(${weight}kg × ${drug.doseMg}mg${drug.doseType==='perDay'?` / ${drug.div}`:''}) × ${drug.vol}mL] ÷ ${drug.conc}mg`;
+        resultCard.innerHTML = `<p>Administer Volume (Per Dose):</p><h2>${volMl.toFixed(1)} mL ${isFixed ? '(Fixed Dose)' : ''}</h2><p style="color:var(--primary); font-weight:bold;">Frequency: ${drug.freq}</p><div style="font-size:0.85rem; color:#64748b; margin-top:1rem; border-top:1px dashed #cbd5e1; padding-top:0.5rem;">${mathString}</div>`;
         outputArea.style.display = 'block';
     }
 
@@ -388,19 +603,20 @@
         if(!activePatientId) return;
         const patient = globalPatientsStore[activePatientId]; const achieved = patient.achievedMilestones || {};
         const availableAges = Object.keys(milestonesDb).map(Number).sort((a,b)=>a-b);
-        let currentBracket = 0;
+        let currentBracket = 0; let upcomingBracket = 0;
         for(let i=0; i<availableAges.length; i++){ if(currentPatientAgeInMonths >= availableAges[i]) currentBracket = availableAges[i]; else break; }
+        upcomingBracket = availableAges.find(age => age > currentPatientAgeInMonths) || null;
         
         const evalContainer = document.getElementById('msEvalContainer');
         if (currentBracket === 0) { evalContainer.innerHTML = "<p>Patient under 2 months.</p>"; } else {
-            evalContainer.innerHTML = milestonesDb[currentBracket].map(m => `<div class="milestone-item"><input type="checkbox" id="${m.id}" ${achieved[m.id] ? 'checked' : ''} onchange="toggleMilestone('${m.id}', this.checked)"><div><span class="milestone-domain">${m.domain}</span><br><span class="milestone-text">${m.text}</span></div></div>`).join("");
+            evalContainer.innerHTML = milestonesDb[currentBracket].map(m => `<div class="milestone-item"><input type="checkbox" id="${m.id}" ${achieved[m.id] ? 'checked' : ''} onchange="toggleMilestone('${m.id}', this.checked)"><div><span class="milestone-domain">${m.domain}</span><br><span class="milestone-text"><label for="${m.id}" style="cursor:pointer; font-weight:normal;">${m.text}</label></span></div></div>`).join("");
         }
 
         let completedHTML = ""; let missedHTML = "";
         availableAges.forEach(age => {
             let aHTML = "";
-            milestonesDb[age].forEach(m => { if(achieved[m.id]) aHTML += `<div>✅ <b>${m.domain}</b>: ${m.text}</div>`; });
-            if(aHTML) completedHTML += `<h4 style="margin:1rem 0 0.25rem 0;">Achieved at ${age} Months</h4>${aHTML}`;
+            milestonesDb[age].forEach(m => { if(achieved[m.id]) aHTML += `<div style="padding:0.5rem 0; border-bottom:1px solid #e2e8f0;">✅ <b>${m.domain}</b>: ${m.text}</div>`; });
+            if(aHTML) completedHTML += `<h4 style="margin:1rem 0 0.25rem 0; color:var(--primary);">Achieved at ${age} Months Target</h4>${aHTML}`;
             
             if(age <= currentBracket) {
                 milestonesDb[age].forEach(m => {
@@ -409,10 +625,28 @@
             }
         });
         document.getElementById('msCompletedContainer').innerHTML = completedHTML || "<p>No milestones recorded.</p>";
-        document.getElementById('msMissedContainer').innerHTML = missedHTML || "<div>✅ No red flags detected.</div>";
+        document.getElementById('msMissedContainer').innerHTML = missedHTML || "<div style='padding:1rem; background:#f0fdf4; border:1px solid #16a34a; border-radius:8px; color:#166534; font-weight:bold;'>✅ All age-appropriate milestones achieved. No red flags detected.</div>";
+
+        const upcomingContainer = document.getElementById('msUpcomingContainer');
+        if(upcomingBracket) {
+            upcomingContainer.innerHTML = milestonesDb[upcomingBracket].map(m => `<div style="padding:0.75rem; border:1px solid #e2e8f0; border-radius:6px; margin-bottom:0.5rem; background:white;"><span class="milestone-domain">${m.domain}</span><div style="font-weight:500;">${m.text}</div></div>`).join("");
+        } else {
+            upcomingContainer.innerHTML = "<p>Advanced age bracket. Transition to standard school-age cognitive assessments.</p>";
+        }
     }
     function toggleMilestone(mId, isChecked) { globalPatientsStore[activePatientId].achievedMilestones[mId] = isChecked; localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderMilestoneDashboard(); }
 
+    function buildMilestoneReference() {
+        const container = document.getElementById('msReferenceContainer');
+        let tableHTML = `<table class="nis-table"><thead><tr><th>Age Bracket</th><th>Domain</th><th>Milestone Marker</th></tr></thead><tbody>`;
+        Object.keys(milestonesDb).forEach(age => {
+            milestonesDb[age].forEach((m, idx) => {
+                if(idx === 0) { tableHTML += `<tr><td rowspan="${milestonesDb[age].length}"><b>${age} Months</b></td><td><span class="milestone-domain">${m.domain}</span></td><td>${m.text}</td></tr>`; } 
+                else { tableHTML += `<tr><td><span class="milestone-domain">${m.domain}</span></td><td>${m.text}</td></tr>`; }
+            });
+        });
+        container.innerHTML = tableHTML + `</tbody></table>`;
+    }
 
     // --- THE DYNAMIC PRINT ENGINE ---
     function getPrintHeaderHTML(title) {
@@ -452,14 +686,11 @@
                         <div class="rx-drug-name">${activePrescriptionData.name}</div>
                         <div class="rx-dosage">Take ${activePrescriptionData.vol} mL &mdash; ${activePrescriptionData.freq}</div>
                         <div style="color:#555; font-size:12px; margin-top:10px;">Clinical targets: ${activePrescriptionData.details}</div>
-                        
-                        <div style="margin-top: 60px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center;">
-                            Physician Signature
-                        </div>
+                        <div style="margin-top: 60px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center;">Physician Signature</div>
                     </div>
                 `;
             } else {
-                html += `<p style="font-style:italic;">No active drug calculation to print. Please calculate a dose in the Dosage Engine first.</p>`;
+                html += `<p style="font-style:italic; padding: 20px; border: 1px solid #ccc;">No active drug calculation to print. Please calculate a dose in the Dosage Engine first.</p>`;
             }
             if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
         }
@@ -467,15 +698,12 @@
         // Build Milestones Layout
         if (mode === 'milestones' || mode === 'comprehensive') {
             html += getPrintHeaderHTML("DEVELOPMENTAL EVALUATION REPORT");
-            
             html += `<h3>Missed Milestones & Clinical Red Flags</h3>`;
             html += document.getElementById('msMissedContainer').innerHTML;
-
             html += `<h3 style="margin-top: 30px;">Successfully Achieved Milestones</h3>`;
             html += document.getElementById('msCompletedContainer').innerHTML;
         }
 
-        // Inject into invisible div and trigger browser print dialog
         engine.innerHTML = html;
         window.print();
     }
