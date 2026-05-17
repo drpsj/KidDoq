@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIS 2026 - Advanced Clinical Tracker</title>
+    <title>NIS 2026 - Smart OPD Hub</title>
     <style>
         :root {
             --primary: #1e3a8a;
@@ -32,7 +32,7 @@
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1150px;
             margin: 2rem auto;
             padding: 0 1rem;
             display: grid;
@@ -91,7 +91,6 @@
         }
 
         button:hover { background-color: #0f766e; }
-        
         button.secondary { background-color: #64748b; }
         button.secondary:hover { background-color: #475569; }
 
@@ -114,9 +113,10 @@
         }
         .patient-badge:hover { background: var(--primary-light); }
 
+        /* Navigation Tabs Layout */
         .tabs-nav {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.25rem;
             margin-bottom: 1rem;
             border-bottom: 2px solid #cbd5e1;
         }
@@ -126,9 +126,10 @@
             color: var(--gray-700);
             width: auto;
             margin: 0;
-            padding: 0.75rem 1.2rem;
+            padding: 0.75rem 1rem;
             border-radius: 6px 6px 0 0;
             font-weight: 500;
+            font-size: 0.9rem;
         }
         .tab-btn:hover { background: #e2e8f0; }
         .tab-btn.active {
@@ -160,37 +161,37 @@
 
         .vaccine-row {
             display: grid;
-            grid-template-columns: 2fr 1fr 1.2fr;
+            grid-template-columns: 1.8fr 1fr 1fr;
             align-items: center;
-            padding: 0.85rem 0;
+            padding: 1rem 0;
             border-bottom: 1px solid #f1f5f9;
             gap: 1rem;
-        }
-        @media (max-width: 600px) {
-            .vaccine-row {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-            .date-display-box { text-align: left !important; }
         }
         .vaccine-row:last-child { border-bottom: none; }
 
         .vaccine-info h4 { margin: 0 0 0.25rem 0; font-size: 1rem; }
         .vaccine-meta { font-size: 0.8rem; color: #64748b; }
 
-        .date-display-box {
-            font-size: 0.85rem;
-            line-height: 1.4;
-            color: #475569;
+        .action-protocol-card {
+            background: #fff7ed;
+            border: 1px solid #ffedd5;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            color: #c2410c;
         }
-        .date-display-box b { color: var(--primary); }
-        .date-display-box .shifted { color: var(--warning); font-weight: 600; }
+        .action-protocol-card b { color: #ea580c; }
+
+        .date-display-box {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .date-display-box.shifted { color: var(--warning); }
 
         .date-picker-cell { text-align: right; }
         .date-picker-cell input { width: 100%; max-width: 140px; font-size: 0.85rem; padding: 0.25rem; }
 
-        .alert-delayed { color: var(--warning); font-size: 0.75rem; font-weight: bold; margin-top: 0.25rem; }
-        
         .audit-card {
             padding: 1rem;
             border-radius: 8px;
@@ -214,23 +215,42 @@
         .status-pill.done { background: #dcfce7; color: var(--success); }
         .status-pill.upcoming { background: #ecfccb; color: #4d7c0f; }
 
+        /* Clean Matrix View Styles for NIS Reference Chart */
+        .nis-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+        .nis-table th, .nis-table td {
+            border: 1px solid #cbd5e1;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .nis-table th { background-color: var(--primary-light); color: var(--primary); }
+
         .action-bar { display: flex; gap: 1rem; margin-bottom: 1rem; }
 
+        /* Optimized Professional Print Stylesheet for Parents */
         @media print {
             body { background: white; color: black; }
-            .panel, header, .date-picker-cell input, button, .tabs-nav { display: none !important; }
+            .panel, header, .date-picker-cell, button, .tabs-nav, .action-protocol-card { display: none !important; }
             .container { grid-template-columns: 1fr; margin: 0; padding: 0; }
-            .timeline-section { box-shadow: none; padding: 0; }
-            .tab-content { display: block !important; }
-            .vaccine-row { grid-template-columns: 2fr 2fr; }
+            .timeline-section { box-shadow: none; padding: 0; margin-bottom: 2rem; }
+            .vaccine-row { grid-template-columns: 1fr 1fr; padding: 0.5rem 0; page-break-inside: avoid; }
+            .date-display-box::before { content: "Due Date: "; font-weight: normal; font-size: 0.85rem; color: #475569; }
+            #timelineTab { display: block !important; }
+            #auditTab, #referenceTab { display: none !important; }
+            .print-header { display: block !important; border-bottom: 2px solid black; padding-bottom: 1rem; margin-bottom: 1.5rem; }
         }
+        .print-header { display: none; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>NIS 2026 Smart OPD Immunization Tracker</h1>
-    <p>Adaptive Scheduling • Baseline Verification • Dual-Date System</p>
+    <p>Simplified Due Dates • Missed Dose Action Steps • Print Engine</p>
 </header>
 
 <div class="container">
@@ -265,13 +285,18 @@
 
     <!-- RIGHT PANEL: TIMELINE & SUMMARY VIEWPORTS -->
     <div id="workspaceWrapper" style="display:none;">
+        
+        <!-- HIDDEN IN BROWSER, POPULATES AUTOMATICALLY ON PARENT PRINTOUT -->
+        <div class="print-header" id="printHeaderInfo"></div>
+
         <div class="action-bar">
-            <button onclick="window.print()" class="secondary" style="margin:0; width:auto;">🖨️ Print Card for Parent</button>
+            <button onclick="triggerParentPrint()" class="secondary" style="margin:0; width:auto;">🖨️ Print Tracker for Parent</button>
         </div>
 
         <div class="tabs-nav">
-            <button class="tab-btn active" onclick="switchTab('timelineTab', this)">📅 Adaptive Schedule Calendar</button>
-            <button class="tab-btn" onclick="switchTab('auditTab', this)">📋 Patient Status Audit (Dashboard)</button>
+            <button class="tab-btn active" onclick="switchTab('timelineTab', this)">📅 Patient Schedule Tracker</button>
+            <button class="tab-btn" onclick="switchTab('auditTab', this)">📋 Clinical Status Audit</button>
+            <button class="tab-btn" onclick="switchTab('referenceTab', this)">📘 Official NIS 2026 Guidelines</button>
         </div>
 
         <!-- TAB 1: IMMUNIZATION TIMELINE SCREEN -->
@@ -283,51 +308,71 @@
         <div id="auditTab" class="tab-content">
             <div class="timeline-section">
                 <h3 class="section-title">Clinical Audit Dashboard</h3>
-                <p style="font-size: 0.85rem; color:#64748b; margin-bottom:1.5rem;">
-                    Evaluated live against today's target date to highlight missed windows or upcoming priorities.
-                </p>
                 <div id="auditOutput"></div>
+            </div>
+        </div>
+
+        <!-- TAB 3: OFFICIAL UNALTERED REFERENCE MATRIX -->
+        <div id="referenceTab" class="tab-content">
+            <div class="timeline-section">
+                <h3 class="section-title">Universal Immunization Programme Standard Matrix (2026)</h3>
+                <table class="nis-table">
+                    <thead>
+                        <tr><th>Age Milestone</th><th>Vaccines Mandatory</th><th>Route & Site Location</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><b>At Birth</b></td><td>BCG, OPV-0, HepB-Birth Dose</td><td>Intradermal Left Upper Arm / Oral / IM Left Thigh</td></tr>
+                        <tr><td><b>6 Weeks</b></td><td>Pentavalent-1, OPV-1, RVV-1, fIPV-1, PCV-1</td><td>IM Right Thigh / Oral / Oral / ID Right Arm / IM Left Thigh</td></tr>
+                        <tr><td><b>10 Weeks</b></td><td>Pentavalent-2, OPV-2, RVV-2</td><td>IM Right Thigh / Oral / Oral</td></tr>
+                        <tr><td><b>14 Weeks</b></td><td>Pentavalent-3, OPV-3, RVV-3, fIPV-2, PCV-2</td><td>IM Right Thigh / Oral / Oral / ID Right Arm / IM Left Thigh</td></tr>
+                        <tr><td><b>9 Months</b></td><td>MR-1, PCV-Booster, JE-1 (Endemic Only), Vit A (Dose 1)</td><td>Subcutaneous Right Arm / IM Right Thigh / Subcutaneous Left Arm / Oral</td></tr>
+                        <tr><td><b>16-24 Months</b></td><td>MR-2, DPT-Booster 1, OPV-Booster, JE-2 (Endemic)</td><td>Subcutaneous Right Arm / IM Left Thigh / Oral / Subcutaneous Left Arm</td></tr>
+                        <tr><td><b>5-6 Years</b></td><td>DPT-Booster 2</td><td>IM Deltoid Upper Arm</td></tr>
+                        <tr><td><b>9-14 Years</b></td><td>HPV Vaccine (Girls - 2 Dose Campaign Strategy)</td><td>IM Deltoid Upper Arm (0 and 6 Months Interval)</td></tr>
+                        <tr><td><b>10 & 16 Years</b></td><td>Td (Tetanus & adult Diphtheria) Booster</td><td>IM Deltoid Upper Arm</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <div id="emptyState" class="panel" style="text-align: center; color: #64748b; grid-column: 2;">
-        Enter patient details or select a saved profile to build the adaptive calendar.
+        Enter patient details or select a saved profile to build the clinical workspace.
     </div>
 </div>
 
 <script>
     const baseVaccineSchema = [
-        { id: "bcg", name: "BCG", window: "At Birth", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 0 },
-        { id: "opv0", name: "OPV - 0", window: "At Birth", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 0 },
-        { id: "hepb0", name: "Hepatitis B - Birth", window: "At Birth", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 0 },
+        { id: "bcg", name: "BCG", window: "At Birth", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 0, strategy: "Can be administered up to 1 year of age if missed at birth. Look for scar validation." },
+        { id: "opv0", name: "OPV - 0", window: "At Birth", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 0, strategy: "Strict max age limit of 15 days from birth. Do not administer if older." },
+        { id: "hepb0", name: "Hepatitis B - Birth", window: "At Birth", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 0, strategy: "Must be given within 24 hours of birth to prevent vertical transmission." },
         
-        { id: "penta1", name: "Pentavalent - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6 },
-        { id: "opv1", name: "OPV - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6 },
-        { id: "fipv1", name: "fIPV - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6 },
-        { id: "pcv1", name: "PCV - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6 },
+        { id: "penta1", name: "Pentavalent - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6, strategy: "Can be given up to 1 year of age. If missed, initiate series immediately." },
+        { id: "opv1", name: "OPV - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6, strategy: "Can be given up to 5 years of age if previous routine doses were missed." },
+        { id: "fipv1", name: "fIPV - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6, strategy: "Fractional dose (0.1 mL). Ensure true intradermal wheal." },
+        { id: "pcv1", name: "PCV - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6, strategy: "Primary baseline dose. Can be taken up to 1 year of age." },
 
-        { id: "penta2", name: "Pentavalent - 2", window: "10 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 10, dependsOn: "penta1", minIntervalWeeks: 4 },
-        { id: "opv2", name: "OPV - 2", window: "10 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 10, dependsOn: "opv1", minIntervalWeeks: 4 },
+        { id: "penta2", name: "Pentavalent - 2", window: "10 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 10, dependsOn: "penta1", minIntervalWeeks: 4, strategy: "Ensure a strict minimum gap of 4 weeks from the actual Pentavalent-1 date." },
+        { id: "opv2", name: "OPV - 2", window: "10 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 10, dependsOn: "opv1", minIntervalWeeks: 4, strategy: "Ensure a minimum interval of 4 weeks from the actual OPV-1 date." },
 
-        { id: "penta3", name: "Pentavalent - 3", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "penta2", minIntervalWeeks: 4 },
-        { id: "opv3", name: "OPV - 3", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "opv2", minIntervalWeeks: 4 },
-        { id: "fipv2", name: "fIPV - 2", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "fipv1", minIntervalWeeks: 8 },
-        { id: "pcv2", name: "PCV - 2", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "pcv1", minIntervalWeeks: 8 },
+        { id: "penta3", name: "Pentavalent - 3", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "penta2", minIntervalWeeks: 4, strategy: "Ensure a minimum 4-week gap from Pentavalent-2. Max age limit is 1 year." },
+        { id: "opv3", name: "OPV - 3", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "opv2", minIntervalWeeks: 4, strategy: "Ensure a minimum 4-week gap from OPV-2. Max age limit is 5 years." },
+        { id: "fipv2", name: "fIPV - 2", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "fipv1", minIntervalWeeks: 8, strategy: "Requires a mandatory 8-week minimum gap from fIPV-1. Do not give earlier." },
+        { id: "pcv2", name: "PCV - 2", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "pcv1", minIntervalWeeks: 8, strategy: "Requires a mandatory 8-week minimum gap from PCV-1." },
 
-        { id: "mr1", name: "MR - 1", window: "9 Months", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 39 },
-        { id: "pcvBooster", name: "PCV - Booster", window: "9 Months", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 39, dependsOn: "pcv2", minIntervalWeeks: 24 },
-        { id: "je1", name: "JE - 1", window: "9 Months", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 39, condition: "je" },
+        { id: "mr1", name: "MR - 1", window: "9 Months", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 39, strategy: "Can be given up to 5 years of age. Vital for breakout coverage." },
+        { id: "pcvBooster", name: "PCV - Booster", window: "9 Months", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 39, dependsOn: "pcv2", minIntervalWeeks: 24, strategy: "Must maintain at least a 6-month (24-week) gap from the actual PCV-2 dose." },
+        { id: "je1", name: "JE - 1", window: "9 Months", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 39, condition: "je", strategy: "For endemic districts only. Can be administered up to 15 years of age." },
 
-        { id: "mr2", name: "MR - 2", window: "16-24 Months", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 69, dependsOn: "mr1", minIntervalWeeks: 24 },
-        { id: "dptBooster1", name: "DPT - Booster 1", window: "16-24 Months", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 69, dependsOn: "penta3", minIntervalWeeks: 24 },
-        { id: "je2", name: "JE - 2", window: "16-24 Months", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 69, condition: "je", dependsOn: "je1", minIntervalWeeks: 24 },
+        { id: "mr2", name: "MR - 2", window: "16-24 Months", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 69, dependsOn: "mr1", minIntervalWeeks: 24, strategy: "Maintain a minimum 6-month interval from the actual MR-1 dose." },
+        { id: "dptBooster1", name: "DPT - Booster 1", window: "16-24 Months", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 69, dependsOn: "penta3", minIntervalWeeks: 24, strategy: "Ensure at least a 6-month interval from the actual Pentavalent-3 dose." },
+        { id: "je2", name: "JE - 2", window: "16-24 Months", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 69, condition: "je", dependsOn: "je1", minIntervalWeeks: 24, strategy: "Maintain a minimum 6-month interval from the actual JE-1 dose." },
         
-        { id: "dptBooster2", name: "DPT - Booster 2", window: "5-6 Years", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 260 },
-        { id: "hpv1", name: "HPV - 1 (Girls Only)", window: "9-14 Years Campaign", group: "Adolescent (2026 Layout)", baseOffsetWeeks: 468, condition: "female" },
-        { id: "hpv2", name: "HPV - 2", window: "6 Months Post Dose 1", group: "Adolescent (2026 Layout)", baseOffsetWeeks: 494, condition: "female", dependsOn: "hpv1", minIntervalWeeks: 24 },
-        { id: "td10", name: "Td - 10 Years", window: "10 Years", group: "Adolescent (2026 Layout)", baseOffsetWeeks: 520 },
-        { id: "td16", name: "Td - 16 Years", window: "16 Years", group: "Adolescent (2026 Layout)", baseOffsetWeeks: 832 }
+        { id: "dptBooster2", name: "DPT - Booster 2", window: "5-6 Years", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 260, strategy: "Administered at 5-6 years. Can be given up to 7 years if missed." },
+        { id: "hpv1", name: "HPV - 1", window: "9-14 Years", group: "Adolescent (2026 Layout)", baseOffsetWeeks: 468, condition: "female", strategy: "2026 Core Expansion for girls. Initiate immediately between 9–14 years." },
+        { id: "hpv2", name: "HPV - 2", window: "6 Months Post Dose 1", group: "Adolescent (2026 Layout)", baseOffsetWeeks: 494, condition: "female", dependsOn: "hpv1", minIntervalWeeks: 24, strategy: "Ensure a strict 6-month spacing gap following the actual HPV-1 dose." },
+        { id: "td10", name: "Td - 10 Years", window: "10 Years", group: "Adolescent (2026 Layout)", baseOffsetWeeks: 520, strategy: "Replaces historical TT-10. Protects against tetanus and adult diphtheria." },
+        { id: "td16", name: "Td - 16 Years", window: "16 Years", group: "Adolescent (2026 Layout)", baseOffsetWeeks: 832, strategy: "Replaces historical TT-16. Booster dosage." }
     ];
 
     let globalPatientsStore = JSON.parse(localStorage.getItem('nis_patients')) || {};
@@ -395,18 +440,22 @@
         timelineOutput.innerHTML = "";
         auditOutput.innerHTML = "";
 
+        // Build Print Metadata block for parent card layout
+        document.getElementById('printHeaderInfo').innerHTML = `
+            <h2>IMMUNIZATION SCHEDULE TRACKER (Official UIP India)</h2>
+            <p><b>Patient Name/ID:</b> ${patient.name} &nbsp;&nbsp;&nbsp;&nbsp; <b>Date of Birth:</b> ${patient.dob} &nbsp;&nbsp;&nbsp;&nbsp; <b>Gender:</b> ${patient.gender.toUpperCase()}</p>
+        `;
+
         let computedTimeline = {};
 
         baseVaccineSchema.forEach(v => {
             if(v.condition === "je" && !patient.je) return;
             if(v.condition === "female" && patient.gender !== "female") return;
 
-            // 1. Calculate standard unshifted baseline target date
             let baselineTargetDate = new Date(baseDate);
             baselineTargetDate.setDate(baselineTargetDate.getDate() + (v.baseOffsetWeeks * 7));
 
-            // 2. Compute catch-up adjusted date separately
-            let adjustedTargetDate = new Date(baselineTargetDate);
+            let finalDue = new Date(baselineTargetDate);
             let alignmentAltered = false;
 
             if(v.dependsOn && computedTimeline[v.dependsOn]) {
@@ -414,8 +463,8 @@
                 const absoluteMinDate = new Date(parentActualAdminDate);
                 absoluteMinDate.setDate(absoluteMinDate.getDate() + (v.minIntervalWeeks * 7));
 
-                if(adjustedTargetDate < absoluteMinDate) {
-                    adjustedTargetDate = absoluteMinDate;
+                if(finalDue < absoluteMinDate) {
+                    finalDue = absoluteMinDate;
                     alignmentAltered = true;
                 }
             }
@@ -425,14 +474,13 @@
             
             if(actualValue !== "") {
                 status = "done";
-            } else if (adjustedTargetDate < today) {
+            } else if (finalDue < today) {
                 status = "overdue";
             }
 
             computedTimeline[v.id] = {
                 ...v,
-                baseline: baselineTargetDate.toISOString().split('T')[0],
-                projected: adjustedTargetDate.toISOString().split('T')[0],
+                projected: finalDue.toISOString().split('T')[0],
                 actual: actualValue,
                 isDelayedByCatchup: alignmentAltered,
                 status: status
@@ -454,25 +502,20 @@
                 const row = document.createElement('div');
                 row.className = "vaccine-row";
                 
-                const prettyBaseline = new Date(v.baseline).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
-                const prettyProjected = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
-                const delayWarningMsg = v.isDelayedByCatchup ? `<div class="alert-delayed">⚠️ Delayed due to spacing interval</div>` : "";
-
-                // Display dynamic class if the catch-up layout shifted the date out
-                const adjustedDateStyle = v.isDelayedByCatchup ? 'class="shifted"' : '';
+                const prettyFinalDue = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+                const dateDisplayClass = v.isDelayedByCatchup ? "date-display-box shifted" : "date-display-box";
 
                 row.innerHTML = `
                     <div class="vaccine-info">
                         <h4>${v.name}</h4>
-                        <div class="vaccine-meta">UIP Window: ${v.window}</div>
-                        ${delayWarningMsg}
+                        <div class="vaccine-meta" style="margin-bottom:0.4rem;">Standard Window: ${v.window}</div>
+                        <div class="action-protocol-card"><b>If Missed:</b> ${v.strategy}</div>
                     </div>
-                    <div class="date-display-box">
-                        <div>Baseline Due: <b>${prettyBaseline}</b></div>
-                        <div>Adjusted Due: <span ${adjustedDateStyle}>${prettyProjected}</span></div>
+                    <div class="${dateDisplayClass}">
+                        ${v.actual ? '✅ Completed' : prettyFinalDue}
                     </div>
-                    <div class="date-picker-cell" data-date="Target: ${prettyProjected}">
-                        <label style="margin:0; font-size:10px; color:#94a3b8;">Administered Date:</label>
+                    <div class="date-picker-cell">
+                        <label style="margin:0; font-size:10px; color:#94a3b8;">Administered On:</label>
                         <input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}', '${v.id}', this.value)">
                     </div>
                 `;
@@ -481,15 +524,13 @@
             timelineOutput.appendChild(card);
         }
 
-        // Dashboard View Construction
+        // Audit view assembly logic fallback
         const overdueBox = document.createElement('div');
-        overdueBox.innerHTML = "<h4>⚠️ Overdue / Should Have Taken By Now</h4>";
+        overdueBox.innerHTML = "<h4>⚠️ Overdue / Missed Windows</h4>";
         const doneBox = document.createElement('div');
-        doneBox.innerHTML = "<h4>✅ Completed Vaccinations</h4>";
+        doneBox.innerHTML = "<h4>✅ Logged & Completed</h4>";
         const upcomingBox = document.createElement('div');
-        upcomingBox.innerHTML = "<h4>📅 Future Doses Schedule</h4>";
-
-        let totalOverdue = 0, totalDone = 0;
+        upcomingBox.innerHTML = "<h4>📅 Future Milestones</h4>";
 
         Object.values(computedTimeline).forEach(v => {
             const prettyProj = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
@@ -497,23 +538,17 @@
             card.className = `audit-card ${v.status}`;
             
             if(v.status === 'overdue') {
-                card.innerHTML = `<div><b>${v.name}</b> <br><small>Missed target date: ${prettyProj}</small></div> <span class="status-pill overdue">Overdue</span>`;
+                card.innerHTML = `<div><b>${v.name}</b><br><small>Target was: ${prettyProj}</small></div> <span class="status-pill overdue">Missed</span>`;
                 overdueBox.appendChild(card);
-                totalOverdue++;
             } else if(v.status === 'done') {
                 const prettyAct = new Date(v.actual).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
-                card.innerHTML = `<div><b>${v.name}</b> <br><small>Administered on: ${prettyAct}</small></div> <span class="status-pill done">Given</span>`;
+                card.innerHTML = `<div><b>${v.name}</b><br><small>Given on: ${prettyAct}</small></div> <span class="status-pill done">Given</span>`;
                 doneBox.appendChild(card);
-                totalDone++;
             } else {
-                card.innerHTML = `<div><b>${v.name}</b> <br><small>Due on: ${prettyProj}</small></div> <span class="status-pill upcoming">Upcoming</span>`;
+                card.innerHTML = `<div><b>${v.name}</b><br><small>Due: ${prettyProj}</small></div> <span class="status-pill upcoming">Upcoming</span>`;
                 upcomingBox.appendChild(card);
             }
         });
-
-        if(totalOverdue === 0) overdueBox.innerHTML += `<p style="color:#64748b; font-size:13px; padding-left:10px;">No overdue entries.</p>`;
-        if(totalDone === 0) doneBox.innerHTML += `<p style="color:#64748b; font-size:13px; padding-left:10px;">No doses logged yet.</p>`;
-
         auditOutput.appendChild(overdueBox);
         auditOutput.appendChild(doneBox);
         auditOutput.appendChild(upcomingBox);
@@ -523,6 +558,12 @@
         globalPatientsStore[pId].givenDates[vId] = dateStr;
         localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore));
         calculateAndRenderTimeline(pId);
+    }
+
+    function triggerParentPrint() {
+        // Automatically switch viewport to tracker mode before system execution call to avoid reference trace printing
+        switchTab('timelineTab', document.querySelectorAll('.tab-btn')[0]);
+        window.print();
     }
 
     function clearAllData() {
