@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIS 2026 - Vaccine Tracker India</title>
+    <title>NIS 2026 - Advanced Clinical Tracker</title>
     <style>
         :root {
             --primary: #1e3a8a;
@@ -12,13 +12,15 @@
             --gray-100: #f3f4f6;
             --gray-700: #374151;
             --success: #16a34a;
+            --warning: #ea580c;
+            --danger: #dc2626;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f8fafc;
+            background-color: #f1f5f9;
             color: var(--gray-700);
         }
 
@@ -27,312 +29,487 @@
             color: white;
             padding: 1.5rem;
             text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1100px;
             margin: 2rem auto;
             padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 1.5rem;
         }
 
-        .setup-card {
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+        }
+
+        .panel {
             background: white;
             padding: 1.5rem;
             border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            align-items: end;
+            height: fit-content;
         }
 
         label {
             display: block;
             font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
+            margin: 0.75rem 0 0.25rem 0;
+            font-size: 0.85rem;
         }
 
         input, select {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.65rem;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             box-sizing: border-box;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
-        .toggle-container {
+        .checkbox-container {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding-bottom: 0.5rem;
+            margin-top: 1rem;
         }
-
-        .toggle-container input {
-            width: auto;
-        }
+        .checkbox-container input { width: auto; }
 
         button {
+            width: 100%;
             background-color: var(--accent);
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
+            padding: 0.75rem;
+            font-size: 0.95rem;
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
+            margin-top: 1.25rem;
             transition: background 0.2s;
         }
 
-        button:hover {
-            background-color: #0f766e;
+        button:hover { background-color: #0f766e; }
+        
+        button.secondary { background-color: #64748b; }
+        button.secondary:hover { background-color: #475569; }
+
+        .patient-list {
+            margin-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
         }
 
-        .timeline-section {
-            margin-bottom: 2rem;
-        }
-
-        .timeline-title {
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary-light);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .vaccine-row {
-            background: white;
-            border-left: 4px solid var(--primary);
-            margin-bottom: 0.75rem;
-            padding: 1rem;
-            border-radius: 0 8px 8px 0;
+        .patient-badge {
+            background: var(--gray-100);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-
-        .vaccine-row.completed {
-            border-left-color: var(--success);
-            opacity: 0.7;
-        }
-
-        .vaccine-details h4 {
-            margin: 0 0 0.25rem 0;
-            font-size: 1.1rem;
-        }
-
-        .vaccine-meta {
-            font-size: 0.85rem;
-            color: #64748b;
-        }
-
-        .date-badge {
-            background: var(--primary-light);
-            color: var(--primary);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-weight: 600;
             font-size: 0.9rem;
-            text-align: right;
         }
+        .patient-badge:hover { background: var(--primary-light); }
 
-        .status-checkbox {
-            transform: scale(1.3);
-            margin-right: 1rem;
-            cursor: pointer;
-        }
-
-        .flex-left {
+        /* Tabs Navigation Layout */
+        .tabs-nav {
             display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        .tab-btn {
+            background: none;
+            color: var(--gray-700);
+            width: auto;
+            margin: 0;
+            padding: 0.75rem 1.2rem;
+            border-radius: 6px 6px 0 0;
+            font-weight: 500;
+        }
+        .tab-btn:hover { background: #e2e8f0; }
+        .tab-btn.active {
+            background: white;
+            color: var(--primary);
+            border: 2px solid #cbd5e1;
+            border-bottom: 2px solid white;
+            font-weight: bold;
+            margin-bottom: -2px;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .timeline-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 0.25rem;
+            margin-top: 0;
+        }
+
+        .vaccine-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .vaccine-row:last-child { border-bottom: none; }
+
+        .vaccine-info h4 { margin: 0 0 0.25rem 0; font-size: 1rem; }
+        .vaccine-meta { font-size: 0.8rem; color: #64748b; }
+
+        .date-picker-cell { text-align: right; }
+        .date-picker-cell input { width: 140px; font-size: 0.85rem; padding: 0.25rem; }
+
+        .alert-delayed { color: var(--warning); font-size: 0.75rem; font-weight: bold; margin-top: 0.25rem; }
+        
+        /* Dashboard Metric Status Badges */
+        .audit-card {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
         }
+        .audit-card.overdue { background: #fef2f2; border-left: 5px solid var(--danger); }
+        .audit-card.done { background: #f0fdf4; border-left: 5px solid var(--success); }
+        .audit-card.upcoming { background: #f7fee7; border-left: 5px solid #84cc16; }
 
-        @media (max-width: 600px) {
-            .vaccine-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            .date-badge {
-                align-self: flex-end;
-            }
+        .status-pill {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-pill.overdue { background: #fee2e2; color: var(--danger); }
+        .status-pill.done { background: #dcfce7; color: var(--success); }
+        .status-pill.upcoming { background: #ecfccb; color: #4d7c0f; }
+
+        .action-bar { display: flex; gap: 1rem; margin-bottom: 1rem; }
+
+        @media print {
+            body { background: white; color: black; }
+            .panel, header, .date-picker-cell input, button, .tabs-nav { display: none !important; }
+            .container { grid-template-columns: 1fr; margin: 0; padding: 0; }
+            .timeline-section { box-shadow: none; padding: 0; }
+            .date-picker-cell::after { content: attr(data-date); font-weight: bold; }
+            .tab-content { display: block !important; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>India National Immunization Scheduler</h1>
-    <p>UIP Guidelines (Campaign Rollout 2026)</p>
+    <h1>NIS 2026 Smart OPD Immunization Tracker</h1>
+    <p>Catch-up Logic • Multi-Profile Storage • Clinical Status Audit</p>
 </header>
 
 <div class="container">
-    <div class="setup-card">
-        <div class="form-grid">
-            <div>
-                <label for="dob">Date of Birth / Registration</label>
-                <input type="date" id="dob" required>
-            </div>
-            <div>
-                <label for="gender">Gender</label>
-                <select id="gender">
-                    <option value="female">Female</option>
-                    <option value="male">Male</option>
-                </select>
-            </div>
-            <div class="toggle-container">
-                <input type="checkbox" id="jeEndemic">
-                <label for="jeEndemic">JE Endemic Area?</label>
-            </div>
-            <div>
-                <button onclick="generateSchedule()">Generate Tracker</button>
+    <!-- LEFT PANEL: PATIENT REGISTER -->
+    <div class="panel">
+        <h3>Patient Registration</h3>
+        <label for="pName">Patient Name / ID</label>
+        <input type="text" id="pName" placeholder="e.g., Baby of Sunita">
+
+        <label for="dob">Date of Birth</label>
+        <input type="date" id="dob">
+
+        <label for="gender">Gender</label>
+        <select id="gender">
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+        </select>
+
+        <div class="checkbox-container">
+            <input type="checkbox" id="jeEndemic">
+            <label for="jeEndemic">JE Endemic Area?</label>
+        </div>
+
+        <button onclick="saveAndRegisterPatient()">Save & Calculate</button>
+        
+        <div class="patient-list">
+            <h4>Saved Profiles (OPD Local)</h4>
+            <div id="patientListContainer"></div>
+            <button class="secondary" onclick="clearAllData()" style="font-size:0.75rem; padding:4px;">Clear All Profiles</button>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: TIMELINE & SUMMARY VIEWPORTS -->
+    <div id="workspaceWrapper" style="display:none;">
+        <div class="action-bar">
+            <button onclick="window.print()" class="secondary" style="margin:0; width:auto;">🖨️ Print Card for Parent</button>
+        </div>
+
+        <!-- NEW TAB ARCHITECTURE -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('timelineTab', this)">📅 Adaptive Schedule Calendar</button>
+            <button class="tab-btn" onclick="switchTab('auditTab', this)">📋 Patient Status Audit (Dashboard)</button>
+        </div>
+
+        <!-- TAB 1: IMMUNIZATION TIMELINE SCREEN -->
+        <div id="timelineTab" class="tab-content active">
+            <div id="timelineOutput"></div>
+        </div>
+
+        <!-- TAB 2: AUTOMATED SUMMARY STATUS AUDIT SCREEN -->
+        <div id="auditTab" class="tab-content">
+            <div class="timeline-section">
+                <h3 class="section-title">Clinical Audit Dashboard</h3>
+                <p style="font-size: 0.85rem; color:#64748b; margin-bottom:1.5rem;">
+                    Evaluated live against today's target date to highlight missed windows or upcoming priorities.
+                </p>
+                <div id="auditOutput"></div>
             </div>
         </div>
     </div>
 
-    <div id="scheduleOutput"></div>
+    <div id="emptyState" class="panel" style="text-align: center; color: #64748b; grid-column: 2;">
+        Enter patient details or select a saved profile to build the adaptive calendar.
+    </div>
 </div>
 
 <script>
-    // Complete NIS Dataset Map with 2026 logic offsets (Calculated in Days, Months or Years)
-    const vaccinePayload = [
-        // INFANTS
-        { id: "bcg", name: "BCG", window: "At Birth", offsetType: "days", offsetVal: 0, route: "Intra-dermal (Left upper arm)", group: "Infant (Birth to 1 Year)" },
-        { id: "opv0", name: "OPV - 0", window: "At Birth", offsetType: "days", offsetVal: 0, route: "Oral (2 drops)", group: "Infant (Birth to 1 Year)" },
-        { id: "hepb0", name: "Hepatitis B - Birth Dose", window: "At Birth", offsetType: "days", offsetVal: 0, route: "Intra-muscular (Left thigh)", group: "Infant (Birth to 1 Year)" },
+    const baseVaccineSchema = [
+        { id: "bcg", name: "BCG", window: "At Birth", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 0 },
+        { id: "opv0", name: "OPV - 0", window: "At Birth", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 0 },
+        { id: "hepb0", name: "Hepatitis B - Birth", window: "At Birth", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 0 },
         
-        { id: "penta1", name: "Pentavalent - 1", window: "6 Weeks", offsetType: "weeks", offsetVal: 6, route: "Intra-muscular (Right thigh)", group: "Infant (Birth to 1 Year)" },
-        { id: "opv1", name: "OPV - 1", window: "6 Weeks", offsetType: "weeks", offsetVal: 6, route: "Oral (2 drops)", group: "Infant (Birth to 1 Year)" },
-        { id: "rvv1", name: "Rotavirus (RVV) - 1", window: "6 Weeks", offsetType: "weeks", offsetVal: 6, route: "Oral (5 drops)", group: "Infant (Birth to 1 Year)" },
-        { id: "fipv1", name: "fIPV - 1 (Fractional IPV)", window: "6 Weeks", offsetType: "weeks", offsetVal: 6, route: "Intra-dermal (Right upper arm)", group: "Infant (Birth to 1 Year)" },
-        { id: "pcv1", name: "PCV - 1 (Pneumococcal)", window: "6 Weeks", offsetType: "weeks", offsetVal: 6, route: "Intra-muscular (Left thigh)", group: "Infant (Birth to 1 Year)" },
+        { id: "penta1", name: "Pentavalent - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6 },
+        { id: "opv1", name: "OPV - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6 },
+        { id: "fipv1", name: "fIPV - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6 },
+        { id: "pcv1", name: "PCV - 1", window: "6 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 6 },
 
-        { id: "penta2", name: "Pentavalent - 2", window: "10 Weeks", offsetType: "weeks", offsetVal: 10, route: "Intra-muscular (Right thigh)", group: "Infant (Birth to 1 Year)" },
-        { id: "opv2", name: "OPV - 2", window: "10 Weeks", offsetType: "weeks", offsetVal: 10, route: "Oral (2 drops)", group: "Infant (Birth to 1 Year)" },
-        { id: "rvv2", name: "Rotavirus (RVV) - 2", window: "10 Weeks", offsetType: "weeks", offsetVal: 10, route: "Oral (5 drops)", group: "Infant (Birth to 1 Year)" },
+        { id: "penta2", name: "Pentavalent - 2", window: "10 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 10, dependsOn: "penta1", minIntervalWeeks: 4 },
+        { id: "opv2", name: "OPV - 2", window: "10 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 10, dependsOn: "opv1", minIntervalWeeks: 4 },
 
-        { id: "penta3", name: "Pentavalent - 3", window: "14 Weeks", offsetType: "weeks", offsetVal: 14, route: "Intra-muscular (Right thigh)", group: "Infant (Birth to 1 Year)" },
-        { id: "opv3", name: "OPV - 3", window: "14 Weeks", offsetType: "weeks", offsetVal: 14, route: "Oral (2 drops)", group: "Infant (Birth to 1 Year)" },
-        { id: "rvv3", name: "Rotavirus (RVV) - 3", window: "14 Weeks", offsetType: "weeks", offsetVal: 14, route: "Oral (5 drops)", group: "Infant (Birth to 1 Year)" },
-        { id: "fipv2", name: "fIPV - 2", window: "14 Weeks", offsetType: "weeks", offsetVal: 14, route: "Intra-dermal (Right upper arm)", group: "Infant (Birth to 1 Year)" },
-        { id: "pcv2", name: "PCV - 2", window: "14 Weeks", offsetType: "weeks", offsetVal: 14, route: "Intra-muscular (Left thigh)", group: "Infant (Birth to 1 Year)" },
+        { id: "penta3", name: "Pentavalent - 3", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "penta2", minIntervalWeeks: 4 },
+        { id: "opv3", name: "OPV - 3", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "opv2", minIntervalWeeks: 4 },
+        { id: "fipv2", name: "fIPV - 2", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "fipv1", minIntervalWeeks: 8 },
+        { id: "pcv2", name: "PCV - 2", window: "14 Weeks", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 14, dependsOn: "pcv1", minIntervalWeeks: 8 },
 
-        { id: "mr1", name: "MR - 1 (Measles & Rubella)", window: "9 Months", offsetType: "months", offsetVal: 9, route: "Subcutaneous (Right upper arm)", group: "Infant (Birth to 1 Year)" },
-        { id: "pcvBooster", name: "PCV - Booster", window: "9 Months", offsetType: "months", offsetVal: 9, route: "Intra-muscular (Right thigh)", group: "Infant (Birth to 1 Year)" },
-        { id: "je1", name: "JE - 1 (Japanese Encephalitis)", window: "9 Months", offsetType: "months", offsetVal: 9, route: "Subcutaneous (Left upper arm)", group: "Infant (Birth to 1 Year)", condition: "je" },
-        { id: "vita1", name: "Vitamin A (1st Dose)", window: "9 Months", offsetType: "months", offsetVal: 9, route: "Oral (1 mL / 1 Lakh IU)", group: "Infant (Birth to 1 Year)" },
+        { id: "mr1", name: "MR - 1", window: "9 Months", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 39 },
+        { id: "pcvBooster", name: "PCV - Booster", window: "9 Months", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 39, dependsOn: "pcv2", minIntervalWeeks: 24 },
+        { id: "je1", name: "JE - 1", window: "9 Months", group: "Infant (Birth to 1 Year)", baseOffsetWeeks: 39, condition: "je" },
 
-        // TODDLERS & CHILDREN
-        { id: "mr2", name: "MR - 2", window: "16-24 Months", offsetType: "months", offsetVal: 16, route: "Subcutaneous (Right upper arm)", group: "Toddler & Child (1 to 6 Years)" },
-        { id: "dptBooster1", name: "DPT - Booster 1", window: "16-24 Months", offsetType: "months", offsetVal: 16, route: "Intra-muscular (Left mid-thigh)", group: "Toddler & Child (1 to 6 Years)" },
-        { id: "opvBooster", name: "OPV - Booster", window: "16-24 Months", offsetType: "months", offsetVal: 16, route: "Oral (2 drops)", group: "Toddler & Child (1 to 6 Years)" },
-        { id: "je2", name: "JE - 2", window: "16-24 Months", offsetType: "months", offsetVal: 16, route: "Subcutaneous (Left upper arm)", group: "Toddler & Child (1 to 6 Years)", condition: "je" },
-        { id: "dptBooster2", name: "DPT - Booster 2", window: "5-6 Years", offsetType: "years", offsetVal: 5, route: "Intra-muscular (Deltoid)", group: "Toddler & Child (1 to 6 Years)" },
-
-        // ADOLESCENTS & CAMPAIGNS
-        { id: "hpv1", name: "HPV Vaccine - Dose 1", window: "9-14 Years (Adolescent Campaign)", offsetType: "years", offsetVal: 9, route: "Intra-muscular (Deltoid)", group: "Adolescent (2026 National Standard)", condition: "female" },
-        { id: "hpv2", name: "HPV Vaccine - Dose 2", window: "6 Months post Dose 1", offsetType: "yearsMonths", offsetVal: {y: 9, m: 6}, route: "Intra-muscular (Deltoid)", group: "Adolescent (2026 National Standard)", condition: "female" },
-        { id: "td10", name: "Td - 10 Years", window: "10 Years", offsetType: "years", offsetVal: 10, route: "Intra-muscular (Deltoid)", group: "Adolescent (2026 National Standard)" },
-        { id: "td16", name: "Td - 16 Years", window: "16 Years", offsetType: "years", offsetVal: 16, route: "Intra-muscular (Deltoid)", group: "Adolescent (2026 National Standard)" }
+        { id: "mr2", name: "MR - 2", window: "16-24 Months", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 69, dependsOn: "mr1", minIntervalWeeks: 24 },
+        { id: "dptBooster1", name: "DPT - Booster 1", window: "16-24 Months", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 69, dependsOn: "penta3", minIntervalWeeks: 24 },
+        { id: "je2", name: "JE - 2", window: "16-24 Months", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 69, condition: "je", dependsOn: "je1", minIntervalWeeks: 24 },
+        
+        { id: "dptBooster2", name: "DPT - Booster 2", window: "5-6 Years", group: "Toddler & Child (1 to 6 Years)", baseOffsetWeeks: 260 },
+        { id: "hpv1", name: "HPV - 1 (Girls Only)", window: "9-14 Years Campaign", group: "Adolescent (2026 Layout)", baseOffsetWeeks: 468, condition: "female" },
+        { id: "hpv2", name: "HPV - 2", window: "6 Months Post Dose 1", group: "Adolescent (2026 Layout)", baseOffsetWeeks: 494, condition: "female", dependsOn: "hpv1", minIntervalWeeks: 24 },
+        { id: "td10", name: "Td - 10 Years", window: "10 Years", group: "Adolescent (2026 Layout)", baseOffsetWeeks: 520 },
+        { id: "td16", name: "Td - 16 Years", window: "16 Years", group: "Adolescent (2026 Layout)", baseOffsetWeeks: 832 }
     ];
 
-    // Auto-populate input with current date for easier testing
-    document.getElementById('dob').valueAsDate = new Date();
+    let globalPatientsStore = JSON.parse(localStorage.getItem('nis_patients')) || {};
+    let activePatientId = null;
 
-    function addCalculatedDate(baseDate, record) {
-        let target = new Date(baseDate);
-        if (record.offsetType === "days") {
-            target.setDate(target.getDate() + record.offsetVal);
-        } else if (record.offsetType === "weeks") {
-            target.setDate(target.getDate() + (record.offsetVal * 7));
-        } else if (record.offsetType === "months") {
-            target.setMonth(target.getMonth() + record.offsetVal);
-        } else if (record.offsetType === "years") {
-            target.setFullYear(target.getFullYear() + record.offsetVal);
-        } else if (record.offsetType === "yearsMonths") {
-            target.setFullYear(target.getFullYear() + record.offsetVal.y);
-            target.setMonth(target.getMonth() + record.offsetVal.m);
-        }
-        return target.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    window.onload = function() { renderPatientBadges(); };
+
+    function switchTab(tabId, el) {
+        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        el.classList.add('active');
     }
 
-    function generateSchedule() {
-        const dobValue = document.getElementById('dob').value;
-        if (!dobValue) {
-            alert("Please select a registration or Date of Birth.");
-            return;
-        }
-
-        const baseDate = new Date(dobValue);
+    function saveAndRegisterPatient() {
+        const name = document.getElementById('pName').value.trim() || "Anonymous Profile";
+        const dob = document.getElementById('dob').value;
         const gender = document.getElementById('gender').value;
-        const isJeEndemic = document.getElementById('jeEndemic').checked;
-        const outputDiv = document.getElementById('scheduleOutput');
-        outputDiv.innerHTML = "";
+        const je = document.getElementById('jeEndemic').checked;
 
-        // Sort data dynamically into thematic arrays
-        const groups = {};
+        if(!dob) { alert("DOB input is mandatory."); return; }
 
-        vaccinePayload.forEach(v => {
-            // Evaluates App Filtering Rules Engine
-            if (v.condition === "je" && !isJeEndemic) return;
-            if (v.condition === "female" && gender !== "female") return;
+        const id = activePatientId || 'p_' + Date.now();
+        globalPatientsStore[id] = {
+            id: id, name: name, dob: dob, gender: gender, je: je,
+            givenDates: globalPatientsStore[id]?.givenDates || {}
+        };
 
-            if (!groups[v.group]) {
-                groups[v.group] = [];
+        localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore));
+        activePatientId = id;
+        renderPatientBadges();
+        calculateAndRenderTimeline(id);
+    }
+
+    function renderPatientBadges() {
+        const container = document.getElementById('patientListContainer');
+        container.innerHTML = "";
+        Object.values(globalPatientsStore).forEach(p => {
+            const b = document.createElement('div');
+            b.className = "patient-badge";
+            b.innerHTML = `<span><b>${p.name}</b></span> <small>${p.dob}</small>`;
+            b.onclick = () => {
+                activePatientId = p.id;
+                document.getElementById('pName').value = p.name;
+                document.getElementById('dob').value = p.dob;
+                document.getElementById('gender').value = p.gender;
+                document.getElementById('jeEndemic').checked = p.je;
+                calculateAndRenderTimeline(p.id);
+            };
+            container.appendChild(b);
+        });
+    }
+
+    function calculateAndRenderTimeline(pId) {
+        document.getElementById('emptyState').style.display = "none";
+        document.getElementById('workspaceWrapper').style.display = "block";
+        
+        const patient = globalPatientsStore[pId];
+        const baseDate = new Date(patient.dob);
+        const today = new Date();
+        
+        const timelineOutput = document.getElementById('timelineOutput');
+        const auditOutput = document.getElementById('auditOutput');
+        
+        timelineOutput.innerHTML = "";
+        auditOutput.innerHTML = "";
+
+        let computedTimeline = {};
+
+        // Pass 1: Compute Dates via Catch-up Rules Engines
+        baseVaccineSchema.forEach(v => {
+            if(v.condition === "je" && !patient.je) return;
+            if(v.condition === "female" && patient.gender !== "female") return;
+
+            let targetDate = new Date(baseDate);
+            targetDate.setDate(targetDate.getDate() + (v.baseOffsetWeeks * 7));
+            let alignmentAltered = false;
+
+            if(v.dependsOn && computedTimeline[v.dependsOn]) {
+                const parentActualAdminDate = new Date(patient.givenDates[v.dependsOn] || computedTimeline[v.dependsOn].projected);
+                const absoluteMinDate = new Date(parentActualAdminDate);
+                absoluteMinDate.setDate(absoluteMinDate.getDate() + (v.minIntervalWeeks * 7));
+
+                if(targetDate < absoluteMinDate) {
+                    targetDate = absoluteMinDate;
+                    alignmentAltered = true;
+                }
             }
-            groups[v.group].push({
+
+            // Define Live Status Flag
+            let status = "upcoming";
+            const actualValue = patient.givenDates[v.id] || "";
+            
+            if(actualValue !== "") {
+                status = "done";
+            } else if (targetDate < today) {
+                status = "overdue";
+            }
+
+            computedTimeline[v.id] = {
                 ...v,
-                calculatedDate: addCalculatedDate(baseDate, v)
-            });
+                projected: targetDate.toISOString().split('T')[0],
+                actual: actualValue,
+                isDelayedByCatchup: alignmentAltered,
+                status: status
+            };
         });
 
-        // DOM Rendering Engine
-        for (const [groupName, vaccines] of Object.entries(groups)) {
-            const section = document.createElement('div');
-            section.className = 'timeline-section';
-            
-            const title = document.createElement('h2');
-            title.className = 'timeline-title';
-            title.innerText = groupName;
-            section.appendChild(title);
+        // Pass 2: Group & Render Standard Dynamic Timeline
+        let groups = {};
+        Object.values(computedTimeline).forEach(item => {
+            if(!groups[item.group]) groups[item.group] = [];
+            groups[item.group].push(item);
+        });
 
-            vaccines.forEach(vaccine => {
+        for (const [groupName, vaccines] of Object.entries(groups)) {
+            const card = document.createElement('div');
+            card.className = "timeline-section";
+            card.innerHTML = `<h3 class="section-title">${groupName}</h3>`;
+
+            vaccines.forEach(v => {
                 const row = document.createElement('div');
-                row.className = 'vaccine-row';
-                row.id = `row-${vaccine.id}`;
+                row.className = "vaccine-row";
+                const prettyProjected = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+                const delayWarningMsg = v.isDelayedByCatchup ? `<div class="alert-delayed">⚠️ Adjusted due to spacing rules</div>` : "";
 
                 row.innerHTML = `
-                    <div class="flex-left">
-                        <input type="checkbox" class="status-checkbox" onchange="toggleComplete('${vaccine.id}', this)">
-                        <div class="vaccine-details">
-                            <h4>${vaccine.name}</h4>
-                            <div class="vaccine-meta">${vaccine.window} • ${vaccine.route}</div>
-                        </div>
+                    <div class="vaccine-info">
+                        <h4>${v.name}</h4>
+                        <div class="vaccine-meta">Scheduled Window: ${v.window}</div>
+                        ${delayWarningMsg}
                     </div>
-                    <div class="date-badge">Due: ${vaccine.calculatedDate}</div>
+                    <div class="date-picker-cell" data-date="Target: ${prettyProjected}">
+                        <label style="margin:0; font-size:10px; color:#94a3b8;">Administered Date:</label>
+                        <input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}', '${v.id}', this.value)">
+                    </div>
                 `;
-                section.appendChild(row);
+                card.appendChild(row);
             });
-
-            outputDiv.appendChild(section);
+            timelineOutput.appendChild(card);
         }
+
+        // Pass 3: Render Clinical Audit Summary Dashboard Sorting
+        const overdueBox = document.createElement('div');
+        overdueBox.innerHTML = "<h4>⚠️ Overdue / Should Have Taken By Now</h4>";
+        const doneBox = document.createElement('div');
+        doneBox.innerHTML = "<h4>✅ Completed Vaccinations</h4>";
+        const upcomingBox = document.createElement('div');
+        upcomingBox.innerHTML = "<h4>📅 Future Doses Schedule</h4>";
+
+        let totalOverdue = 0, totalDone = 0, totalUpcoming = 0;
+
+        Object.values(computedTimeline).forEach(v => {
+            const prettyProj = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+            const card = document.createElement('div');
+            card.className = `audit-card ${v.status}`;
+            
+            if(v.status === 'overdue') {
+                card.innerHTML = `<div><b>${v.name}</b> <br><small>Missed target date: ${prettyProj}</small></div> <span class="status-pill overdue">Overdue</span>`;
+                overdueBox.appendChild(card);
+                totalOverdue++;
+            } else if(v.status === 'done') {
+                const prettyAct = new Date(v.actual).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+                card.innerHTML = `<div><b>${v.name}</b> <br><small>Administered on: ${prettyAct}</small></div> <span class="status-pill done">Given</span>`;
+                doneBox.appendChild(card);
+                totalDone++;
+            } else {
+                card.innerHTML = `<div><b>${v.name}</b> <br><small>Due on: ${prettyProj}</small></div> <span class="status-pill upcoming">Upcoming</span>`;
+                upcomingBox.appendChild(card);
+                totalUpcoming++;
+            }
+        });
+
+        if(totalOverdue === 0) overdueBox.innerHTML += `<p style="color:#64748b; font-size:13px; padding-left:10px;">No overdue entries.</p>`;
+        if(totalDone === 0) doneBox.innerHTML += `<p style="color:#64748b; font-size:13px; padding-left:10px;">No doses logged yet.</p>`;
+
+        auditOutput.appendChild(overdueBox);
+        auditOutput.appendChild(doneBox);
+        auditOutput.appendChild(upcomingBox);
     }
 
-    function toggleComplete(id, checkbox) {
-        const targetRow = document.getElementById(`row-${id}`);
-        if (checkbox.checked) {
-            targetRow.classList.add('completed');
-        } else {
-            targetRow.classList.remove('completed');
+    function updateAdministrationDate(pId, vId, dateStr) {
+        globalPatientsStore[pId].givenDates[vId] = dateStr;
+        localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore));
+        calculateAndRenderTimeline(pId);
+    }
+
+    function clearAllData() {
+        if(confirm("Delete all stored patient logs?")) {
+            localStorage.removeItem('nis_patients');
+            globalPatientsStore = {};
+            activePatientId = null;
+            location.reload();
         }
     }
 </script>
-
 </body>
 </html>
