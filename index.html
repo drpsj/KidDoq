@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pediatric Clinical Hub</title>
+    <title>Pediatric Clinical Hub v5.1</title>
     <style>
         :root {
             --primary: #1e3a8a; --primary-light: #eff6ff; --accent: #0d9488;
@@ -123,14 +123,12 @@
 </head>
 <body>
 
-<!-- WEB APP SHELL -->
 <header>
-    <h1>Pediatric Clinical Hub v5.0</h1>
-    <p>NIS Tracker | Multi-Drug Prescription | Positive Milestones Print</p>
+    <h1>Pediatric Clinical Hub v5.1</h1>
+    <p>NIS Tracker | Multi-Drug Prescription | Positive Milestones Dashboard</p>
 </header>
 
 <div class="app-shell">
-    <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="app-features-nav">
             <button class="feature-btn active" onclick="switchMainFeature('trackerFeatureView', this)">📅 Immunization Tracker</button>
@@ -168,7 +166,6 @@
 
             <button class="action" onclick="saveAndRegisterPatient(false)">Save Profile & Load Workspace</button>
             
-            <!-- MASTER COMPREHENSIVE PRINT BUTTON -->
             <button class="print-master" onclick="executePrint('comprehensive')" id="btnMasterPrint" style="display:none;">
                 🖨️ Print Comprehensive Report
             </button>
@@ -181,7 +178,6 @@
         </div>
     </div>
 
-    <!-- MAIN INTERFACE -->
     <div class="main-content">
         <div id="emptyStatePlaceholder" class="panel" style="text-align: center; color: #64748b;">
             Select an existing patient profile from the Registry or register a new one to access features.
@@ -222,7 +218,7 @@
                 </div>
             </div>
 
-            <!-- 2: DRUG DOSAGE CALCULATOR (Multi-Drug Enabled) -->
+            <!-- 2: DRUG DOSAGE CALCULATOR -->
             <div id="dosageFeatureView" class="view-content">
                 <div class="timeline-section" style="background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:1rem; display:flex; justify-content:flex-end;">
                     <button onclick="executePrint('prescription')" class="secondary" style="padding:0.6rem 1rem; font-weight:bold; background:var(--primary);">🖨️ Print Prescription Pad</button>
@@ -246,7 +242,6 @@
                         <div class="result-card" id="doseResultCard"></div>
                     </div>
                     
-                    <!-- NEW MULTI-DRUG PRESCRIPTION CART -->
                     <div class="rx-cart-container">
                         <h3 class="section-title">Active Prescription Pad</h3>
                         <p style="font-size:0.85rem; color:#64748b; margin-top:-5px;">Drugs added here will appear on the final printed prescription.</p>
@@ -255,23 +250,41 @@
                 </div>
             </div>
 
-            <!-- 3: DEVELOPMENTAL MILESTONES -->
+            <!-- 3: DEVELOPMENTAL MILESTONES (NEW UNIFIED DASHBOARD) -->
             <div id="milestoneFeatureView" class="view-content">
                 <div class="timeline-section" style="background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:1rem; display:flex; justify-content:flex-end;">
                     <button onclick="executePrint('milestones')" class="secondary" style="padding:0.6rem 1rem; font-weight:bold; background:var(--primary);">🖨️ Print Progress Report (Positive)</button>
                 </div>
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('msEvalTab', this)">📋 Active Evaluation</button>
-                    <button class="sub-tab-btn" onclick="switchSubTab('msCompletedTab', this)">✅ Completed Log</button>
+                    <!-- MERGED TAB FOR PROGRESS DASHBOARD -->
+                    <button class="sub-tab-btn" onclick="switchSubTab('msProgressTab', this)">📈 Progress Dashboard</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('msMissedTab', this)">🚨 Missed & Red Flags</button>
-                    <button class="sub-tab-btn" onclick="switchSubTab('msUpcomingTab', this)">📅 Upcoming Guidance</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('msReferenceTab', this)">📘 IAP/CDC Standards</button>
                 </div>
                 
                 <div id="msEvalTab" class="sub-tab-content active"><div class="timeline-section"><h3 class="section-title">Current Age Evaluation Checklist</h3><div id="msEvalContainer"></div></div></div>
-                <div id="msCompletedTab" class="sub-tab-content"><div class="timeline-section"><h3 class="section-title">Completed Milestones Log</h3><div id="msCompletedContainer"></div></div></div>
+                
+                <!-- NEW COMBINED DASHBOARD TAB -->
+                <div id="msProgressTab" class="sub-tab-content">
+                    <div class="timeline-section">
+                        <h3 class="section-title">Developmental Progress Dashboard</h3>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem; margin-top:1.5rem;">
+                            <!-- Column 1: Achieved -->
+                            <div>
+                                <h4 style="color:var(--success); margin-top:0; border-bottom:1px solid var(--success); padding-bottom:0.5rem;">✅ Successfully Achieved</h4>
+                                <div id="msCompletedContainer"></div>
+                            </div>
+                            <!-- Column 2: Upcoming -->
+                            <div>
+                                <h4 style="color:var(--primary); margin-top:0; border-bottom:1px solid var(--primary); padding-bottom:0.5rem;">📅 What to Look Forward To</h4>
+                                <div id="msUpcomingContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="msMissedTab" class="sub-tab-content"><div class="timeline-section"><h3 class="section-title">Missed Milestones & Clinical Significance (Physician Only)</h3><div id="msMissedContainer"></div></div></div>
-                <div id="msUpcomingTab" class="sub-tab-content"><div class="timeline-section"><h3 class="section-title">Upcoming Milestones (Guidance)</h3><div id="msUpcomingContainer"></div></div></div>
                 <div id="msReferenceTab" class="sub-tab-content"><div class="timeline-section"><h3 class="section-title">Standard Developmental Milestones (IAP/CDC)</h3><div id="msReferenceContainer"></div></div></div>
             </div>
         </div>
@@ -460,8 +473,6 @@
     let globalPatientsStore = JSON.parse(localStorage.getItem('nis_patients')) || {};
     let activePatientId = null;
     let currentPatientAgeInMonths = 0;
-    
-    // Global variable to hold a single calculated drug before it's added to the cart
     let pendingPrescriptionDrug = null;
 
     window.onload = function() { renderPatientBadges(); buildMilestoneReference(); };
@@ -516,7 +527,7 @@
             id: id, name: name, dob: dob, gender: gender, weight: weight, ageYrs: y, ageMos: m, totalMonths: currentPatientAgeInMonths,
             givenDates: globalPatientsStore[id]?.givenDates || {}, 
             achievedMilestones: globalPatientsStore[id]?.achievedMilestones || {},
-            rxList: globalPatientsStore[id]?.rxList || [] // MULTI-DRUG CART ARRAY
+            rxList: globalPatientsStore[id]?.rxList || []
         };
         
         localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore));
@@ -537,9 +548,7 @@
                 document.getElementById('gender').value = p.gender; document.getElementById('pWeight').value = p.weight || "";
                 currentPatientAgeInMonths = p.totalMonths || 0;
                 
-                // Clear any pending drug state on screen when switching patients
-                document.getElementById('calcOutputArea').style.display = 'none';
-                pendingPrescriptionDrug = null;
+                document.getElementById('calcOutputArea').style.display = 'none'; pendingPrescriptionDrug = null;
                 
                 renderPatientBadges(); triggerActiveWorkspaceBuild(p.id);
             };
@@ -550,8 +559,7 @@
         document.getElementById('emptyStatePlaceholder').style.display = "none";
         document.getElementById('activeWorkspace').style.display = "block";
         document.getElementById('btnMasterPrint').style.display = "block"; 
-        calculateAndRenderTimeline(pId); calculateDose(); renderMilestoneDashboard();
-        renderRxCartList(); // Refresh the Rx Cart UI
+        calculateAndRenderTimeline(pId); calculateDose(); renderMilestoneDashboard(); renderRxCartList();
     }
     
     // Timeline Builder
@@ -599,7 +607,7 @@
     }
     function updateAdministrationDate(pId, vId, dateStr) { globalPatientsStore[pId].givenDates[vId] = dateStr; localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); calculateAndRenderTimeline(pId); }
 
-    // --- DOSAGE BUILDER & RX CART ---
+    // Dosage Builder
     function populateDrugs() { const cat = document.getElementById('drugCategory').value; const formSelect = document.getElementById('drugFormulation'); formSelect.innerHTML = '<option value="">-- Select Drug Formulation --</option>'; if(cat && drugDb[cat]) { drugDb[cat].forEach((drug, index) => { formSelect.innerHTML += `<option value="${index}">${drug.name}</option>`; }); } }
     
     function calculateDose() {
@@ -617,34 +625,19 @@
         }
         
         let volMl = (targetMg * drug.vol) / drug.conc;
-        
-        // Stage it in memory
         pendingPrescriptionDrug = { name: drug.name, vol: volMl.toFixed(1), freq: drug.freq, details: `${targetMg.toFixed(1)} mg/dose | ${drug.conc}mg/${drug.vol}mL suspension` };
 
         let mathString = isFixed ? "Fixed standard dose" : `[(${weight}kg × ${drug.doseMg}mg${drug.doseType==='perDay'?` / ${drug.div}`:''}) × ${drug.vol}mL] ÷ ${drug.conc}mg`;
-        
-        resultCard.innerHTML = `
-            <p>Administer Volume (Per Dose):</p>
-            <h2>${volMl.toFixed(1)} mL ${isFixed ? '(Fixed Dose)' : ''}</h2>
-            <p style="color:var(--primary); font-weight:bold;">Frequency: ${drug.freq}</p>
-            <div style="font-size:0.85rem; color:#64748b; margin-top:1rem; border-top:1px dashed #cbd5e1; padding-top:0.5rem;">${mathString}</div>
-            <button onclick="addPendingToRxCart()" class="action" style="margin-top:15px; background:var(--primary);">➕ Add to Prescription Pad</button>
-        `;
+        resultCard.innerHTML = `<p>Administer Volume (Per Dose):</p><h2>${volMl.toFixed(1)} mL ${isFixed ? '(Fixed Dose)' : ''}</h2><p style="color:var(--primary); font-weight:bold;">Frequency: ${drug.freq}</p><div style="font-size:0.85rem; color:#64748b; margin-top:1rem; border-top:1px dashed #cbd5e1; padding-top:0.5rem;">${mathString}</div><button onclick="addPendingToRxCart()" class="action" style="margin-top:15px; background:var(--primary);">➕ Add to Prescription Pad</button>`;
         outputArea.style.display = 'block';
     }
 
     function addPendingToRxCart() {
         if(!activePatientId || !pendingPrescriptionDrug) return;
-        
         globalPatientsStore[activePatientId].rxList.push(pendingPrescriptionDrug);
         localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore));
-        
-        // Clear screen to prep for next drug
-        document.getElementById('drugFormulation').value = "";
-        document.getElementById('calcOutputArea').style.display = 'none';
-        pendingPrescriptionDrug = null;
-        
-        renderRxCartList();
+        document.getElementById('drugFormulation').value = ""; document.getElementById('calcOutputArea').style.display = 'none';
+        pendingPrescriptionDrug = null; renderRxCartList();
     }
 
     function removeDrugFromCart(index) {
@@ -657,31 +650,17 @@
     function renderRxCartList() {
         const cartContainer = document.getElementById('rxCartList');
         if(!activePatientId) return;
-        
         const list = globalPatientsStore[activePatientId].rxList;
-        
-        if (list.length === 0) {
-            cartContainer.innerHTML = "<div style='font-style:italic; color:#64748b;'>Prescription pad is empty. Calculate a dose above and click 'Add to Prescription Pad'.</div>";
-            return;
-        }
+        if (list.length === 0) { cartContainer.innerHTML = "<div style='font-style:italic; color:#64748b;'>Prescription pad is empty. Calculate a dose above and click 'Add to Prescription Pad'.</div>"; return; }
 
         let html = "";
         list.forEach((drug, index) => {
-            html += `
-                <div class="rx-cart-item">
-                    <div class="rx-cart-item-details">
-                        <h4>${index + 1}. ${drug.name}</h4>
-                        <div style="color:var(--primary); font-weight:bold;">Take ${drug.vol} mL &mdash; ${drug.freq}</div>
-                        <div>Targeting: ${drug.details}</div>
-                    </div>
-                    <button onclick="removeDrugFromCart(${index})" style="background:var(--danger); color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">Remove</button>
-                </div>
-            `;
+            html += `<div class="rx-cart-item"><div class="rx-cart-item-details"><h4>${index + 1}. ${drug.name}</h4><div style="color:var(--primary); font-weight:bold;">Take ${drug.vol} mL &mdash; ${drug.freq}</div><div>Targeting: ${drug.details}</div></div><button onclick="removeDrugFromCart(${index})" style="background:var(--danger); color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">Remove</button></div>`;
         });
         cartContainer.innerHTML = html;
     }
 
-    // --- MILESTONES BUILDER ---
+    // Milestones Builder
     function renderMilestoneDashboard() {
         if(!activePatientId) return;
         const patient = globalPatientsStore[activePatientId]; const achieved = patient.achievedMilestones || {};
@@ -699,7 +678,7 @@
         availableAges.forEach(age => {
             let aHTML = "";
             milestonesDb[age].forEach(m => { if(achieved[m.id]) aHTML += `<div style="padding:0.5rem 0; border-bottom:1px solid #e2e8f0;">✅ <b>${m.domain}</b>: ${m.text}</div>`; });
-            if(aHTML) completedHTML += `<h4 style="margin:1rem 0 0.25rem 0; color:var(--primary);">Achieved at ${age} Months Target</h4>${aHTML}`;
+            if(aHTML) completedHTML += `<h4 style="margin:1rem 0 0.25rem 0; color:var(--success);">Achieved at ${age} Months Target</h4>${aHTML}`;
             
             if(age <= currentBracket) {
                 milestonesDb[age].forEach(m => {
