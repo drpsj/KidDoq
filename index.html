@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pediatric Clinical Hub v10.2 (Stable)</title>
+    <title>Pediatric Clinical Hub v10.3</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -127,7 +127,7 @@
 <body>
 
 <header>
-    <h1>Pediatric Clinical Hub v10.2 (Stable)</h1>
+    <h1>Pediatric Clinical Hub v10.3 (Stable Build)</h1>
     <p>NIS Tracker | Drug Dosages | Milestones | Nutrition & Dietetics | Growth</p>
 </header>
 
@@ -612,7 +612,7 @@
         if(!activePatientId) return alert("Select a patient first.");
         const p = globalPatientsStore[activePatientId];
         const vaxList = p.upcomingVaccinesForWhatsapp.join(", ");
-        const msg = `Dear Parent, this is a reminder from the Pediatric Clinic that Baby ${p.name}'s upcoming vaccinations (${vaxList}) are due soon. Please visit the clinic.`;
+        const msg = `Dear Parent, this is a reminder from the Pediatric Clinic that Baby ${p.name}'s upcoming vaccinations (${vaxList}) are due soon. Please visit the clinic to keep their schedule on track.`;
         const targetPhone = p.phone ? p.phone.replace(/[^0-9]/g, "") : "";
         window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
