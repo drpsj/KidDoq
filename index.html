@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pediatric Clinical Hub v5.1</title>
+    <title>Pediatric Clinical Hub</title>
     <style>
         :root {
             --primary: #1e3a8a; --primary-light: #eff6ff; --accent: #0d9488;
@@ -77,10 +77,10 @@
         .rx-cart-item-details div { font-size: 0.85rem; color: #64748b; }
         
         /* Milestones specific */
-        .milestone-item { display: flex; gap: 1rem; padding: 0.85rem; border-bottom: 1px solid var(--gray-200); align-items: flex-start; }
-        .milestone-item input[type="checkbox"] { width: 24px; height: 24px; margin: 0; cursor: pointer; accent-color: var(--primary); }
-        .milestone-text { font-size: 1rem; font-weight: 500; color: var(--gray-700); }
-        .milestone-domain { font-size: 0.75rem; background: var(--primary-light); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 4px; text-transform: uppercase; }
+        .milestone-item { display: flex; gap: 1rem; padding: 0.65rem 0; align-items: flex-start; }
+        .milestone-item input[type="checkbox"] { width: 22px; height: 22px; margin: 0; cursor: pointer; accent-color: var(--primary); }
+        .milestone-text { font-size: 1rem; font-weight: 500; color: var(--gray-700); line-height: 1.3;}
+        .milestone-domain { font-size: 0.75rem; background: var(--gray-200); color: var(--gray-700); padding: 2px 6px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 4px; text-transform: uppercase; }
         .red-flag-card { background: #fef2f2; border: 1px solid #fca5a5; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
         .red-flag-card h4 { color: var(--danger); margin: 0 0 0.25rem 0; font-size: 1rem; }
         .sig-text { font-size: 0.85rem; color: #7f1d1d; font-weight: 500; margin-top: 0.5rem; background: white; padding: 0.5rem; border-radius: 4px; }
@@ -123,12 +123,14 @@
 </head>
 <body>
 
+<!-- WEB APP SHELL -->
 <header>
-    <h1>Pediatric Clinical Hub v5.1</h1>
-    <p>NIS Tracker | Multi-Drug Prescription | Positive Milestones Dashboard</p>
+    <h1>Pediatric Clinical Hub v5.2</h1>
+    <p>NIS Tracker | Multi-Drug Prescription | Retroactive Milestones Logger</p>
 </header>
 
 <div class="app-shell">
+    <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="app-features-nav">
             <button class="feature-btn active" onclick="switchMainFeature('trackerFeatureView', this)">📅 Immunization Tracker</button>
@@ -166,6 +168,7 @@
 
             <button class="action" onclick="saveAndRegisterPatient(false)">Save Profile & Load Workspace</button>
             
+            <!-- MASTER COMPREHENSIVE PRINT BUTTON -->
             <button class="print-master" onclick="executePrint('comprehensive')" id="btnMasterPrint" style="display:none;">
                 🖨️ Print Comprehensive Report
             </button>
@@ -178,6 +181,7 @@
         </div>
     </div>
 
+    <!-- MAIN INTERFACE -->
     <div class="main-content">
         <div id="emptyStatePlaceholder" class="panel" style="text-align: center; color: #64748b;">
             Select an existing patient profile from the Registry or register a new one to access features.
@@ -242,6 +246,7 @@
                         <div class="result-card" id="doseResultCard"></div>
                     </div>
                     
+                    <!-- NEW MULTI-DRUG PRESCRIPTION CART -->
                     <div class="rx-cart-container">
                         <h3 class="section-title">Active Prescription Pad</h3>
                         <p style="font-size:0.85rem; color:#64748b; margin-top:-5px;">Drugs added here will appear on the final printed prescription.</p>
@@ -256,26 +261,30 @@
                     <button onclick="executePrint('milestones')" class="secondary" style="padding:0.6rem 1rem; font-weight:bold; background:var(--primary);">🖨️ Print Progress Report (Positive)</button>
                 </div>
                 <div class="sub-tabs-nav">
-                    <button class="sub-tab-btn active" onclick="switchSubTab('msEvalTab', this)">📋 Active Evaluation</button>
-                    <!-- MERGED TAB FOR PROGRESS DASHBOARD -->
+                    <!-- NEW MASTER CHECKLIST TAB -->
+                    <button class="sub-tab-btn active" onclick="switchSubTab('msEvalTab', this)">📋 Master Checklist (Past & Present)</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('msProgressTab', this)">📈 Progress Dashboard</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('msMissedTab', this)">🚨 Missed & Red Flags</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('msReferenceTab', this)">📘 IAP/CDC Standards</button>
                 </div>
                 
-                <div id="msEvalTab" class="sub-tab-content active"><div class="timeline-section"><h3 class="section-title">Current Age Evaluation Checklist</h3><div id="msEvalContainer"></div></div></div>
+                <div id="msEvalTab" class="sub-tab-content active">
+                    <div class="timeline-section">
+                        <h3 class="section-title">Comprehensive Milestones Evaluation</h3>
+                        <p style="color:#64748b; font-size:0.9rem; margin-bottom:1.5rem;">Check off milestones the patient has achieved. You can retroactively log past milestones for new or older patients.</p>
+                        <div id="msEvalContainer"></div>
+                    </div>
+                </div>
                 
-                <!-- NEW COMBINED DASHBOARD TAB -->
+                <!-- COMBINED DASHBOARD TAB -->
                 <div id="msProgressTab" class="sub-tab-content">
                     <div class="timeline-section">
                         <h3 class="section-title">Developmental Progress Dashboard</h3>
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem; margin-top:1.5rem;">
-                            <!-- Column 1: Achieved -->
                             <div>
                                 <h4 style="color:var(--success); margin-top:0; border-bottom:1px solid var(--success); padding-bottom:0.5rem;">✅ Successfully Achieved</h4>
                                 <div id="msCompletedContainer"></div>
                             </div>
-                            <!-- Column 2: Upcoming -->
                             <div>
                                 <h4 style="color:var(--primary); margin-top:0; border-bottom:1px solid var(--primary); padding-bottom:0.5rem;">📅 What to Look Forward To</h4>
                                 <div id="msUpcomingContainer"></div>
@@ -660,7 +669,7 @@
         cartContainer.innerHTML = html;
     }
 
-    // Milestones Builder
+    // Milestones Builder (UPDATED FOR PAST/PRESENT LOGGING)
     function renderMilestoneDashboard() {
         if(!activePatientId) return;
         const patient = globalPatientsStore[activePatientId]; const achieved = patient.achievedMilestones || {};
@@ -669,11 +678,40 @@
         for(let i=0; i<availableAges.length; i++){ if(currentPatientAgeInMonths >= availableAges[i]) currentBracket = availableAges[i]; else break; }
         upcomingBracket = availableAges.find(age => age > currentPatientAgeInMonths) || null;
         
+        // 1. Master Evaluation Checklist (Past & Present)
         const evalContainer = document.getElementById('msEvalContainer');
-        if (currentBracket === 0) { evalContainer.innerHTML = "<p>Patient under 2 months.</p>"; } else {
-            evalContainer.innerHTML = milestonesDb[currentBracket].map(m => `<div class="milestone-item"><input type="checkbox" id="${m.id}" ${achieved[m.id] ? 'checked' : ''} onchange="toggleMilestone('${m.id}', this.checked)"><div><span class="milestone-domain">${m.domain}</span><br><span class="milestone-text"><label for="${m.id}" style="cursor:pointer; font-weight:normal;">${m.text}</label></span></div></div>`).join("");
+        if (currentBracket === 0) { 
+            evalContainer.innerHTML = "<p>Patient under 2 months. No milestones to evaluate yet.</p>"; 
+        } else {
+            let evalHTML = "";
+            availableAges.forEach(age => {
+                if (age <= currentBracket) {
+                    let isCurrent = (age === currentBracket);
+                    let borderStyle = isCurrent ? "border: 2px solid var(--primary);" : "border: 1px solid var(--gray-200);";
+                    let bgStyle = isCurrent ? "background: var(--primary-light);" : "background: white;";
+                    let title = isCurrent ? `Current Age Target (${age} Months)` : `Past Target (${age} Months)`;
+
+                    evalHTML += `<div style="${borderStyle} ${bgStyle} padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">`;
+                    evalHTML += `<h4 style="margin-top:0; color:var(--primary); margin-bottom:0.5rem;">${title}</h4>`;
+                    
+                    milestonesDb[age].forEach(m => {
+                        evalHTML += `
+                            <div class="milestone-item" style="border-bottom:none; padding:0.4rem 0;">
+                                <input type="checkbox" id="${m.id}" ${achieved[m.id] ? 'checked' : ''} onchange="toggleMilestone('${m.id}', this.checked)">
+                                <div>
+                                    <span class="milestone-domain">${m.domain}</span>
+                                    <span class="milestone-text"><label for="${m.id}" style="cursor:pointer; font-weight:normal;">${m.text}</label></span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    evalHTML += `</div>`;
+                }
+            });
+            evalContainer.innerHTML = evalHTML;
         }
 
+        // 2. Completed and Missed Processing
         let completedHTML = ""; let missedHTML = "";
         availableAges.forEach(age => {
             let aHTML = "";
@@ -689,9 +727,12 @@
         document.getElementById('msCompletedContainer').innerHTML = completedHTML || "<p>No milestones recorded.</p>";
         document.getElementById('msMissedContainer').innerHTML = missedHTML || "<div style='padding:1rem; background:#f0fdf4; border:1px solid #16a34a; border-radius:8px; color:#166534; font-weight:bold;'>✅ All age-appropriate milestones achieved. No red flags detected.</div>";
 
+        // 3. Upcoming Guidance Processing
         const upcomingContainer = document.getElementById('msUpcomingContainer');
         if(upcomingBracket) {
-            upcomingContainer.innerHTML = milestonesDb[upcomingBracket].map(m => `<div style="padding:0.75rem; border:1px solid #e2e8f0; border-radius:6px; margin-bottom:0.5rem; background:white;"><span class="milestone-domain">${m.domain}</span><div style="font-weight:500;">${m.text}</div></div>`).join("");
+            let uHTML = `<h4 style="margin:1rem 0 0.25rem 0; color:var(--primary);">Target: ${upcomingBracket} Months</h4>`;
+            uHTML += milestonesDb[upcomingBracket].map(m => `<div style="padding:0.75rem; border:1px solid #e2e8f0; border-radius:6px; margin-bottom:0.5rem; background:white;"><span class="milestone-domain">${m.domain}</span><div style="font-weight:500;">${m.text}</div></div>`).join("");
+            upcomingContainer.innerHTML = uHTML;
         } else {
             upcomingContainer.innerHTML = "<p>Advanced age bracket. Transition to standard school-age cognitive assessments.</p>";
         }
