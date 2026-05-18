@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pediatric Clinical Hub</title>
+    <title>Pediatric Clinical Hub v5.3</title>
     <style>
         :root {
             --primary: #1e3a8a; --primary-light: #eff6ff; --accent: #0d9488;
@@ -56,15 +56,17 @@
         .section-title { color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 0.25rem; margin-top: 0; display: flex; justify-content: space-between; align-items: center;}
 
         /* Tracker specific */
-        .vaccine-row { display: grid; grid-template-columns: 1.8fr 1fr 1fr; align-items: center; padding: 1rem 0; border-bottom: 1px solid #f1f5f9; gap: 1rem; }
+        .vaccine-row { display: grid; grid-template-columns: 1.8fr 1fr 1.5fr; align-items: center; padding: 1rem 0; border-bottom: 1px solid #f1f5f9; gap: 1rem; }
         .vaccine-row:last-child { border-bottom: none; }
         .vaccine-info h4 { margin: 0 0 0.25rem 0; font-size: 1rem; }
         .vaccine-meta { font-size: 0.8rem; color: #64748b; }
         .action-protocol-card { background: #fff7ed; border: 1px solid #ffedd5; padding: 0.5rem; border-radius: 6px; font-size: 0.78rem; color: #c2410c; }
         .date-display-box { font-size: 1rem; font-weight: 700; color: var(--primary); }
         .date-display-box.shifted { color: var(--warning); }
-        .date-picker-cell { text-align: right; }
-        .date-picker-cell input { width: 100%; max-width: 140px; font-size: 0.85rem; padding: 0.25rem; }
+        
+        .date-picker-cell { text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 10px;}
+        .date-picker-cell input[type="date"] { width: 100%; max-width: 130px; font-size: 0.85rem; padding: 0.25rem; }
+        .tick-box { width: 24px; height: 24px; cursor: pointer; accent-color: var(--success); }
 
         /* Calculator & Rx Cart specific */
         .formula-box { background: #1e293b; color: #f8fafc; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.95rem; margin-bottom: 1.5rem; text-align: center; }
@@ -75,6 +77,9 @@
         .rx-cart-item { background: #f8fafc; border: 1px solid #cbd5e1; padding: 1rem; border-radius: 8px; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center;}
         .rx-cart-item-details h4 { margin: 0 0 0.25rem 0; color: var(--primary); font-size: 1rem; }
         .rx-cart-item-details div { font-size: 0.85rem; color: #64748b; }
+        
+        /* Quick Calc Inputs */
+        .quick-calc-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; background: white; padding: 1rem; border-radius: 8px; border: 2px solid var(--gray-200); margin-bottom: 1.5rem;}
         
         /* Milestones specific */
         .milestone-item { display: flex; gap: 1rem; padding: 0.65rem 0; align-items: flex-start; }
@@ -116,8 +121,6 @@
             #printEngine .rx-symbol { font-size: 3rem; font-family: serif; font-weight: bold; line-height: 1; margin-bottom: 1.5rem; }
             #printEngine .rx-drug-name { font-size: 1.3rem; font-weight: bold; margin-bottom: 0.25rem;}
             #printEngine .rx-dosage { font-size: 1.4rem; font-weight: bold; border-bottom: 2px dashed #ccc; display: inline-block; padding-bottom: 5px; margin-bottom: 0.5rem;}
-            
-            #printEngine .ms-positive-item { padding: 8px 0; border-bottom: 1px dashed #ccc; }
         }
     </style>
 </head>
@@ -125,8 +128,8 @@
 
 <!-- WEB APP SHELL -->
 <header>
-    <h1>Pediatric Clinical Hub v5.2</h1>
-    <p>NIS Tracker | Multi-Drug Prescription | Retroactive Milestones Logger</p>
+    <h1>Pediatric Clinical Hub v5.3</h1>
+    <p>NIS Checklist Tracker | On-The-Go Calculator | Milestones Dashboard</p>
 </header>
 
 <div class="app-shell">
@@ -152,7 +155,7 @@
                 <input type="number" id="ageMos" placeholder="Mos" min="0" max="11" oninput="estimateWeightFromAge()">
             </div>
 
-            <label for="pWeight">Weight (kg) <small style="color:#64748b; font-weight:normal;">(Auto-estimated)</small></label>
+            <label for="pWeight">Weight (kg)</label>
             <input type="number" step="0.1" id="pWeight" placeholder="e.g., 12.5" oninput="saveAndRegisterPatient(true)">
 
             <label for="gender">Gender</label>
@@ -168,7 +171,6 @@
 
             <button class="action" onclick="saveAndRegisterPatient(false)">Save Profile & Load Workspace</button>
             
-            <!-- MASTER COMPREHENSIVE PRINT BUTTON -->
             <button class="print-master" onclick="executePrint('comprehensive')" id="btnMasterPrint" style="display:none;">
                 🖨️ Print Comprehensive Report
             </button>
@@ -185,6 +187,8 @@
     <div class="main-content">
         <div id="emptyStatePlaceholder" class="panel" style="text-align: center; color: #64748b;">
             Select an existing patient profile from the Registry or register a new one to access features.
+            <br><br>
+            <i>(Note: The Drug Dose Calculator can be accessed without a patient profile for quick checks).</i>
         </div>
 
         <div id="activeWorkspace" style="display:none;">
@@ -222,14 +226,28 @@
                 </div>
             </div>
 
-            <!-- 2: DRUG DOSAGE CALCULATOR -->
+            <!-- 2: DRUG DOSAGE CALCULATOR (NOW WITH ON-THE-GO INDEPENDENT MODE) -->
             <div id="dosageFeatureView" class="view-content">
-                <div class="timeline-section" style="background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:1rem; display:flex; justify-content:flex-end;">
+                
+                <div class="timeline-section" id="rxPrintBtnHeader" style="background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:1rem; display:flex; justify-content:flex-end;">
                     <button onclick="executePrint('prescription')" class="secondary" style="padding:0.6rem 1rem; font-weight:bold; background:var(--primary);">🖨️ Print Prescription Pad</button>
                 </div>
+                
                 <div class="timeline-section">
                     <h2 style="margin-top:0; color:var(--primary);">💊 Pediatric Drug Dosage Engine</h2>
-                    <div class="formula-box"><b>Formula:</b> Vol(mL) = [<span>Weight(kg)</span> × <span>Dose(mg/kg)</span> × <span>Drug Vol(mL)</span>] ÷ <span>Drug Conc(mg)</span></div>
+                    <div class="formula-box" style="margin-bottom: 1rem;"><b>Formula:</b> Vol(mL) = [<span>Weight(kg)</span> × <span>Dose(mg/kg)</span> × <span>Drug Vol(mL)</span>] ÷ <span>Drug Conc(mg)</span></div>
+                    
+                    <!-- NEW QUICK CALC ROW -->
+                    <div class="quick-calc-inputs">
+                        <div>
+                            <label style="color:var(--accent);">On-The-Go Weight (kg)</label>
+                            <input type="number" id="calcWeight" placeholder="e.g., 12.5" oninput="calculateDose()">
+                        </div>
+                        <div>
+                            <label style="color:#64748b;">OR Quick Age (Months) to estimate</label>
+                            <input type="number" id="calcQuickAge" placeholder="e.g., 18" oninput="quickEstimateWeight()">
+                        </div>
+                    </div>
                     
                     <div class="calc-control-panel">
                         <div><label>Drug Category</label>
@@ -244,28 +262,35 @@
                     
                     <div id="calcOutputArea" style="display:none;">
                         <div class="result-card" id="doseResultCard"></div>
+                        <!-- Add to Cart button will be injected here if patient active -->
+                        <div id="rxAddButtonArea"></div>
                     </div>
                     
-                    <!-- NEW MULTI-DRUG PRESCRIPTION CART -->
-                    <div class="rx-cart-container">
-                        <h3 class="section-title">Active Prescription Pad</h3>
-                        <p style="font-size:0.85rem; color:#64748b; margin-top:-5px;">Drugs added here will appear on the final printed prescription.</p>
-                        <div id="rxCartList"></div>
+                    <div id="rxCartArea">
+                        <div class="rx-cart-container">
+                            <h3 class="section-title">Active Prescription Pad</h3>
+                            <p style="font-size:0.85rem; color:#64748b; margin-top:-5px;">Drugs added here will appear on the final printed prescription.</p>
+                            <div id="rxCartList"></div>
+                        </div>
                     </div>
+                    
+                    <div id="rxNoPatientWarning" style="margin-top:2rem; padding:1rem; background:#fff7ed; border:1px solid #ffedd5; color:#c2410c; border-radius:8px; text-align:center; display:none;">
+                        <b>Note:</b> You are in "On-The-Go" mode. To build and print a multi-drug prescription pad, please select or register a patient from the sidebar.
+                    </div>
+
                 </div>
             </div>
 
-            <!-- 3: DEVELOPMENTAL MILESTONES (NEW UNIFIED DASHBOARD) -->
+            <!-- 3: DEVELOPMENTAL MILESTONES -->
             <div id="milestoneFeatureView" class="view-content">
                 <div class="timeline-section" style="background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:1rem; display:flex; justify-content:flex-end;">
-                    <button onclick="executePrint('milestones')" class="secondary" style="padding:0.6rem 1rem; font-weight:bold; background:var(--primary);">🖨️ Print Progress Report (Positive)</button>
+                    <button onclick="executePrint('milestones')" class="secondary" style="padding:0.6rem 1rem; font-weight:bold; background:var(--primary);">🖨️ Print Progress Report</button>
                 </div>
                 <div class="sub-tabs-nav">
-                    <!-- NEW MASTER CHECKLIST TAB -->
-                    <button class="sub-tab-btn active" onclick="switchSubTab('msEvalTab', this)">📋 Master Checklist (Past & Present)</button>
+                    <button class="sub-tab-btn active" onclick="switchSubTab('msEvalTab', this)">📋 Master Checklist</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('msProgressTab', this)">📈 Progress Dashboard</button>
-                    <button class="sub-tab-btn" onclick="switchSubTab('msMissedTab', this)">🚨 Missed & Red Flags</button>
-                    <button class="sub-tab-btn" onclick="switchSubTab('msReferenceTab', this)">📘 IAP/CDC Standards</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('msMissedTab', this)">🚨 Missed / Red Flags</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('msReferenceTab', this)">📘 IAP Standards</button>
                 </div>
                 
                 <div id="msEvalTab" class="sub-tab-content active">
@@ -276,7 +301,6 @@
                     </div>
                 </div>
                 
-                <!-- COMBINED DASHBOARD TAB -->
                 <div id="msProgressTab" class="sub-tab-content">
                     <div class="timeline-section">
                         <h3 class="section-title">Developmental Progress Dashboard</h3>
@@ -307,46 +331,14 @@
     // --- 1. FULL DATABASES ---
     
     const milestonesDb = {
-        2: [
-            { id: "m2_1", domain: "Social/Emotional", text: "Social smile (smiles back at you).", sig: "Absence may indicate visual deficit, severe cognitive delay, or early signs of ASD." },
-            { id: "m2_2", domain: "Language", text: "Coos, makes sounds other than crying.", sig: "Hearing deficit or profound speech delay." },
-            { id: "m2_3", domain: "Gross Motor", text: "Holds head up steady when held at shoulder.", sig: "Poor head control indicates hypotonia, neuromuscular disorders, or CP." }
-        ],
-        4: [
-            { id: "m4_1", domain: "Social/Emotional", text: "Laughs out loud, looks at you, moves or makes sounds to get attention.", sig: "Lack of social engagement or visual impairment." },
-            { id: "m4_2", domain: "Fine Motor", text: "Brings hands to mouth, reaches for toys.", sig: "Motor delay or visual impairment." },
-            { id: "m4_3", domain: "Gross Motor", text: "Rolls from tummy to back.", sig: "Gross motor delay, hypertonia, or hypotonia." }
-        ],
-        6: [
-            { id: "m6_1", domain: "Gross Motor", text: "Sits without support (tripod/steady).", sig: "Red flag for Cerebral Palsy or global developmental delay." },
-            { id: "m6_2", domain: "Language", text: "Babbles with consonants (da, ba, ga).", sig: "Strong indicator for potential hearing loss. Requires audiology referral." },
-            { id: "m6_3", domain: "Fine Motor", text: "Transfers objects from one hand to another.", sig: "Hand preference before 1 year is a red flag for hemiplegia." }
-        ],
-        9: [
-            { id: "m9_1", domain: "Fine Motor", text: "Uses basic pincer grasp (thumb and index finger).", sig: "Fine motor delay; neurological impairment." },
-            { id: "m9_2", domain: "Gross Motor", text: "Stands holding on to furniture (pulls to stand).", sig: "Gross motor delay; lower limb hypotonia/hypertonia." },
-            { id: "m9_3", domain: "Language", text: "Responds to own name.", sig: "Major red flag for hearing deficit or Autism Spectrum Disorder." }
-        ],
-        12: [
-            { id: "m12_1", domain: "Language", text: "Says 1 or 2 clear words (mama, dada).", sig: "Expressive speech delay; rule out hearing loss." },
-            { id: "m12_2", domain: "Gross Motor", text: "Walks holding on to furniture (cruising) or takes first independent steps.", sig: "If unable to bear weight, indicates severe motor pathway pathology." },
-            { id: "m12_3", domain: "Social/Emotional", text: "Points to objects they want.", sig: "Lack of joint attention is a core early indicator for ASD." }
-        ],
-        18: [
-            { id: "m18_1", domain: "Gross Motor", text: "Walks independently without falling often.", sig: "If not walking by 18m, absolute indication for neurological workup (e.g., Duchenne, CP)." },
-            { id: "m18_2", domain: "Language", text: "Uses at least 10 to 15 single words.", sig: "Expressive language delay." },
-            { id: "m18_3", domain: "Fine Motor", text: "Uses a spoon to eat.", sig: "Fine motor and coordination delay." }
-        ],
-        24: [
-            { id: "m24_1", domain: "Language", text: "Puts 2 words together (e.g., 'more milk').", sig: "Significant language delay. Needs speech therapy assessment." },
-            { id: "m24_2", domain: "Gross Motor", text: "Kicks a ball, runs.", sig: "Gross motor delay." },
-            { id: "m24_3", domain: "Social/Emotional", text: "Parallel play (plays next to, but not with, other children).", sig: "Social withdrawal; monitor for ASD." }
-        ],
-        36: [
-            { id: "m36_1", domain: "Language", text: "Speaks in 3-4 word sentences; mostly understood by strangers.", sig: "Speech articulation or expressive delay." },
-            { id: "m36_2", domain: "Gross Motor", text: "Pedals a tricycle.", sig: "Coordination and gross motor deficits." },
-            { id: "m36_3", domain: "Fine Motor", text: "Copies a circle.", sig: "Visual-motor integration delay." }
-        ]
+        2: [ { id: "m2_1", domain: "Social/Emotional", text: "Social smile (smiles back at you).", sig: "Absence may indicate visual deficit, severe cognitive delay, or early signs of ASD." }, { id: "m2_2", domain: "Language", text: "Coos, makes sounds other than crying.", sig: "Hearing deficit or profound speech delay." }, { id: "m2_3", domain: "Gross Motor", text: "Holds head up steady when held at shoulder.", sig: "Poor head control indicates hypotonia, neuromuscular disorders, or CP." } ],
+        4: [ { id: "m4_1", domain: "Social/Emotional", text: "Laughs out loud, looks at you.", sig: "Lack of social engagement or visual impairment." }, { id: "m4_2", domain: "Fine Motor", text: "Brings hands to mouth, reaches for toys.", sig: "Motor delay or visual impairment." }, { id: "m4_3", domain: "Gross Motor", text: "Rolls from tummy to back.", sig: "Gross motor delay, hypertonia, or hypotonia." } ],
+        6: [ { id: "m6_1", domain: "Gross Motor", text: "Sits without support (tripod/steady).", sig: "Red flag for Cerebral Palsy or global developmental delay." }, { id: "m6_2", domain: "Language", text: "Babbles with consonants (da, ba, ga).", sig: "Strong indicator for potential hearing loss. Requires audiology referral." }, { id: "m6_3", domain: "Fine Motor", text: "Transfers objects from one hand to another.", sig: "Hand preference before 1 year is a red flag for hemiplegia." } ],
+        9: [ { id: "m9_1", domain: "Fine Motor", text: "Uses basic pincer grasp (thumb and index finger).", sig: "Fine motor delay; neurological impairment." }, { id: "m9_2", domain: "Gross Motor", text: "Stands holding on to furniture (pulls to stand).", sig: "Gross motor delay; lower limb hypotonia/hypertonia." }, { id: "m9_3", domain: "Language", text: "Responds to own name.", sig: "Major red flag for hearing deficit or Autism Spectrum Disorder." } ],
+        12: [ { id: "m12_1", domain: "Language", text: "Says 1 or 2 clear words (mama, dada).", sig: "Expressive speech delay; rule out hearing loss." }, { id: "m12_2", domain: "Gross Motor", text: "Walks holding on to furniture or takes first steps.", sig: "If unable to bear weight, indicates severe motor pathway pathology." }, { id: "m12_3", domain: "Social/Emotional", text: "Points to objects they want.", sig: "Lack of joint attention is a core early indicator for ASD." } ],
+        18: [ { id: "m18_1", domain: "Gross Motor", text: "Walks independently without falling often.", sig: "If not walking by 18m, absolute indication for neurological workup (e.g., Duchenne, CP)." }, { id: "m18_2", domain: "Language", text: "Uses at least 10 to 15 single words.", sig: "Expressive language delay." }, { id: "m18_3", domain: "Fine Motor", text: "Uses a spoon to eat.", sig: "Fine motor and coordination delay." } ],
+        24: [ { id: "m24_1", domain: "Language", text: "Puts 2 words together (e.g., 'more milk').", sig: "Significant language delay. Needs speech therapy assessment." }, { id: "m24_2", domain: "Gross Motor", text: "Kicks a ball, runs.", sig: "Gross motor delay." }, { id: "m24_3", domain: "Social/Emotional", text: "Parallel play.", sig: "Social withdrawal; monitor for ASD." } ],
+        36: [ { id: "m36_1", domain: "Language", text: "Speaks in 3-4 word sentences; mostly understood.", sig: "Speech articulation or expressive delay." }, { id: "m36_2", domain: "Gross Motor", text: "Pedals a tricycle.", sig: "Coordination and gross motor deficits." }, { id: "m36_3", domain: "Fine Motor", text: "Copies a circle.", sig: "Visual-motor integration delay." } ]
     };
 
     const drugDb = {
@@ -492,8 +484,31 @@
         document.querySelectorAll('.feature-btn').forEach(fb => fb.classList.remove('active'));
         document.getElementById(viewId).classList.add('active-view');
         el.classList.add('active');
-        if(viewId === 'dosageFeatureView') calculateDose(); 
-        if(viewId === 'milestoneFeatureView') renderMilestoneDashboard();
+        
+        const workspace = document.getElementById('activeWorkspace');
+        const emptyState = document.getElementById('emptyStatePlaceholder');
+
+        if(viewId === 'dosageFeatureView') {
+            workspace.style.display = 'block';
+            emptyState.style.display = 'none';
+            
+            // Hide specific patient elements if no patient
+            if(!activePatientId) document.getElementById('btnMasterPrint').style.display = "none";
+            document.getElementById('rxPrintBtnHeader').style.display = activePatientId ? 'flex' : 'none';
+            document.getElementById('rxCartArea').style.display = activePatientId ? 'block' : 'none';
+            document.getElementById('rxNoPatientWarning').style.display = activePatientId ? 'none' : 'block';
+            
+            calculateDose(); 
+        } else {
+            if(!activePatientId) {
+                workspace.style.display = 'none';
+                emptyState.style.display = 'block';
+            } else {
+                workspace.style.display = 'block';
+                emptyState.style.display = 'none';
+                if(viewId === 'milestoneFeatureView') renderMilestoneDashboard();
+            }
+        }
     }
     function switchSubTab(subTabId, el) {
         document.querySelectorAll('.sub-tab-content').forEach(stc => stc.classList.remove('active'));
@@ -520,6 +535,10 @@
         if(currentPatientAgeInMonths === 0) return;
         let estKg = currentPatientAgeInMonths < 12 ? (currentPatientAgeInMonths / 2) + 4 : (y * 2) + 8;
         document.getElementById('pWeight').value = estKg.toFixed(1);
+        
+        // Sync quick calc if dosage tab is open
+        document.getElementById('calcWeight').value = estKg.toFixed(1);
+        document.getElementById('calcQuickAge').value = currentPatientAgeInMonths;
         calculateDose();
     }
     function saveAndRegisterPatient(isBackgroundUpdate = false) {
@@ -543,7 +562,11 @@
         activePatientId = id;
         
         if(!isBackgroundUpdate) { renderPatientBadges(); triggerActiveWorkspaceBuild(id); } 
-        else { calculateDose(); renderMilestoneDashboard(); }
+        else { 
+            document.getElementById('calcWeight').value = weight;
+            calculateDose(); 
+            renderMilestoneDashboard(); 
+        }
     }
     function renderPatientBadges() {
         const container = document.getElementById('patientListContainer'); container.innerHTML = "";
@@ -557,6 +580,10 @@
                 document.getElementById('gender').value = p.gender; document.getElementById('pWeight').value = p.weight || "";
                 currentPatientAgeInMonths = p.totalMonths || 0;
                 
+                // Sync Quick Calc
+                document.getElementById('calcWeight').value = p.weight || "";
+                document.getElementById('calcQuickAge').value = p.totalMonths || "";
+                
                 document.getElementById('calcOutputArea').style.display = 'none'; pendingPrescriptionDrug = null;
                 
                 renderPatientBadges(); triggerActiveWorkspaceBuild(p.id);
@@ -568,6 +595,11 @@
         document.getElementById('emptyStatePlaceholder').style.display = "none";
         document.getElementById('activeWorkspace').style.display = "block";
         document.getElementById('btnMasterPrint').style.display = "block"; 
+        
+        document.getElementById('rxPrintBtnHeader').style.display = 'flex';
+        document.getElementById('rxCartArea').style.display = 'block';
+        document.getElementById('rxNoPatientWarning').style.display = 'none';
+
         calculateAndRenderTimeline(pId); calculateDose(); renderMilestoneDashboard(); renderRxCartList();
     }
     
@@ -598,7 +630,24 @@
             vaccines.forEach(v => {
                 const prettyFinalDue = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
                 const dateDisplayClass = v.isDelayedByCatchup ? "date-display-box shifted" : "date-display-box";
-                card.innerHTML += `<div class="vaccine-row"><div class="vaccine-info"><h4>${v.name}</h4><div class="vaccine-meta" style="margin-bottom:0.4rem;">Window: ${v.window}</div><div class="action-protocol-card"><b>If Missed:</b> ${v.strategy}</div></div><div class="${dateDisplayClass}">${v.actual ? '✅ Completed' : prettyFinalDue}</div><div class="date-picker-cell"><label style="margin:0; font-size:10px; color:#94a3b8;">Administered On:</label><input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}', '${v.id}', this.value)"></div></div>`;
+                const isDone = v.actual !== "";
+                
+                card.innerHTML += `
+                <div class="vaccine-row">
+                    <div class="vaccine-info">
+                        <h4>${v.name}</h4><div class="vaccine-meta" style="margin-bottom:0.4rem;">Window: ${v.window}</div><div class="action-protocol-card"><b>If Missed:</b> ${v.strategy}</div>
+                    </div>
+                    <div class="${dateDisplayClass}">
+                        ${isDone ? '✅ Completed' : prettyFinalDue}
+                    </div>
+                    <div class="date-picker-cell">
+                        <input type="checkbox" title="Quick check for today" class="tick-box" ${isDone ? 'checked' : ''} onchange="toggleVaccineAdministered('${pId}', '${v.id}', this.checked)">
+                        <div style="text-align:left;">
+                            <label style="margin:0; font-size:10px; color:#94a3b8;">Administered On:</label>
+                            <input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}', '${v.id}', this.value)">
+                        </div>
+                    </div>
+                </div>`;
             });
             timelineOutput.appendChild(card);
         }
@@ -614,14 +663,33 @@
         });
         auditOutput.appendChild(overdueBox); auditOutput.appendChild(doneBox); auditOutput.appendChild(upcomingBox);
     }
+    
+    function toggleVaccineAdministered(pId, vId, isChecked) {
+        const dateStr = isChecked ? new Date().toISOString().split('T')[0] : "";
+        updateAdministrationDate(pId, vId, dateStr);
+    }
     function updateAdministrationDate(pId, vId, dateStr) { globalPatientsStore[pId].givenDates[vId] = dateStr; localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); calculateAndRenderTimeline(pId); }
 
-    // Dosage Builder
+    // Quick Dosage Calc Logic
+    function quickEstimateWeight() {
+        let m = parseInt(document.getElementById('calcQuickAge').value) || 0;
+        if(m > 0) {
+            let est = m < 12 ? (m/2)+4 : Math.floor(m/12)*2 + 8;
+            document.getElementById('calcWeight').value = est.toFixed(1);
+            calculateDose();
+        }
+    }
+    
     function populateDrugs() { const cat = document.getElementById('drugCategory').value; const formSelect = document.getElementById('drugFormulation'); formSelect.innerHTML = '<option value="">-- Select Drug Formulation --</option>'; if(cat && drugDb[cat]) { drugDb[cat].forEach((drug, index) => { formSelect.innerHTML += `<option value="${index}">${drug.name}</option>`; }); } }
     
     function calculateDose() {
-        const weight = parseFloat(document.getElementById('pWeight').value); const cat = document.getElementById('drugCategory').value; const drugIndex = document.getElementById('drugFormulation').value;
-        const outputArea = document.getElementById('calcOutputArea'); const resultCard = document.getElementById('doseResultCard');
+        const weight = parseFloat(document.getElementById('calcWeight').value); 
+        const cat = document.getElementById('drugCategory').value; 
+        const drugIndex = document.getElementById('drugFormulation').value;
+        const outputArea = document.getElementById('calcOutputArea'); 
+        const resultCard = document.getElementById('doseResultCard');
+        const addButtonArea = document.getElementById('rxAddButtonArea');
+        
         if(!weight || !cat || drugIndex === "") { outputArea.style.display = 'none'; pendingPrescriptionDrug = null; return; }
         
         const drug = drugDb[cat][drugIndex];
@@ -637,7 +705,15 @@
         pendingPrescriptionDrug = { name: drug.name, vol: volMl.toFixed(1), freq: drug.freq, details: `${targetMg.toFixed(1)} mg/dose | ${drug.conc}mg/${drug.vol}mL suspension` };
 
         let mathString = isFixed ? "Fixed standard dose" : `[(${weight}kg × ${drug.doseMg}mg${drug.doseType==='perDay'?` / ${drug.div}`:''}) × ${drug.vol}mL] ÷ ${drug.conc}mg`;
-        resultCard.innerHTML = `<p>Administer Volume (Per Dose):</p><h2>${volMl.toFixed(1)} mL ${isFixed ? '(Fixed Dose)' : ''}</h2><p style="color:var(--primary); font-weight:bold;">Frequency: ${drug.freq}</p><div style="font-size:0.85rem; color:#64748b; margin-top:1rem; border-top:1px dashed #cbd5e1; padding-top:0.5rem;">${mathString}</div><button onclick="addPendingToRxCart()" class="action" style="margin-top:15px; background:var(--primary);">➕ Add to Prescription Pad</button>`;
+        
+        resultCard.innerHTML = `<p>Administer Volume (Per Dose):</p><h2>${volMl.toFixed(1)} mL ${isFixed ? '(Fixed Dose)' : ''}</h2><p style="color:var(--primary); font-weight:bold;">Frequency: ${drug.freq}</p><div style="font-size:0.85rem; color:#64748b; margin-top:1rem; border-top:1px dashed #cbd5e1; padding-top:0.5rem;">${mathString}</div>`;
+        
+        if(activePatientId) {
+            addButtonArea.innerHTML = `<button onclick="addPendingToRxCart()" class="action" style="margin-top:15px; background:var(--primary);">➕ Add to Prescription Pad</button>`;
+        } else {
+            addButtonArea.innerHTML = "";
+        }
+        
         outputArea.style.display = 'block';
     }
 
@@ -669,7 +745,7 @@
         cartContainer.innerHTML = html;
     }
 
-    // Milestones Builder (UPDATED FOR PAST/PRESENT LOGGING)
+    // Milestones Builder
     function renderMilestoneDashboard() {
         if(!activePatientId) return;
         const patient = globalPatientsStore[activePatientId]; const achieved = patient.achievedMilestones || {};
@@ -678,7 +754,6 @@
         for(let i=0; i<availableAges.length; i++){ if(currentPatientAgeInMonths >= availableAges[i]) currentBracket = availableAges[i]; else break; }
         upcomingBracket = availableAges.find(age => age > currentPatientAgeInMonths) || null;
         
-        // 1. Master Evaluation Checklist (Past & Present)
         const evalContainer = document.getElementById('msEvalContainer');
         if (currentBracket === 0) { 
             evalContainer.innerHTML = "<p>Patient under 2 months. No milestones to evaluate yet.</p>"; 
@@ -711,7 +786,6 @@
             evalContainer.innerHTML = evalHTML;
         }
 
-        // 2. Completed and Missed Processing
         let completedHTML = ""; let missedHTML = "";
         availableAges.forEach(age => {
             let aHTML = "";
@@ -727,7 +801,6 @@
         document.getElementById('msCompletedContainer').innerHTML = completedHTML || "<p>No milestones recorded.</p>";
         document.getElementById('msMissedContainer').innerHTML = missedHTML || "<div style='padding:1rem; background:#f0fdf4; border:1px solid #16a34a; border-radius:8px; color:#166534; font-weight:bold;'>✅ All age-appropriate milestones achieved. No red flags detected.</div>";
 
-        // 3. Upcoming Guidance Processing
         const upcomingContainer = document.getElementById('msUpcomingContainer');
         if(upcomingBracket) {
             let uHTML = `<h4 style="margin:1rem 0 0.25rem 0; color:var(--primary);">Target: ${upcomingBracket} Months</h4>`;
@@ -755,6 +828,7 @@
     // --- THE DYNAMIC PRINT ENGINE ---
     function getPrintHeaderHTML(title) {
         const p = globalPatientsStore[activePatientId];
+        if(!p) return ""; // Fallback for pure quick calc print if ever needed
         return `
             <div style="margin-bottom: 20px;">
                 <h1 style="margin-bottom: 5px; font-size:24px;">${title}</h1>
@@ -769,9 +843,9 @@
     }
 
     function executePrint(mode) {
-        if (!activePatientId) { alert("Please select a patient first."); return; }
+        if (!activePatientId && mode !== 'prescription') { alert("Please select a patient first."); return; }
         const engine = document.getElementById('printEngine');
-        const p = globalPatientsStore[activePatientId];
+        const p = globalPatientsStore[activePatientId] || {};
         let html = "";
 
         // Build Tracker Layout
@@ -781,13 +855,12 @@
             if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
         }
 
-        // Build MULTI-DRUG Prescription Layout
+        // Build Prescription Layout
         if (mode === 'prescription' || mode === 'comprehensive') {
             html += getPrintHeaderHTML("PEDIATRIC PRESCRIPTION");
             
             if (p.rxList && p.rxList.length > 0) {
                 html += `<div class="rx-pad"><div class="rx-symbol">Rx</div>`;
-                
                 p.rxList.forEach((rx, index) => {
                     html += `
                         <div style="margin-bottom: 1.8rem;">
@@ -797,10 +870,20 @@
                         </div>
                     `;
                 });
-                
                 html += `<div style="margin-top: 60px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center;">Physician Signature</div></div>`;
             } else {
-                html += `<p style="font-style:italic; padding: 20px; border: 1px solid #ccc;">No drugs have been added to the prescription pad.</p>`;
+                // If printing on-the-go with no cart items but there IS an active single calc
+                if(pendingPrescriptionDrug) {
+                    html += `<div class="rx-pad"><div class="rx-symbol">Rx</div>
+                        <div style="margin-bottom: 1.8rem;">
+                            <div class="rx-drug-name">1. ${pendingPrescriptionDrug.name}</div>
+                            <div class="rx-dosage">Take ${pendingPrescriptionDrug.vol} mL &mdash; ${pendingPrescriptionDrug.freq}</div>
+                            <div style="color:#555; font-size:12px; margin-top:5px;">Clinical targets: ${pendingPrescriptionDrug.details}</div>
+                        </div>
+                        <div style="margin-top: 60px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center;">Physician Signature</div></div>`;
+                } else {
+                    html += `<p style="font-style:italic; padding: 20px; border: 1px solid #ccc;">No drugs have been added to the prescription pad.</p>`;
+                }
             }
             if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
         }
