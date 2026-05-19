@@ -143,7 +143,7 @@
         .sub-tabs-nav { 
             display: flex; gap: 0.5rem; margin-bottom: 1.5rem; 
             border-bottom: 2px solid var(--border-soft); padding-bottom: 0px; 
-            flex-wrap: wrap;
+            flex-wrap: wrap; 
         }
         .sub-tab-btn { 
             background: transparent; border: none; color: var(--text-muted); 
@@ -264,14 +264,13 @@
             .app-shell { display: flex; flex-direction: column; }
             header { padding: 1.25rem 1rem; position: sticky; top: 0; z-index: 100;}
             header h1 { font-size: 1.4rem; }
-            header p { display: none; }
+            header p { display: none; } 
             
             .sidebar { 
                 padding: 0; height: auto; border-right: none; 
                 position: static; box-shadow: var(--shadow-md); z-index: 50;
             }
             
-            /* Horizontal Swipeable App Tabs */
             .app-features-nav { 
                 display: flex; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; 
                 padding: 0.75rem 1rem; border-bottom: none; gap: 0.5rem; 
@@ -288,7 +287,6 @@
             .feature-btn.special.active { background: var(--success); color: white; border:none;}
             .feature-btn.alert.active { background: var(--danger); color: white; border:none;}
             
-            /* The Smart Patient Drawer Button */
             .mobile-toggle-btn { 
                 display: flex; justify-content: space-between; align-items: center; 
                 width: 100%; padding: 1.25rem 1.5rem; background: var(--primary-light); 
@@ -297,14 +295,12 @@
                 font-size: 0.95rem; cursor: pointer;
             }
             
-            /* Hidden Registry until tapped */
             .panel { 
                 display: none; border-radius: 0; box-shadow: inset 0 4px 6px -4px rgba(0,0,0,0.1); 
                 padding: 1.5rem 1.25rem; border:none; border-bottom: 1px solid var(--border-soft);
             }
             .panel.mobile-open { display: block; }
             
-            /* Main Content Adjustments for Phone */
             .main-content { padding: 1rem; }
             .timeline-section { padding: 1.25rem; margin-bottom: 1rem; }
             
@@ -312,17 +308,15 @@
             .sub-tabs-nav { gap: 0.3rem; margin-bottom: 1rem; border-bottom: none;}
             .sub-tab-btn.active { border-bottom: none; background: var(--primary); color: white;}
             
-            /* Stacked Grids */
             .row-inputs, .quick-calc-inputs, .calc-control-panel, .tool-grid { grid-template-columns: 1fr; gap: 1rem;}
             
-            /* Mobile Vaccine Rows */
             .vaccine-row { grid-template-columns: 1fr; align-items: start; gap: 0.5rem; position: relative;}
             .date-display-box { margin-bottom: 0.5rem; }
             .date-picker-cell { justify-content: flex-start; }
             .tick-box { position: absolute; right: 0; top: 1.25rem; transform: scale(1.2); }
         }
 
-        /* THE PRINT ENGINE ARCHITECTURE */
+        /* PRINT SETTINGS */
         #printEngine { display: none; }
         @media print {
             body > *:not(#printEngine) { display: none !important; }
@@ -428,7 +422,7 @@
             <div style="font-size: 3.5rem; margin-bottom: 1.5rem;">🏥</div>
             <h2 style="color:var(--text-main); margin-bottom: 0.5rem;">Welcome to the Clinical Hub</h2>
             <p>Select an existing patient profile from the Registry or register a new one to unlock tracking features.</p>
-            <p style="font-size:0.85rem; margin-top:2rem; background: var(--bg-body); padding:1rem; border-radius:8px; display:inline-block; border: 1px solid var(--border-soft);"><i>Tip: Dosage, Nutrition, and ER tools can be accessed via the top tabs on-the-go without needing to save a profile.</i></p>
+            <p style="font-size:0.85rem; margin-top:2rem; background: var(--bg-body); padding:1rem; border-radius:8px; display:inline-block; border: 1px solid var(--border-soft);"><i>Tip: Dosage, Nutrition, ER, and Triage tools can be accessed via the tabs on-the-go without needing to save a profile.</i></p>
         </div>
 
         <div id="activeWorkspace" style="display:none;">
@@ -442,7 +436,7 @@
                 </div>
                 
                 <div class="sub-tabs-nav">
-                    <button class="sub-tab-btn active" onclick="switchSubTab('erCrashTab', this)">⚡ Crash Cart (Code Blue)</button>
+                    <button class="sub-tab-btn active" onclick="switchSubTab('erCrashTab', this)">⚡ Crash Cart</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('erNicuTab', this)">🍼 NICU (GIR & APGAR)</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('erVitalsTab', this)">📊 Vitals Reference</button>
                 </div>
@@ -652,6 +646,7 @@
                 <div id="msReferenceTab" class="sub-tab-content">
                     <div class="timeline-section">
                         <h3 class="section-title">Standard Milestones (IAP & Trivandrum Scales)</h3>
+                        <p style="color:var(--text-muted); font-size:0.95rem;">Official clinical standards adapted from standard guidelines and Trivandrum Scales.</p>
                         <div style="overflow-x:auto;"><div id="msReferenceContainer"></div></div>
                     </div>
                 </div>
@@ -673,6 +668,7 @@
                 <div id="nutriCalcTab" class="sub-tab-content active">
                     <div class="timeline-section">
                         <h3 class="section-title" style="color:var(--success);">Nutritional Requirements (ICMR RDA)</h3>
+                        <p style="color:var(--text-muted); font-size:0.95rem;">Auto-calculated targets based on active patient Age and Weight.</p>
                         <div class="tool-grid" id="nutriTargetArea"></div>
                     </div>
                 </div>
@@ -680,6 +676,7 @@
                 <div id="nutriRecallTab" class="sub-tab-content">
                     <div class="timeline-section">
                         <h3 class="section-title" style="color:var(--success);">24-Hour Diet Recall Analyzer</h3>
+                        <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.5rem;">Log what the child ate in the past 24 hours to automatically detect caloric or protein deficiencies against their ICMR RDA targets.</p>
                         <div class="tool-grid">
                             <div style="background:var(--bg-body); padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft);">
                                 <label>Meal Time</label>
@@ -874,9 +871,7 @@
 <div id="printEngine"></div>
 
 <script>
-    // --- 1. FULL DATABASES ---
-    
-    // Milestones Data
+    // --- 1. FULL DATABASES (Safe formatting for Android clipboard) ---
     const milestonesDb = {
         2: [
             { id: "m2_1", domain: "Social", text: "Social smile.", sig: "Visual/cognitive deficit." },
@@ -923,7 +918,6 @@
         ]
     };
 
-    // Standard Drugs Data
     const drugDb = {
         "antibiotics": [
             { name: "Amoxicillin 125mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
@@ -941,7 +935,7 @@
             { name: "Cefpodoxime 100mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 100, vol: 5 },
             { name: "Azithromycin 100mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "QD (3-5 days)", conc: 100, vol: 5 },
             { name: "Azithromycin 200mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "QD (3-5 days)", conc: 200, vol: 5 },
-            { name: "Mebendazole 100mg/5ml", doseMg: 100, doseType: "perDose", div: 1, freq: "Stat (Repeat in 2wks) - FIXED", conc: 100, vol: 5 },
+            { name: "Mebendazole 100mg/5ml", doseMg: 100, doseType: "perDose", div: 1, freq: "Stat (Repeat in 2wks)", conc: 100, vol: 5 },
             { name: "Metronidazole 125mg/5ml", doseMg: 30, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 }
         ],
         "antipyretics": [
@@ -949,8 +943,13 @@
             { name: "Paracetamol 120mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 120, vol: 5 },
             { name: "Paracetamol 125mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 125, vol: 5 },
             { name: "Paracetamol 250mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 250, vol: 5 },
+            { name: "Paracetamol Suppository 80mg", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 80, vol: 1 },
+            { name: "Paracetamol Suppository 120mg", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 120, vol: 1 },
+            { name: "Paracetamol Suppository 250mg", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 250, vol: 1 },
             { name: "Ibuprofen 40mg/ml drops", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H (with food)", conc: 40, vol: 1 },
-            { name: "Ibuprofen 100mg/5ml susp", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H (with food)", conc: 100, vol: 5 }
+            { name: "Ibuprofen 100mg/5ml susp", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H (with food)", conc: 100, vol: 5 },
+            { name: "Diclofenac Suppository 12.5mg", doseMg: 1, doseType: "perDose", div: 1, freq: "BID or TID", conc: 12.5, vol: 1 },
+            { name: "Diclofenac Suppository 25mg", doseMg: 1, doseType: "perDose", div: 1, freq: "BID or TID", conc: 25, vol: 1 }
         ],
         "antihistamines": [
             { name: "Chlorpheniramine 2mg/5ml syrup", doseMg: 0.35, doseType: "perDay", div: 4, freq: "Q6H", conc: 2, vol: 5 },
@@ -975,7 +974,6 @@
         ]
     };
 
-    // Foods Database
     const foodsDb = [
         {name:"Boiled rice", cat:"Cereals", p:8.5, c:77, f:0, k:349},
         {name:"Raw rice", cat:"Cereals", p:7.5, c:76, f:0, k:346},
@@ -996,7 +994,33 @@
         {name:"Carrot", cat:"Vegetables", p:1, c:11, f:0.2, k:48}
     ];
 
-    // Core System Variables
+    const baseVaccineSchema = [
+        { id: "bcg", name: "BCG", window: "At Birth", group: "Infant", baseOffsetWeeks: 0, strategy: "Give ASAP." },
+        { id: "opv0", name: "OPV-0", window: "At Birth", group: "Infant", baseOffsetWeeks: 0, strategy: "Max 15 days." },
+        { id: "hepB0", name: "Hepatitis B-0", window: "At Birth", group: "Infant", baseOffsetWeeks: 0, strategy: "Give within 24h." },
+        { id: "penta1", name: "Pentavalent-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Max 1 yr." },
+        { id: "opv1", name: "OPV-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Up to 5 yrs." },
+        { id: "fipv1", name: "fIPV-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Fractional dose (ID)." },
+        { id: "pcv1", name: "PCV-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Max 1 yr." },
+        { id: "penta2", name: "Pentavalent-2", window: "10 Wks", group: "Infant", baseOffsetWeeks: 10, dependsOn: "penta1", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "opv2", name: "OPV-2", window: "10 Wks", group: "Infant", baseOffsetWeeks: 10, dependsOn: "opv1", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "penta3", name: "Pentavalent-3", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "penta2", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "opv3", name: "OPV-3", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "opv2", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "fipv2", name: "fIPV-2", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "fipv1", minIntervalWeeks: 8, strategy: "8wk gap." },
+        { id: "pcv2", name: "PCV-2", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "pcv1", minIntervalWeeks: 8, strategy: "8wk gap." },
+        { id: "mr1", name: "MR-1", window: "9 Mos", group: "Infant", baseOffsetWeeks: 39, strategy: "Up to 5 yrs." },
+        { id: "pcvB", name: "PCV Booster", window: "9 Mos", group: "Infant", baseOffsetWeeks: 39, dependsOn: "pcv2", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "je1", name: "JE-1", window: "9 Mos", group: "Infant", baseOffsetWeeks: 39, condition: "je", strategy: "Endemic areas." },
+        { id: "mr2", name: "MR-2", window: "16-24 Mos", group: "Toddler", baseOffsetWeeks: 69, dependsOn: "mr1", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "dptB1", name: "DPT Booster-1", window: "16-24 Mos", group: "Toddler", baseOffsetWeeks: 69, dependsOn: "penta3", minIntervalWeeks: 24, strategy: "6mo gap required." },
+        { id: "je2", name: "JE-2", window: "16-24 Mos", group: "Toddler", baseOffsetWeeks: 69, condition: "je", dependsOn: "je1", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "dptB2", name: "DPT Booster-2", window: "5-6 Yrs", group: "Toddler", baseOffsetWeeks: 260, strategy: "Max 7 yrs." },
+        { id: "hpv1", name: "HPV-1", window: "9-14 Yrs", group: "Adolescent", baseOffsetWeeks: 468, condition: "female", strategy: "Girls only." },
+        { id: "hpv2", name: "HPV-2", window: "6 Mos Post Dose 1", group: "Adolescent", baseOffsetWeeks: 494, condition: "female", dependsOn: "hpv1", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "td10", name: "Td-10", window: "10 Yrs", group: "Adolescent", baseOffsetWeeks: 520, strategy: "Tetanus/Diphtheria." },
+        { id: "td16", name: "Td-16", window: "16 Yrs", group: "Adolescent", baseOffsetWeeks: 832, strategy: "Tetanus/Diphtheria." }
+    ];
+
     let globalPatientsStore = JSON.parse(localStorage.getItem('nis_patients')) || {};
     let customDrugsStore = JSON.parse(localStorage.getItem('custom_drugs')) || { "antibiotics": [], "antipyretics": [], "antihistamines": [], "git": [], "respiratory": [] };
     let activePatientId = null; 
@@ -1168,11 +1192,10 @@
 
     function triggerActiveWorkspaceBuild(pId) {
         document.getElementById('emptyStatePlaceholder').style.display = "none"; document.getElementById('activeWorkspace').style.display = "block"; document.getElementById('btnMasterPrint').style.display = "flex"; document.getElementById('btnMasterWA').style.display = "flex";
-        // To save space, I will not include the full tracking loop, it runs securely in the background.
-        calculateDose(); renderMilestoneDashboard(); renderRxCartList(); calcGrowth(); calcMalnutrition(); calcNutrition(); renderSensory(); renderDietRecall(); calcCrash();
+        calculateAndRenderTimeline(pId); calculateDose(); renderMilestoneDashboard(); renderRxCartList(); calcGrowth(); calcMalnutrition(); calcNutrition(); renderSensory(); renderDietRecall(); calcCrash();
     }
 
-    // --- ER & NICU SUITE (PHASE 1 ADDITIONS) ---
+    // --- ER & NICU SUITE ---
     function calcCrash() {
         let wt = parseFloat(document.getElementById('crashWeight').value) || parseFloat(document.getElementById('calcWeight').value);
         let ageY = parseInt(document.getElementById('crashAge').value) || parseInt(document.getElementById('ageYrs').value) || 0;
@@ -1183,9 +1206,9 @@
         if(!wt) { out.innerHTML = "Patient weight required to generate Code Blue parameters."; return; }
 
         let defib1 = wt * 2; let defib2 = wt * 4;
-        let adr = wt * 0.1; // 1:10000 IV/IO
-        let amio = wt * 5; // 5mg/kg
-        let fluid = wt * 20; // 20ml/kg bolus
+        let adr = wt * 0.1; 
+        let amio = wt * 5; 
+        let fluid = wt * 20; 
         
         let et = totalM < 12 ? 3.5 : (ageY / 4) + 4;
         let depth = totalM < 24 ? wt + 6 : (ageY / 2) + 12;
@@ -1304,31 +1327,450 @@
     function removeDrugFromCart(idx) { globalPatientsStore[activePatientId].rxList.splice(idx, 1); localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderRxCartList(); }
     function renderRxCartList() { const cartContainer = document.getElementById('rxCartList'); if(!activePatientId) return; const list = globalPatientsStore[activePatientId].rxList; if (list.length === 0) { cartContainer.innerHTML = "<div style='font-style:italic; color:#64748b;'>Prescription pad empty.</div>"; return; } let html = ""; list.forEach((drug, index) => { html += `<div class="rx-cart-item"><div class="rx-cart-item-details"><h4 style="color:var(--text-main); margin-top:0;">${index + 1}. ${drug.name}</h4><div style="color:var(--primary); font-weight:bold; font-size:1.05rem;">Take ${drug.vol} mL &mdash; ${drug.freq}</div><div style="margin-top:4px;">Targeting: ${drug.details}</div></div><button onclick="removeDrugFromCart(${index})" class="secondary" style="background:var(--danger); color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">Remove</button></div>`; }); cartContainer.innerHTML = html; }
 
-    // --- OTHER CORE ENGINES (MINIMIZED FOR SPACE) ---
-    function sendWhatsAppReminder() { /* Same as v11 */ }
-    function sendWACompReport() { /* Same as v11 */ }
-    function calcNutrition() { /* Same as v11 */ }
-    function populateFoodSelect() { /* Same as v11 */ }
-    function addDietRecall() { /* Same as v11 */ }
-    function removeDietRecall(idx) { /* Same as v11 */ }
-    function renderDietRecall() { /* Same as v11 */ }
-    function renderFoodDB(dataArray) { /* Same as v11 */ }
-    function filterFoodDB() { /* Same as v11 */ }
-    function calcMalnutrition() { /* Same as v11 */ }
-    window.evalMAC = function(val) { /* Same as v11 */ }
-    function renderSensory() { /* Same as v11 */ }
-    function drawGrowthCharts(patientAgeMonths, currentWeight, currentHeight, patientGender) { /* Same as v11 */ }
-    function calcGrowth() { /* Same as v11 */ }
-    function calcFluids() { /* Same as v11 */ }
-    function calcPRAM() { /* Same as v11 */ }
-    function calcJaundice() { /* Same as v11 */ }
-    function loadLocalClinicalPDF(inputElement) { /* Same as v11 */ }
-    function renderMilestoneDashboard() { /* Same as v11 */ }
-    function toggleMilestone(mId, isChecked) { /* Same as v11 */ }
-    function buildMilestoneReference() { /* Same as v11 */ }
-    function executePrint(mode) { /* Same as v11 */ }
-    function clearAllData() { if(confirm("Delete all stored patient logs?")) { localStorage.removeItem('nis_patients'); location.reload(); } }
+    // --- TRACKER & WHATSAPP ---
+    function calculateAndRenderTimeline(pId) {
+        const patient = globalPatientsStore[pId]; const baseDate = new Date(patient.dob || new Date()); const today = new Date();
+        document.getElementById('timelineOutput').innerHTML = ""; document.getElementById('auditOutput').innerHTML = "";
+        let computedTimeline = {};
+        
+        baseVaccineSchema.forEach(v => {
+            if(v.condition === "je" && !patient.je) return; 
+            if(v.condition === "female" && patient.gender !== "female") return;
+            let targetDate = new Date(baseDate); targetDate.setDate(targetDate.getDate() + (v.baseOffsetWeeks * 7));
+            let finalDue = new Date(targetDate); let alignmentAltered = false;
+            if(v.dependsOn && computedTimeline[v.dependsOn]) {
+                const parentActualAdminDate = new Date(patient.givenDates[v.dependsOn] || computedTimeline[v.dependsOn].projected);
+                const absoluteMinDate = new Date(parentActualAdminDate); absoluteMinDate.setDate(absoluteMinDate.getDate() + (v.minIntervalWeeks * 7));
+                if(finalDue < absoluteMinDate) { finalDue = absoluteMinDate; alignmentAltered = true; }
+            }
+            let status = patient.givenDates[v.id] ? "done" : (finalDue < today ? "overdue" : "upcoming");
+            computedTimeline[v.id] = { ...v, projected: finalDue.toISOString().split('T')[0], actual: patient.givenDates[v.id] || "", isDelayedByCatchup: alignmentAltered, status: status };
+        });
+        
+        let groups = {}; Object.values(computedTimeline).forEach(item => { if(!groups[item.group]) groups[item.group] = []; groups[item.group].push(item); });
+        for (const [groupName, vaccines] of Object.entries(groups)) {
+            const card = document.createElement('div'); card.className = "timeline-section"; card.innerHTML = `<h3 class="section-title">${groupName}</h3>`;
+            vaccines.forEach(v => {
+                const prettyFinalDue = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+                const dateDisplayClass = v.isDelayedByCatchup ? "date-display-box shifted" : "date-display-box";
+                const isDone = v.actual !== "";
+                card.innerHTML += `<div class="vaccine-row"><div class="vaccine-info"><h4>${v.name}</h4><div class="vaccine-meta" style="margin-bottom:0.4rem;">Window: ${v.window}</div><div class="action-protocol-card"><b>If Missed:</b> ${v.strategy}</div></div><div class="${dateDisplayClass}">${isDone ? '✅ Completed' : prettyFinalDue}</div><div class="date-picker-cell"><input type="checkbox" title="Quick check for today" class="tick-box" ${isDone ? 'checked' : ''} onchange="toggleVaccineAdministered('${pId}', '${v.id}', this.checked)"><div style="text-align:left;"><label style="margin:0; font-size:10px; color:#94a3b8;">Administered On:</label><input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}', '${v.id}', this.value)"></div></div></div>`;
+            });
+            document.getElementById('timelineOutput').appendChild(card);
+        }
 
+        patient.upcomingVaccinesForWhatsapp = [];
+        const overdueBox = document.createElement('div'); overdueBox.innerHTML = "<h4 style='color:var(--danger);'>⚠️ Overdue</h4>";
+        const doneBox = document.createElement('div'); doneBox.innerHTML = "<h4 style='color:var(--success);'>✅ Completed</h4>";
+        const upcomingBox = document.createElement('div'); upcomingBox.innerHTML = "<h4 style='color:var(--primary);'>📅 Future Doses</h4>";
+        
+        Object.values(computedTimeline).forEach(v => {
+            const prettyProj = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+            const card = document.createElement('div'); card.className = `audit-card ${v.status}`;
+            if(v.status === 'overdue') { 
+                card.innerHTML = `<div><b style="color:var(--text-main);">${v.name}</b><br><small style="color:var(--text-muted);">Target was: ${prettyProj}</small></div> <span class="status-pill overdue">Missed</span>`; 
+                overdueBox.appendChild(card); 
+                patient.upcomingVaccinesForWhatsapp.push(v.name); 
+            }
+            else if(v.status === 'done') { 
+                card.innerHTML = `<div><b style="color:var(--text-main);">${v.name}</b><br><small style="color:var(--text-muted);">Given on: ${new Date(v.actual).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'})}</small></div> <span class="status-pill done">Given</span>`; 
+                doneBox.appendChild(card); 
+            }
+            else { 
+                card.innerHTML = `<div><b style="color:var(--text-main);">${v.name}</b><br><small style="color:var(--text-muted);">Due: ${prettyProj}</small></div> <span class="status-pill upcoming">Upcoming</span>`; 
+                upcomingBox.appendChild(card); 
+                if(patient.upcomingVaccinesForWhatsapp.length < 3) patient.upcomingVaccinesForWhatsapp.push(v.name); 
+            }
+        });
+        document.getElementById('auditOutput').appendChild(overdueBox); 
+        document.getElementById('auditOutput').appendChild(doneBox); 
+        document.getElementById('auditOutput').appendChild(upcomingBox);
+        
+        globalPatientsStore[pId].upcomingVaccinesForWhatsapp = patient.upcomingVaccinesForWhatsapp;
+    }
+    function toggleVaccineAdministered(pId, vId, isChecked) { updateAdministrationDate(pId, vId, isChecked ? new Date().toISOString().split('T')[0] : ""); }
+    function updateAdministrationDate(pId, vId, dateStr) { globalPatientsStore[pId].givenDates[vId] = dateStr; localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); calculateAndRenderTimeline(pId); }
+    function sendWhatsAppReminder() {
+        if(!activePatientId) return alert("Select a patient first.");
+        const p = globalPatientsStore[activePatientId];
+        const vaxList = p.upcomingVaccinesForWhatsapp ? p.upcomingVaccinesForWhatsapp.join(", ") : "scheduled vaccines";
+        const msg = `Dear Parent, this is a reminder from the Pediatric Clinic that Baby ${p.name}'s upcoming vaccinations (${vaxList}) are due soon. Please visit the clinic to keep their schedule on track.`;
+        const targetPhone = p.phone ? p.phone.replace(/[^0-9]/g, "") : "";
+        window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+    function sendWACompReport() {
+        if(!activePatientId) return alert("Select patient");
+        const p = globalPatientsStore[activePatientId];
+        let txt = `*Pediatric Clinical Report*\nName: ${p.name}\nAge: ${p.ageYrs}Y ${p.ageMos}M\nWeight: ${p.weight} kg\n\n`;
+        if(p.rxList && p.rxList.length > 0) {
+            txt += `*Active Prescriptions:*\n`;
+            p.rxList.forEach((rx, i) => { txt += `${i+1}. ${rx.name} - ${rx.vol}mL (${rx.freq})\n`; });
+            txt += `\n`;
+        }
+        if(p.upcomingVaccinesForWhatsapp && p.upcomingVaccinesForWhatsapp.length > 0) {
+            txt += `*Upcoming Vaccines:*\n${p.upcomingVaccinesForWhatsapp.join(", ")}\n\n`;
+        }
+        txt += `Please visit the clinic for your detailed follow-up.`;
+        const targetPhone = p.phone ? p.phone.replace(/[^0-9]/g, "") : "";
+        window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`, '_blank');
+    }
+
+    // --- NUTRITION ENGINE ---
+    function calcNutrition() {
+        let totalM = currentPatientAgeInMonths;
+        if(totalM === 0) totalM = parseInt(document.getElementById('calcQuickAge').value) || 0;
+        let y = Math.floor(totalM / 12);
+        const wt = parseFloat(document.getElementById('pWeight').value || document.getElementById('calcWeight').value);
+        const gender = document.getElementById('gender').value || 'male';
+        const out = document.getElementById('nutriTargetArea');
+        if(totalM === 0 && !wt) { out.innerHTML = "<div class='tool-result neutral'>Enter Age and Weight to calculate ICMR nutritional targets.</div>"; return; }
+        
+        let kcal = 0; let protein = 0; let wtGain = "";
+        if (totalM < 3) { kcal = wt * 116; protein = wt * 2.3; wtGain = "30 g/day"; }
+        else if (totalM < 6) { kcal = wt * 99; protein = wt * 1.85; wtGain = "20 g/day"; }
+        else if (totalM < 9) { kcal = wt * 95; protein = wt * 1.65; wtGain = "15 g/day"; }
+        else if (totalM < 12) { kcal = wt * 101; protein = wt * 1.5; wtGain = "12 g/day"; }
+        else if (y < 3) { kcal = 1220; protein = 22; wtGain = "8 g/day"; }
+        else if (y < 6) { kcal = 1720; protein = 29; wtGain = "6 g/day"; }
+        else if (y < 10) { kcal = 2050; protein = 36; wtGain = "Avg 3 kg/year"; }
+        else { kcal = gender === 'male' ? 2420 : 2200; protein = 43; wtGain = "Pubertal spurt variance"; }
+        
+        out.innerHTML = `
+            <div class="result-card">
+                <p style="margin-top:0; color:var(--text-muted); font-weight:600; text-transform:uppercase; font-size:0.85rem; letter-spacing:0.05em;">Daily Caloric Requirement</p>
+                <h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${kcal.toFixed(0)} kcal</h2>
+                <div style="font-size:0.85rem; color:var(--text-muted);">(ICMR Target based on cohort)</div>
+            </div>
+            <div class="result-card" style="border-color:var(--primary);">
+                <p style="margin-top:0; color:var(--primary); font-weight:600; text-transform:uppercase; font-size:0.85rem; letter-spacing:0.05em;">Daily Protein Target</p>
+                <h2 style="font-size:2.5rem; margin:10px 0; color:var(--primary);">${protein.toFixed(1)} g</h2>
+                <div style="font-size:0.85rem; color:var(--text-muted);">Expected wt gain: <b style="color:var(--text-main);">${wtGain}</b></div>
+            </div>
+        `;
+    }
+    function populateFoodSelect() {
+        let sel = document.getElementById('recallFood');
+        sel.innerHTML = '<option value="">-- Select Food Item --</option>';
+        foodsDb.forEach((f, i) => { sel.innerHTML += `<option value="${i}">${f.name} (${f.k} kcal/100g)</option>`; });
+    }
+    function addDietRecall() {
+        if(!activePatientId) return alert("Select patient first to use the Diet Recall tool.");
+        let m = document.getElementById('recallMeal').value;
+        let fIdx = document.getElementById('recallFood').value;
+        let q = parseFloat(document.getElementById('recallQty').value);
+        if(!m || fIdx === "" || !q) return;
+        
+        let food = foodsDb[fIdx];
+        let intake = { meal: m, name: food.name, qty: q, kcal: (food.k * q) / 100, prot: (food.p * q) / 100 };
+        
+        if(!globalPatientsStore[activePatientId].dietLogs) globalPatientsStore[activePatientId].dietLogs = [];
+        globalPatientsStore[activePatientId].dietLogs.push(intake);
+        localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore));
+        
+        document.getElementById('recallFood').value = ""; document.getElementById('recallQty').value = "";
+        renderDietRecall();
+    }
+    function removeDietRecall(idx) {
+        globalPatientsStore[activePatientId].dietLogs.splice(idx, 1);
+        localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore));
+        renderDietRecall();
+    }
+    function renderDietRecall() {
+        let listArea = document.getElementById('recallListArea');
+        let sumArea = document.getElementById('recallSummaryArea');
+        if(!activePatientId) { listArea.innerHTML = ""; sumArea.innerHTML = "Select a patient to track diet recall."; sumArea.className = "tool-result neutral"; return; }
+
+        let logs = globalPatientsStore[activePatientId].dietLogs || [];
+        if(logs.length === 0) { listArea.innerHTML = ""; sumArea.innerHTML = "Log a food item to initialize deficiency analyzer."; sumArea.className = "tool-result neutral"; return; }
+        
+        let totKcal = 0; let totProt = 0;
+        let html = `<table class="nis-table"><thead><tr><th>Meal</th><th>Food</th><th>Qty (g/ml)</th><th>Protein</th><th>Calories</th><th></th></tr></thead><tbody>`;
+        logs.forEach((l, i) => {
+            totKcal += l.kcal; totProt += l.prot;
+            html += `<tr><td>${l.meal}</td><td>${l.name}</td><td>${l.qty}</td><td>${l.prot.toFixed(1)}g</td><td>${l.kcal.toFixed(0)} kcal</td><td><button onclick="removeDietRecall(${i})" class="secondary" style="background:var(--danger); padding:4px 10px; color:white; border:none; border-radius:4px;">X</button></td></tr>`;
+        });
+        html += `</tbody></table>`;
+        listArea.innerHTML = html;
+        
+        let p = globalPatientsStore[activePatientId];
+        let totalM = p.totalMonths; let y = Math.floor(totalM/12); let wt = parseFloat(p.weight);
+        if(!wt) { sumArea.innerHTML = "Patient weight required to calculate targets for comparison."; return; }
+        
+        let tKcal = 0; let tProt = 0;
+        if (totalM < 3) { tKcal = wt * 116; tProt = wt * 2.3; }
+        else if (totalM < 6) { tKcal = wt * 99; tProt = wt * 1.85; }
+        else if (totalM < 9) { tKcal = wt * 95; tProt = wt * 1.65; }
+        else if (totalM < 12) { tKcal = wt * 101; tProt = wt * 1.5; }
+        else if (y < 3) { tKcal = 1220; tProt = 22; }
+        else if (y < 6) { tKcal = 1720; tProt = 29; }
+        else if (y < 10) { tKcal = 2050; tProt = 36; }
+        else { tKcal = p.gender === 'male' ? 2420 : 2200; tProt = 43; }
+        
+        let kDiff = totKcal - tKcal; let pDiff = totProt - tProt;
+        let kStat = kDiff < 0 ? `<span style="color:var(--danger)">Deficit of ${Math.abs(kDiff).toFixed(0)} kcal</span>` : `<span style="color:var(--success)">Surplus of ${kDiff.toFixed(0)} kcal</span>`;
+        let pStat = pDiff < 0 ? `<span style="color:var(--danger)">Deficit of ${Math.abs(pDiff).toFixed(1)} g</span>` : `<span style="color:var(--success)">Surplus of ${pDiff.toFixed(1)} g</span>`;
+        
+        sumArea.innerHTML = `
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; text-align:left;">
+                <div style="background:white; padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-soft); box-shadow:var(--shadow-sm);">
+                    <h4 style="margin:0 0 10px 0; color:var(--text-main); font-size:1.1rem;">Calories (kcal)</h4>
+                    <div style="color:var(--text-muted); font-size:0.9rem; margin-bottom:5px;">Target: ${tKcal.toFixed(0)} | Intake: ${totKcal.toFixed(0)}</div>
+                    <div style="font-weight:700; font-size:1.05rem;">${kStat}</div>
+                </div>
+                <div style="background:white; padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-soft); box-shadow:var(--shadow-sm);">
+                    <h4 style="margin:0 0 10px 0; color:var(--text-main); font-size:1.1rem;">Protein (g)</h4>
+                    <div style="color:var(--text-muted); font-size:0.9rem; margin-bottom:5px;">Target: ${tProt.toFixed(1)} | Intake: ${totProt.toFixed(1)}</div>
+                    <div style="font-weight:700; font-size:1.05rem;">${pStat}</div>
+                </div>
+            </div>
+        `;
+        sumArea.className = "tool-result";
+    }
+    function renderFoodDB(dataArray) {
+        const tbody = document.getElementById('foodTableBody'); tbody.innerHTML = "";
+        dataArray.forEach(f => { tbody.innerHTML += `<tr><td><b style="color:var(--primary);">${f.name}</b></td><td>${f.cat}</td><td>${f.p}</td><td>${f.c}</td><td>${f.f || 0}</td><td><b style="color:var(--success);">${f.k}</b></td></tr>`; });
+    }
+    function filterFoodDB() {
+        let filter = document.getElementById('foodSearch').value.toUpperCase();
+        let filtered = foodsDb.filter(f => f.name.toUpperCase().includes(filter) || f.cat.toUpperCase().includes(filter));
+        renderFoodDB(filtered);
+    }
+
+    // --- MALNUTRITION & ANTHROPOMETRY ENGINE ---
+    function calcMalnutrition() {
+        if(!activePatientId) return;
+        const p = globalPatientsStore[activePatientId];
+        const wt = parseFloat(p.weight); const ht = parseFloat(document.getElementById('htCm').value || p.htCm); const hc = parseFloat(document.getElementById('hcCm').value || p.hcCm);
+        const totalM = p.totalMonths; const y = Math.floor(totalM / 12);
+        const oedema = document.getElementById('malnOedemaToggle').checked;
+        const outGrid = document.getElementById('malnGridOutput');
+        
+        let html = "";
+        if(wt && totalM > 0) {
+            let expWt = getExpectedWeight(totalM); let wtPercent = (wt / expWt) * 100;
+            let iapGrade = "Normal"; let iapColor = "var(--success)";
+            if(wtPercent <= 80 && wtPercent > 70) { iapGrade = "Grade 1"; iapColor = "var(--warning)"; }
+            else if(wtPercent <= 70 && wtPercent > 60) { iapGrade = "Grade 2"; iapColor = "var(--warning)"; }
+            else if(wtPercent <= 60 && wtPercent > 50) { iapGrade = "Grade 3"; iapColor = "var(--danger)"; }
+            else if(wtPercent <= 50) { iapGrade = "Grade 4"; iapColor = "var(--danger)"; }
+            
+            let wellcome = "Normal / Non-classified";
+            if(wtPercent <= 80 && wtPercent > 60) wellcome = oedema ? "Kwashiorkor" : "Underweight";
+            if(wtPercent <= 60) wellcome = oedema ? "Marasmic-Kwashiorkar" : "Marasmus";
+
+            html += `<div class="tool-result" style="border-color:${iapColor}; color:${iapColor};"><h4 style="margin:0 0 5px 0;">Weight-for-Age Assessment</h4><b>${wtPercent.toFixed(1)}%</b> of Expected (${expWt.toFixed(1)} kg)<br><small style="color:var(--text-main); margin-top:5px; display:block;"><b>IAP:</b> ${iapGrade} | <b>Wellcome:</b> ${wellcome}</small></div>`;
+        }
+        if(y >= 1 && y <= 5) { html += `<div class="tool-result neutral" style="text-align:left;"><label style="margin-top:0;">Enter Mid-Arm Circ. (cm)</label><input type="number" step="0.1" id="macInput" oninput="evalMAC(this.value)"><div id="macOutput" style="margin-top:10px; font-weight:bold;"></div></div>`; }
+        if(totalM < 1 && wt && ht) {
+            let pi = ((wt * 1000) * 100) / Math.pow(ht, 3);
+            let piStat = pi >= 2 ? "Symmetric IUGR" : (pi < 1.9 ? "Asymmetric IUGR" : "Normal / Appropriate");
+            html += `<div class="tool-result neutral"><h4 style="margin:0 0 5px 0;">Ponderal Index (Neonate)</h4><b>PI = ${pi.toFixed(2)}</b><br><small style="color:var(--primary); font-weight:bold;">${piStat}</small></div>`;
+        }
+        if(totalM < 12 && ht) {
+            let expHc = (ht / 2) + 9.5;
+            let hcStat = hc ? (hc < expHc - 3 ? "Microcephaly Risk" : (hc > expHc + 3 ? "Macrocephaly Risk" : "Normal variance")) : "Enter HC to evaluate";
+            html += `<div class="tool-result neutral"><h4 style="margin:0 0 5px 0;">Expected Head Circumference</h4><b>${expHc.toFixed(1)} cm (±2.5cm)</b><br><small style="color:var(--text-main); font-weight:bold;">${hcStat}</small></div>`;
+        }
+        if(wt) {
+            let bsa = ht ? Math.sqrt((ht * wt) / 3600) : (wt <= 5 ? (0.05*wt)+0.05 : (wt <= 10 ? (0.04*wt)+0.1 : (wt <= 20 ? (0.03*wt)+0.2 : (0.02*wt)+0.4)));
+            let maint = wt <= 10 ? wt * 100 : (wt <= 20 ? 1000 + ((wt-10)*50) : 1500 + ((wt-20)*20));
+            html += `<div class="tool-result neutral"><h4 style="margin:0 0 5px 0;">Clinical Base Targets</h4><b>BSA:</b> ${bsa.toFixed(2)} m&sup2;<br><b>Daily Maint. Fluids:</b> ${maint} mL/day</div>`;
+        }
+        outGrid.innerHTML = html || "<div class='tool-result neutral'>Enter Age, Weight, and Height in the Registry to auto-calculate triage metrics.</div>";
+    }
+    window.evalMAC = function(val) {
+        let v = parseFloat(val); let out = document.getElementById('macOutput');
+        if(!v) { out.innerHTML = ""; return; }
+        if(v < 11.5) out.innerHTML = "<span style='color:var(--danger);'>🚨 Severe Acute Malnutrition (SAM)</span>";
+        else if(v <= 13.5) out.innerHTML = "<span style='color:var(--warning);'>⚠️ Borderline Malnutrition</span>";
+        else out.innerHTML = "<span style='color:var(--success);'>✅ Normal MAC</span>";
+    }
+    function renderSensory() {
+        if(!activePatientId) return;
+        const p = globalPatientsStore[activePatientId]; const out = document.getElementById('sensoryOutputArea'); let html = "";
+        if(p.totalMonths < 2) { html += `<b>Vision:</b> Look for cataracts, wandering eye, nystagmus. Follows objects 45&deg;.<br><br><b>Hearing:</b> Assess Startle response and Rattle test.`; } 
+        else if (p.totalMonths < 6) { html += `<b>Vision (12 wks):</b> Fixes and follows objects till 90&deg;.<br><br><b>Hearing:</b> Startle response/Rattle test.`; } 
+        else if (p.totalMonths < 12) { html += `<b>Vision (6-8 mos):</b> Follows 180&deg;. Fixates on small objects near face.<br><br><b>Hearing (8-10 mos):</b> Distraction hearing test (Child must turn head to sound out of visual range).`; } 
+        else if (p.totalMonths < 36) { html += `<b>Vision (2.5 yrs):</b> Test distant vision (3 meters) and fix/follow. Look for strabismus.<br><br><b>Hearing:</b> Refer for Pure-tone audiometry & speech discrimination if language delayed.`; } 
+        else { html += `<b>Vision:</b> Test distant vision (picture/letter test) and near vision (Snellen's). Should match colors.<br><br><b>Hearing:</b> Routine audiometry screening.`; }
+        out.innerHTML = `<div class="tool-result neutral" style="text-align:left; font-weight:normal; line-height:1.6; padding:1.5rem;">${html}</div>`;
+    }
+
+    // --- GROWTH CHARTS ---
+    function drawGrowthCharts(patientAgeMonths, currentWeight, currentHeight, patientGender) {
+        if(wtChartInstance) wtChartInstance.destroy(); if(htChartInstance) htChartInstance.destroy();
+        const standardXLabels = [0, 6, 12, 18, 24, 30, 36];
+        const weight50th = patientGender === 'male' ? [3.3, 7.9, 9.6, 10.9, 12.2, 13.3, 14.3] : [3.2, 7.3, 8.9, 10.2, 11.5, 12.7, 13.9];
+        const weight3rd  = patientGender === 'male' ? [2.4, 6.4, 7.8, 8.8, 9.7, 10.5, 11.3] : [2.4, 5.8, 7.0, 7.9, 8.7, 9.4, 10.2];
+        const weight97th = patientGender === 'male' ? [4.3, 9.8, 12.0, 13.7, 15.3, 16.9, 18.3] : [4.2, 9.3, 11.5, 13.2, 15.0, 16.7, 18.1];
+        const height50th = patientGender === 'male' ? [50, 67, 76, 82, 87, 92, 96] : [49, 65, 74, 80, 85, 90, 95];
+        const height3rd  = patientGender === 'male' ? [46, 63, 71, 76, 81, 85, 89] : [45, 61, 69, 74, 79, 83, 87];
+        const height97th = patientGender === 'male' ? [54, 71, 81, 88, 93, 99, 103] : [53, 69, 79, 86, 91, 97, 101];
+
+        wtChartInstance = new Chart(document.getElementById('weightChartCanvas').getContext('2d'), { type: 'line', data: { labels: standardXLabels, datasets: [ { label: 'Patient Value', data: [{x: patientAgeMonths, y: currentWeight}], backgroundColor: 'red', borderColor: 'red', pointRadius: 7, showLine: false }, { label: 'WHO 97th %', data: weight97th, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 }, { label: 'WHO 50th %', data: weight50th, borderColor: 'rgba(16, 185, 129, 0.8)', fill: false, pointRadius: 0 }, { label: 'WHO 3rd %', data: weight3rd, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 } ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: `Weight-for-Age (${patientGender.toUpperCase()})` } }, scales: { x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Age (Mos)' }, min:0, max:36 } } } });
+        htChartInstance = new Chart(document.getElementById('heightChartCanvas').getContext('2d'), { type: 'line', data: { labels: standardXLabels, datasets: [ { label: 'Patient Value', data: [{x: patientAgeMonths, y: currentHeight}], backgroundColor: 'red', borderColor: 'red', pointRadius: 7, showLine: false }, { label: 'WHO 97th %', data: height97th, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 }, { label: 'WHO 50th %', data: height50th, borderColor: 'rgba(16, 185, 129, 0.8)', fill: false, pointRadius: 0 }, { label: 'WHO 3rd %', data: height3rd, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 } ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: `Height-for-Age (${patientGender.toUpperCase()})` } }, scales: { x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Age (Mos)' }, min:0, max:36 } } } });
+    }
+    function calcGrowth() {
+        const wt = parseFloat(document.getElementById('pWeight').value || document.getElementById('calcWeight').value || 10);
+        let htObj = document.getElementById('htCm'); let htOnTheGoObj = document.getElementById('htCmOnTheGo');
+        const ht = parseFloat( (htObj && htObj.value) ? htObj.value : (htOnTheGoObj ? htOnTheGoObj.value : 0) );
+        let totalM = activePatientId ? globalPatientsStore[activePatientId].totalMonths : (parseInt(document.getElementById('calcQuickAge').value) || 0);
+        let pGender = document.getElementById('gender').value || 'male';
+        if(!ht) return; drawGrowthCharts(totalM, wt, ht, pGender);
+    }
+
+    // --- TRIAGE, ER & CLINICAL TOOLS ---
+    function calcFluids() {
+        const wt = parseFloat(document.getElementById('fluidWeight').value || document.getElementById('pWeight').value); const deg = parseFloat(document.getElementById('fluidDehydration').value); const resArea = document.getElementById('fluidResultArea');
+        if(!wt) { resArea.innerHTML = "Provide weight parameter."; return; }
+        let maint = wt <= 10 ? wt * 100 : (wt <= 20 ? 1000 + ((wt-10)*50) : 1500 + ((wt-20)*20));
+        let deficit = deg * wt * 10; let total = maint + deficit;
+        let first8 = (maint/3) + (deficit/2); let next16 = (maint*(2/3)) + (deficit/2);
+        resArea.innerHTML = `<b>Total Fluid Load Volume: ${total.toFixed(0)} mL/24h</b><br><span style="font-size:0.85rem; color:#475569;">(Maintenance: ${maint.toFixed(0)} mL | Deficit: ${deficit.toFixed(0)} mL)</span><div style="margin-top:15px; padding-top:15px; border-top:1px dashed #cbd5e1; text-align:left; font-size:0.95rem;"><b>Phase 1 (First 8 Hours):</b> ${first8.toFixed(0)} mL &mdash; <b style="color:var(--primary);">${(first8/8).toFixed(1)} mL/hr</b><br><br><b>Phase 2 (Next 16 Hours):</b> ${next16.toFixed(0)} mL &mdash; <b style="color:var(--primary);">${(next16/16).toFixed(1)} mL/hr</b></div>`;
+        resArea.className = "tool-result";
+    }
+    
+    function calcPRAM() {
+        let score = parseInt(document.getElementById('pramO2').value) + parseInt(document.getElementById('pramSupra').value) + parseInt(document.getElementById('pramScalene').value) + parseInt(document.getElementById('pramAir').value) + parseInt(document.getElementById('pramWheeze').value);
+        const resArea = document.getElementById('pramResultArea');
+        let sev = "Mild"; let cls = "tool-result"; let proto = "Salbutamol MDI/Nebulizer. Discharge with spacing spacer strategy instruction.";
+        if(score >= 8) { sev = "Severe Crisis"; cls = "tool-result danger"; proto = "Continuous Salbutamol + Ipratropium brom. Systemic Corticosteroids (IV Dex/Hydrocort). Arrange PICU stabilization infrastructure."; }
+        else if (score >= 4) { sev = "Moderate Severity"; cls = "tool-result warning"; proto = "Salbutamol Nebulization cycle Q20 mins × 3 rounds. Initiate oral Prednisolone course standard dosing protocol."; }
+        resArea.innerHTML = `PRAM Severity Vector Score: <b>${score}/12</b> (${sev})<div style="margin-top:15px; font-size:0.95rem; text-align:left; font-weight:normal; line-height:1.5;"><b>Clinical Management Directive:</b><br>${proto}</div>`;
+        resArea.className = cls;
+    }
+
+    function calcJaundice() {
+        const hr = parseFloat(document.getElementById('jaunHours').value); const tsb = parseFloat(document.getElementById('jaunTSB').value);
+        const risk = document.getElementById('jaunRisk').value; const resArea = document.getElementById('jaunResultArea');
+        if(!hr || !tsb) { resArea.innerHTML = "Provide parameters."; return; }
+        if(hr < 24) { resArea.innerHTML = "<b>🚨 Critical Hyperbilirubinemia:</b> Visual jaundice < 24 hours of life is strictly pathological. Intercept immediately."; resArea.className = "tool-result danger"; return; }
+        
+        let limit = 15;
+        if (hr <= 24) limit = risk === 'high' ? 8 : (risk === 'med' ? 10 : 12);
+        else if (hr <= 48) limit = risk === 'high' ? 11 : (risk === 'med' ? 13 : 15);
+        else if (hr <= 72) limit = risk === 'high' ? 13 : (risk === 'med' ? 15 : 18);
+        else limit = risk === 'high' ? 14 : (risk === 'med' ? 17 : 20);
+        
+        if(tsb >= limit) { resArea.innerHTML = `<b>🚨 Phototherapy Intervention Threshold Breached</b><br>TSB level of ${tsb} mg/dL is at or above safety threshold limits (${limit} mg/dL).`; resArea.className = "tool-result danger"; }
+        else if (tsb >= limit - 2) { resArea.innerHTML = `<b>⚠️ High-Intermediate Risk Zone Warning</b><br>TSB curve profile (${tsb} mg/dL) is within 2 mg/dL of emergency line. Repeat in 12-24 hours.`; resArea.className = "tool-result warning"; }
+        else { resArea.innerHTML = `<b>✅ Safe Baseline Zone Metrics</b><br>TSB profile stands within safe margin clearances.`; resArea.className = "tool-result"; }
+    }
+
+    // --- MILESTONES DASHBOARD ---
+    function renderMilestoneDashboard() {
+        if(!activePatientId) return;
+        const patient = globalPatientsStore[activePatientId]; const achieved = patient.achievedMilestones || {};
+        const availableAges = Object.keys(milestonesDb).map(Number).sort((a,b)=>a-b);
+        let currentBracket = 0; let upcomingBracket = 0;
+        for(let i=0; i<availableAges.length; i++){ if(currentPatientAgeInMonths >= availableAges[i]) currentBracket = availableAges[i]; else break; }
+        upcomingBracket = availableAges.find(age => age > currentPatientAgeInMonths) || null;
+        
+        const evalContainer = document.getElementById('msEvalContainer');
+        if (currentBracket === 0) { evalContainer.innerHTML = "<p>Patient under milestone tracker bracket parameters.</p>"; } else {
+            let evalHTML = "";
+            availableAges.forEach(age => {
+                if (age <= currentBracket) {
+                    let isCurrent = (age === currentBracket);
+                    let borderStyle = isCurrent ? "border: 2px solid var(--primary);" : "border: 1px solid var(--border-soft);";
+                    let bgStyle = isCurrent ? "background: var(--primary-light);" : "background: white;";
+                    evalHTML += `<div style="${borderStyle} ${bgStyle} padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1rem; box-shadow: var(--shadow-sm);"><h4 style="margin-top:0; color:var(--primary); margin-bottom:1rem; font-size:1.1rem; border-bottom:1px solid var(--border-soft); padding-bottom:10px;">${isCurrent ? `Current Age Milestone Bracket Target (${age} Mos)` : `Historical Check verification Target (${age} Mos)`}</h4>`;
+                    milestonesDb[age].forEach(m => { evalHTML += `<div class="milestone-item"><input type="checkbox" id="${m.id}" ${achieved[m.id] ? 'checked' : ''} onchange="toggleMilestone('${m.id}', this.checked)"><div><span class="milestone-domain">${m.domain}</span><div class="milestone-text"><label for="${m.id}" style="cursor:pointer; font-weight:normal; margin:0;">${m.text}</label></div></div></div>`; });
+                    evalHTML += `</div>`;
+                }
+            });
+            evalContainer.innerHTML = evalHTML;
+        }
+
+        let completedHTML = ""; let missedHTML = "";
+        availableAges.forEach(age => {
+            let aHTML = ""; milestonesDb[age].forEach(m => { if(achieved[m.id]) aHTML += `<div>✅ <b>${m.domain}</b>: ${m.text}</div>`; });
+            if(aHTML) completedHTML += `<h5 style="margin:1rem 0 0.25rem 0; color:var(--success); font-size:0.95rem; border-bottom:1px solid #bbf7d0; padding-bottom:5px;">Achieved via ${age}m vectors:</h5>${aHTML}`;
+            if(age <= currentBracket) { milestonesDb[age].forEach(m => { if(!achieved[m.id]) missedHTML += `<div class="red-flag-card" style="padding:10px; border:1px solid #fecaca; background:#fef2f2; border-radius:8px; margin-bottom:10px;"><h4 style="margin:0 0 5px 0; color:#991b1b;">🚨 Flagged Target: ${m.text} (Expected by ${age} Mos)</h4><span class="milestone-domain">${m.domain}</span><div class="sig-text" style="font-size:0.85rem; margin-top:5px; color:#7f1d1d;"><b>Significance:</b> ${m.sig}</div></div>`; }); }
+        });
+        document.getElementById('msCompletedContainer').innerHTML = completedHTML || "<p>No milestones recorded.</p>";
+        document.getElementById('msMissedContainer').innerHTML = missedHTML || "<div style='padding:1.5rem; background:#f0fdf4; border:1px solid #16a34a; border-radius:var(--radius-lg); color:#166534; font-weight:bold;'>✅ All verification targets achieved.</div>";
+        document.getElementById('msUpcomingContainer').innerHTML = upcomingBracket ? `<h4 style="margin:1rem 0 0.5rem 0; color:var(--primary); font-size:1.1rem; border-bottom:1px solid var(--border-soft); padding-bottom:5px;">Targeting Milestone Marker: ${upcomingBracket} Months</h4>` + milestonesDb[upcomingBracket].map(m => `<div style="padding:1rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); margin-bottom:0.75rem; background:white; font-size:0.95rem; box-shadow:var(--shadow-sm);"><span class="milestone-domain">${m.domain}</span><div style="font-weight:600; margin-top:5px; color:var(--text-main);">${m.text}</div></div>`).join("") : "<p>Advanced baseline clearance parameters.</p>";
+    }
+    function toggleMilestone(mId, isChecked) { globalPatientsStore[activePatientId].achievedMilestones[mId] = isChecked; localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderMilestoneDashboard(); }
+    
+    function buildMilestoneReference() {
+        let tableHTML = `<table class="nis-table"><thead><tr><th>Age Bracket</th><th>Domain</th><th>Milestone Marker</th></tr></thead><tbody>`;
+        Object.keys(milestonesDb).forEach(age => {
+            milestonesDb[age].forEach((m, idx) => {
+                if(idx === 0) { tableHTML += `<tr><td rowspan="${milestonesDb[age].length}"><b>${age} Months</b></td><td><span class="milestone-domain">${m.domain}</span></td><td>${m.text}</td></tr>`; } 
+                else { tableHTML += `<tr><td><span class="milestone-domain">${m.domain}</span></td><td>${m.text}</td></tr>`; }
+            });
+        });
+        const refContainer = document.getElementById('msReferenceContainer');
+        if(refContainer) refContainer.innerHTML = tableHTML + `</tbody></table>`;
+    }
+
+    // --- PRINT ENGINE ---
+    function getPrintHeaderHTML(title) {
+        const p = globalPatientsStore[activePatientId]; if(!p) return "";
+        return `
+            <div style="margin-bottom: 20px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                    <h1 style="margin-bottom: 5px; font-size:24px;">${title}</h1>
+                    <div style="font-size:12px; color:#555; padding-bottom:5px;">Dr. Peter Suraj Joseph</div>
+                </div>
+                <div style="font-size: 14px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 10px 0; margin-bottom: 20px;">
+                    <b>Patient ID/Name:</b> ${p.name} &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <b>Age Metrics:</b> ${p.ageYrs}Y ${p.ageMos}M &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <b>Weight:</b> ${p.weight || 'N/A'} kg &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <b>Gender:</b> ${p.gender.toUpperCase()}
+                </div>
+            </div>
+        `;
+    }
+    function extractToolResult(elId) {
+        let el = document.getElementById(elId); if(!el) return ""; let txt = el.innerHTML;
+        if(txt.includes("Execute calculation") || txt.includes("Provide") || txt.includes("Enter") || txt.includes("Evaluate inputs") || txt.includes("Populated")) return "";
+        return `<div class="tool-result">${txt}</div>`;
+    }
+    function executePrint(mode) {
+        if (!activePatientId && mode !== 'prescription') { alert("Please select a patient first."); return; }
+        const engine = document.getElementById('printEngine'); const p = globalPatientsStore[activePatientId] || {}; let html = "";
+
+        if (mode === 'tracker' || mode === 'comprehensive') { html += getPrintHeaderHTML("IMMUNIZATION SCHEDULE REPORT") + document.getElementById('timelineOutput').innerHTML; if (mode === 'comprehensive') html += `<div class="page-break"></div>`; }
+        if (mode === 'prescription' || mode === 'comprehensive') {
+            html += getPrintHeaderHTML("PEDIATRIC PRESCRIPTION PAD");
+            if (p.rxList && p.rxList.length > 0) {
+                html += `<div class="rx-pad"><div class="rx-symbol">Rx</div>`;
+                p.rxList.forEach((rx, index) => { html += `<div style="margin-bottom: 1.8rem;"><div class="rx-drug-name">${index + 1}. ${rx.name}</div><div class="rx-dosage">Take ${rx.vol} mL &mdash; ${rx.freq}</div><div style="color:#555; font-size:12px; margin-top:5px;">Clinical Targets Formulation context: ${rx.details}</div></div>`; });
+                html += `<div style="margin-top: 60px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center;">Authorized Clinic Sign-off Signature</div></div>`;
+            } else if (pendingPrescriptionDrug) {
+                html += `<div class="rx-pad"><div class="rx-symbol">Rx</div><div style="margin-bottom: 1.8rem;"><div class="rx-drug-name">1. ${pendingPrescriptionDrug.name}</div><div class="rx-dosage">Take ${pendingPrescriptionDrug.vol} mL &mdash; ${pendingPrescriptionDrug.freq}</div><div style="color:#555; font-size:12px; margin-top:5px;">Targets context: ${pendingPrescriptionDrug.details}</div></div><div style="margin-top: 60px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center;">Authorized Clinic Sign-off Signature</div></div>`;
+            } else { html += `<p>No active formulations staged onto prescription pad parameters.</p>`; }
+            if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
+        }
+        if (mode === 'nutrition' || mode === 'comprehensive') {
+            html += getPrintHeaderHTML("PEDIATRIC DIET & NUTRITION PLAN");
+            if (p.dietLogs && p.dietLogs.length > 0) { html += `<h3 style="color:var(--success);">24-Hour Diet Recall Analysis</h3>`; html += document.getElementById('recallListArea').innerHTML; html += document.getElementById('recallSummaryArea').innerHTML; }
+            html += `<h3 style="margin-top: 30px; color:var(--success);">Target Requirements (ICMR)</h3>` + document.getElementById('nutriTargetArea').innerHTML;
+            html += `<h3 style="margin-top: 30px; color:var(--primary);">Recommended Household Portions</h3><ul style="font-size:1.1rem; line-height:1.6;"><li>1 bowl cooked rice: 120 kcal</li><li>1 Idli / 1 Vada: 50 kcal</li><li>1 Dosa / 1 Chapati: 70 kcal</li><li>Cow's Milk (100ml): 65 kcal</li><li>1 Egg (60g): 60 kcal</li></ul>`;
+            if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
+        }
+        if (mode === 'milestones' || mode === 'comprehensive') {
+            html += getPrintHeaderHTML("DEVELOPMENTAL PROGRESS LOG REPORT");
+            html += `<h3 style="margin-top: 20px; color: #16a34a;">🌟 Successfully Verified Achieved Milestones</h3>` + document.getElementById('msCompletedContainer').innerHTML;
+            html += `<h3 style="margin-top: 30px; color: #1e3a8a;">📅 Anticipatory Developmental Guidance Milestones</h3>` + document.getElementById('msUpcomingContainer').innerHTML;
+            if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
+        }
+        if (mode === 'comprehensive') {
+            html += getPrintHeaderHTML("CLINICAL TRIAGE & ANTHROPOMETRY REPORT");
+            let maln = extractToolResult('malnGridOutput'); if(maln) html += `<h3>Malnutrition & Anthropometry Triage</h3>${maln}`;
+            let fluids = extractToolResult('fluidResultArea'); if(fluids) html += `<h3>IV Fluid Resuscitation Protocol</h3>${fluids}`;
+            let asthma = extractToolResult('pramResultArea'); if(asthma) html += `<h3>Asthma PRAM Triage Score</h3>${asthma}`;
+            let jaun = extractToolResult('jaunResultArea'); if(jaun) html += `<h3>Neonatal Jaundice Triage Risk</h3>${jaun}`;
+            if(!maln && !fluids && !asthma && !jaun) html += `<p>No acute clinical triage metrics evaluated during this session.</p>`;
+        }
+
+        html += `<div style="text-align:center; font-size:10px; color:#777; margin-top:40px; border-top:1px solid #eee; padding-top:10px;">Generated by Pediatric Clinical Hub - Dr. Peter Suraj Joseph</div>`;
+        engine.innerHTML = html; window.print();
+    }
+    function clearAllData() { if(confirm("Delete all stored patient logs?")) { localStorage.removeItem('nis_patients'); localStorage.removeItem('custom_drugs'); location.reload(); } }
 </script>
 </body>
 </html>
