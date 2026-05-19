@@ -274,7 +274,7 @@
             <button class="feature-btn" onclick="switchMainFeature('asthmaFeatureView', this)">🫁 PRAM</button>
             <button class="feature-btn" onclick="switchMainFeature('jaundiceFeatureView', this)">🍼 Jaundice</button>
             <button class="feature-btn" style="background:#f0fdf4; color:#16a34a; font-weight:700;" onclick="switchMainFeature('aboutFeatureView', this)">ℹ️ About App</button>
-            <button class="feature-btn" style="color:var(--primary); margin-top:1rem; border:1px dashed var(--border-soft);" onclick="openSettingsModal()">⚙️ Settings Tab</button>
+            <button class="feature-btn" style="color:var(--primary); margin-top:1rem; border:1px dashed var(--primary);" onclick="openSettingsModal()">⚙️ Settings Tab</button>
         </div>
 
         <button class="mobile-toggle-btn" onclick="toggleMobileRegistry()">
@@ -309,7 +309,7 @@
             </div>
             <div style="display:flex; gap:10px; margin-top: 1.25rem;">
                 <button class="action" style="margin-top:0;" onclick="saveAndRegisterPatient(false)">Save Profile</button>
-                <button class="secondary" style="margin-top:0; padding:0.75rem;" onclick="prepNewPatient()">➕ Clear</button>
+                <button class="secondary" style="margin-top:0; padding:0.75rem; background-color:var(--bg-surface); color:var(--text-main); border-radius:var(--radius-md); cursor:pointer; font-weight:bold; white-space:nowrap; box-shadow: var(--shadow-sm);" onclick="prepNewPatient()">➕ New</button>
             </div>
             <button class="print-master" onclick="executePrint('comprehensive')" id="btnMasterPrint" style="display:none;">🖨️ Print Master Report</button>
             <button class="whatsapp-btn" onclick="sendWACompReport()" id="btnMasterWA" style="display:none;">💬 WhatsApp Report</button>
@@ -331,16 +331,23 @@
         <div id="activeWorkspace" style="display:none;">
 
             <div id="erFeatureView" class="view-content">
-                <h2 style="color:var(--danger); margin-top:0;">🚨 Emergency & Neonatology Resuscitation Suite</h2>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <h2 style="margin:0; color:var(--danger);">🚨 ER & NICU Suite</h2>
+                        <p style="margin:5px 0 0 0; color:var(--text-muted); font-size:0.95rem;">Rapid calculators for high-stress resuscitation and intensive care scenarios.</p>
+                    </div>
+                </div>
+                
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('erCrashTab', this)">⚡ Code Blue Crash Cart</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('erNicuTab', this)">🍼 NICU (GIR & APGAR)</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('erVitalsTab', this)">📊 Vitals Matrix</button>
                 </div>
+                
                 <div id="erCrashTab" class="sub-tab-content active">
                     <div class="timeline-section" style="border: 2px solid var(--danger); background: rgba(239, 68, 68, 0.02);">
                         <div class="tool-grid">
-                            <div style="background:var(--bg-surface); padding:1.5rem; border-radius:var(--radius-lg); border:1.5px solid var(--border-soft);">
+                            <div style="background:var(--bg-surface); padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft);">
                                 <label>Staged Weight Parameter (kg)</label>
                                 <input type="number" id="crashWeight" oninput="calcCrash()">
                                 <label style="margin-top:1rem;">Staged Age Parameter (Years)</label>
@@ -353,20 +360,20 @@
                 <div id="erNicuTab" class="sub-tab-content">
                     <div class="timeline-section">
                         <div class="tool-grid">
-                            <div style="background:var(--bg-surface); padding:1.5rem; border-radius:var(--radius-lg); border:1.5px solid var(--border-soft);">
-                                <h4>Glucose Infusion Rate (GIR)</h4>
+                            <div style="background:var(--bg-surface); padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft);">
+                                <h4 style="margin-top:0; color:var(--primary); border-bottom:1px solid var(--border-soft); padding-bottom:8px;">Glucose Infusion Rate (GIR)</h4>
                                 <label>Weight (kg)</label><input type="number" id="girWt" oninput="calcGIR()">
                                 <label>Fluid Rate (mL/hr)</label><input type="number" id="girRate" oninput="calcGIR()">
                                 <label>Dextrose Concentration (%)</label><input type="number" id="girDex" oninput="calcGIR()">
                                 <div id="girOutput" class="tool-result neutral" style="margin-top:1rem; padding:10px;">GIR = [Rate × Dex%] / [Wt × 6]</div>
                             </div>
                             <div style="background:var(--bg-surface); padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft);">
-                                <h4>APGAR Performance Score Calculator</h4>
-                                <label>Heart Rate</label><select id="apgarHR" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select>
-                                <label>Respiratory Effort</label><select id="apgarResp" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select>
-                                <label>Muscle Tone</label><select id="apgarTone" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select>
-                                <label>Reflex Excitability</label><select id="apgarReflex" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select>
-                                <label>Color Parameters</label><select id="apgarColor" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select>
+                                <h4 style="margin-top:0; color:var(--primary); border-bottom:1px solid var(--border-soft); padding-bottom:8px;">APGAR Performance Score Calculator</h4>
+                                <div class="row-inputs" style="gap:5px; margin-bottom:5px;"><label>Heart Rate</label><select id="apgarHR" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
+                                <div class="row-inputs" style="gap:5px; margin-bottom:5px;"><label>Resp. Effort</label><select id="apgarResp" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
+                                <div class="row-inputs" style="gap:5px; margin-bottom:5px;"><label>Muscle Tone</label><select id="apgarTone" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
+                                <div class="row-inputs" style="gap:5px; margin-bottom:5px;"><label>Reflex Excitability</label><select id="apgarReflex" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
+                                <div class="row-inputs" style="gap:5px; margin-bottom:5px;"><label>Color Parameters</label><select id="apgarColor" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
                                 <div id="apgarOutput" class="tool-result success" style="margin-top:1rem; padding:10px;">Score: 10/10</div>
                             </div>
                         </div>
@@ -387,7 +394,7 @@
                 </div>
             </div>
 
-            <div id="trackerFeatureView" class="view-content active-view">
+            <div id="trackerFeatureView" class="view-content">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
                     <h2 style="margin:0; color:var(--primary);">📅 Universal Immunization Tracking Timeline</h2>
                     <button onclick="executePrint('tracker')" class="secondary">🖨️ Print Schedule</button>
@@ -634,11 +641,17 @@
 
 <script>
     // --- JAVASCRIPT MASTER SYSTEM ARCHITECTURE ---
+    let appSettings;
+    try { appSettings = JSON.parse(localStorage.getItem('clinic_settings')) || { docName: "Dr. Peter Suraj Joseph", qual: "MBBS, MD (Pediatrics)", clinicName: "Pediatric Clinical Hub", tagline: "", phone: "", address: "", logo: "", isDark: false }; } 
+    catch(e) { appSettings = { docName: "Dr. Peter Suraj Joseph", qual: "MBBS, MD (Pediatrics)", clinicName: "Pediatric Clinical Hub", tagline: "", phone: "", address: "", logo: "", isDark: false }; }
+
+    let globalPatientsStore;
+    try { globalPatientsStore = JSON.parse(localStorage.getItem('nis_patients')) || {}; } catch(e) { globalPatientsStore = {}; }
     
-    // Core Initializer State Variables
-    let appSettings = JSON.parse(localStorage.getItem('clinic_settings')) || { docName: "Dr. Peter Suraj Joseph", qual: "MBBS, MD (Pediatrics)", clinicName: "Pediatric Clinical Hub", tagline: "", phone: "", address: "", logo: "", isDark: false };
-    let globalPatientsStore = JSON.parse(localStorage.getItem('nis_patients')) || {};
-    let customDrugsStore = JSON.parse(localStorage.getItem('custom_drugs')) || { "antibiotics": [], "antipyretics": [], "antihistamines": [], "git": [], "respiratory": [] };
+    let customDrugsStore;
+    try { customDrugsStore = JSON.parse(localStorage.getItem('custom_drugs')) || { "antibiotics": [], "antipyretics": [], "antihistamines": [], "git": [], "respiratory": [] }; } 
+    catch(e) { customDrugsStore = { "antibiotics": [], "antipyretics": [], "antihistamines": [], "git": [], "respiratory": [] }; }
+
     let activePatientId = null; 
     let currentPatientAgeInMonths = 0; 
     let pendingPrescriptionDrug = null;
@@ -1266,7 +1279,7 @@
         let out = document.getElementById('fluidResultArea'); if(!wt) return;
         let m = wt <= 10 ? wt*100 : (wt<=20 ? 1000 + (wt-10)*50 : 1500 + (wt-20)*20);
         let deficit = deg * wt * 10; let total = m + deficit;
-        out.innerHTML = `Total Load: <b>${total.toFixed(0)} mL / 24h</b><br>Rate: <b>${(total/24).toFixed(1)} mL/hr</b>`;
+        out.innerHTML = `Total Load Rate output: <b>${total.toFixed(0)} mL / 24h</b> Fluid Load Load<br>Maintenance Speed Rate: <b>${(total/24).toFixed(1)} mL/hr</b>`;
     }
 
     function calcPRAM() {
@@ -1338,6 +1351,7 @@
         document.getElementById('msMissedContainer').innerHTML = missedHTML || "<div style='padding:1.5rem; background:rgba(16, 185, 129, 0.1); border:1px solid #16a34a; border-radius:var(--radius-lg); color:#166534; font-weight:bold;'>✅ All verification targets achieved.</div>";
         document.getElementById('msUpcomingContainer').innerHTML = upcomingBracket ? `<h4 style="margin:1rem 0 0.5rem 0; color:var(--primary); font-size:1.1rem; border-bottom:1px solid var(--border-soft); padding-bottom:5px;">Targeting Milestone Marker: ${upcomingBracket} Months</h4>` + milestonesDb[upcomingBracket].map(m => `<div style="padding:1rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); margin-bottom:0.75rem; background:var(--bg-surface); font-size:0.95rem; box-shadow:var(--shadow-sm);"><span class="milestone-domain">${m.domain}</span><div style="font-weight:600; margin-top:5px; color:var(--text-main);">${m.text}</div></div>`).join("") : "<p>Advanced baseline clearance parameters.</p>";
     }
+
     function toggleMilestone(mId, isChecked) { globalPatientsStore[activePatientId].achievedMilestones[mId] = isChecked; localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderMilestoneDashboard(); }
     
     function buildMilestoneReference() {
@@ -1403,15 +1417,15 @@
         }
         if (mode === 'nutrition' || mode === 'comprehensive') {
             html += getPrintHeaderHTML("DIET & NUTRITION PLAN");
-            if (p.dietLogs && p.dietLogs.length > 0) { html += `<h3 style="color:var(--success);">24-Hour Diet Recall Analysis</h3>`; html += document.getElementById('recallListArea').innerHTML; html += document.getElementById('recallSummaryArea').innerHTML; }
+            if (p.dietLogs && p.dietLogs.length > 0) { html += `<h3>24-Hour Diet Recall Analysis</h3>`; html += document.getElementById('recallListArea').innerHTML; html += document.getElementById('recallSummaryArea').innerHTML; }
             html += `<h3 style="margin-top: 30px; color:var(--success);">Target Requirements (ICMR)</h3>` + document.getElementById('nutriTargetArea').innerHTML;
             html += `<h3 style="margin-top: 30px; color:var(--primary);">Recommended Household Portions</h3><ul style="font-size:1.1rem; line-height:1.6;"><li>1 bowl cooked rice: 120 kcal</li><li>1 Idli / 1 Vada: 50 kcal</li><li>1 Dosa / 1 Chapati: 70 kcal</li><li>Cow's Milk (100ml): 65 kcal</li><li>1 Egg (60g): 60 kcal</li></ul>`;
             if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
         }
         if (mode === 'milestones' || mode === 'comprehensive') {
             html += getPrintHeaderHTML("DEVELOPMENTAL PROGRESS LOG REPORT");
-            html += `<h3 style="margin-top: 20px; color: #16a34a;">🌟 Successfully Verified Achieved Milestones</h3>` + document.getElementById('msCompletedContainer').innerHTML;
-            html += `<h3 style="margin-top: 30px; color: #1e3a8a;">📅 Anticipatory Developmental Guidance Milestones</h3>` + document.getElementById('msUpcomingContainer').innerHTML;
+            html += `<h3 style="margin-top: 20px;">🌟 Successfully Verified Achieved Milestones</h3>` + document.getElementById('msCompletedContainer').innerHTML;
+            html += `<h3 style="margin-top: 30px;">📅 Anticipatory Developmental Guidance Milestones</h3>` + document.getElementById('msUpcomingContainer').innerHTML;
             if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
         }
         if (mode === 'comprehensive') {
