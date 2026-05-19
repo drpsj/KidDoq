@@ -31,42 +31,102 @@
             --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025);
         }
 
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; background-color: var(--bg-body); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            margin: 0; padding: 0; background-color: var(--bg-body); color: var(--text-main); 
+            display: flex; flex-direction: column; min-height: 100vh; -webkit-font-smoothing: antialiased; 
+        }
         
-        header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 1.5rem; text-align: center; box-shadow: var(--shadow-md); z-index: 10; position: relative; }
+        header { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: white; padding: 1.5rem; text-align: center; box-shadow: var(--shadow-md); 
+            z-index: 10; position: relative; 
+        }
         header h1 { margin: 0 0 5px 0; font-size: 1.8rem; letter-spacing: -0.025em; font-weight: 700;}
         header p { margin: 0; opacity: 0.85; font-size: 0.95rem; font-weight: 400; }
         
-        .app-shell { display: grid; grid-template-columns: 320px 1fr; flex: 1; max-width: 1500px; width: 100%; margin: 0 auto; box-sizing: border-box; }
+        .app-shell { 
+            display: grid; grid-template-columns: 320px 1fr; flex: 1; 
+            max-width: 1500px; width: 100%; margin: 0 auto; box-sizing: border-box; 
+        }
 
         /* DESKTOP SIDEBAR */
-        .sidebar { background: var(--bg-surface); border-right: 1px solid var(--border-soft); padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; height: 100vh; overflow-y: auto; position: sticky; top:0;}
-        .app-features-nav { display: flex; flex-direction: column; gap: 0.35rem; border-bottom: 1px solid var(--border-soft); padding-bottom: 1.5rem; }
-        .feature-btn { background: transparent; color: var(--text-muted); border: none; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s ease; display: flex; align-items: center; gap: 8px;}
+        .sidebar { 
+            background: var(--bg-surface); border-right: 1px solid var(--border-soft); 
+            padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; 
+            height: 100vh; overflow-y: auto; position: sticky; top:0;
+        }
+        
+        .app-features-nav { 
+            display: flex; flex-direction: column; gap: 0.35rem; 
+            border-bottom: 1px solid var(--border-soft); padding-bottom: 1.5rem; 
+        }
+        
+        .feature-btn { 
+            background: transparent; color: var(--text-muted); border: none; 
+            padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.95rem; 
+            font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s ease; 
+            display: flex; align-items: center; gap: 8px;
+        }
+        
         .feature-btn:hover { background: var(--gray-100); color: var(--text-main); }
-        .feature-btn.active { background: var(--primary-light); color: var(--primary); box-shadow: none; font-weight: 700; }
+        .feature-btn.active { background: var(--primary-light); color: var(--primary); font-weight: 700; }
         .feature-btn.special { background: #ecfdf5; color: #166534; }
         .feature-btn.special:hover { background: #dcfce7; }
 
         .panel { background: var(--bg-surface); padding: 0; border-radius: var(--radius-lg); border: none; }
         label { display: block; font-weight: 600; margin: 0.85rem 0 0.35rem 0; font-size: 0.85rem; color: var(--text-main); }
         
-        input, select { width: 100%; padding: 0.65rem 0.8rem; border: 1.5px solid var(--border-soft); border-radius: var(--radius-md); box-sizing: border-box; font-size: 0.95rem; transition: all 0.2s; background: #f8fafc; font-family: inherit;}
-        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); background: white;}
+        input, select { 
+            width: 100%; padding: 0.65rem 0.8rem; border: 1.5px solid var(--border-soft); 
+            border-radius: var(--radius-md); box-sizing: border-box; font-size: 0.95rem; 
+            transition: all 0.2s; background: #f8fafc; font-family: inherit;
+        }
+        input:focus, select:focus { 
+            outline: none; border-color: var(--primary); 
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); background: white;
+        }
+        
         .row-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 
-        button.action { width: 100%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; margin-top: 1.5rem; transition: transform 0.1s, box-shadow 0.2s; box-shadow: var(--shadow-sm); }
+        button.action { 
+            width: 100%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: white; border: none; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; 
+            border-radius: var(--radius-md); cursor: pointer; margin-top: 1.5rem; 
+            transition: transform 0.1s, box-shadow 0.2s; box-shadow: var(--shadow-sm); 
+        }
         button.action:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
         button.action:active { transform: translateY(1px); }
-        button.secondary { background-color: var(--bg-body); color: var(--text-main); border: 1px solid var(--border-soft); padding: 0.5rem 0.8rem; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; transition: all 0.2s;}
+        
+        button.secondary { 
+            background-color: var(--bg-body); color: var(--text-main); border: 1px solid var(--border-soft); 
+            padding: 0.5rem 0.8rem; border-radius: var(--radius-md); cursor: pointer; 
+            font-weight: 600; transition: all 0.2s;
+        }
         button.secondary:hover { background-color: #e2e8f0; }
-        button.whatsapp-btn { background: linear-gradient(135deg, #25D366, #128C7E); color: white; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; justify-content: center; margin-top: 0.5rem; box-shadow: var(--shadow-sm); transition: transform 0.1s;}
+        
+        button.whatsapp-btn { 
+            background: linear-gradient(135deg, #25D366, #128C7E); color: white; 
+            padding: 0.75rem 1rem; border-radius: var(--radius-md); font-weight: 600; border: none; 
+            cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; 
+            justify-content: center; margin-top: 0.5rem; box-shadow: var(--shadow-sm); transition: transform 0.1s;
+        }
         button.whatsapp-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
-        button.print-master { background: #1e293b; color: white; padding: 0.85rem; border-radius: var(--radius-md); font-weight: 600; width: 100%; border: none; cursor: pointer; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;}
+        
+        button.print-master { 
+            background: #1e293b; color: white; padding: 0.85rem; border-radius: var(--radius-md); 
+            font-weight: 600; width: 100%; border: none; cursor: pointer; margin-top: 1rem; 
+            display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;
+        }
         button.print-master:hover { background: #0f172a; }
 
         .patient-list { margin-top: 1.5rem; border-top: 1px solid var(--border-soft); padding-top: 1.5rem; max-height: 180px; overflow-y: auto; }
-        .patient-badge { background: white; padding: 0.75rem 1rem; border-radius: var(--radius-md); margin-bottom: 0.5rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; border: 1px solid var(--border-soft); transition: all 0.2s; box-shadow: var(--shadow-sm);}
+        .patient-badge { 
+            background: white; padding: 0.75rem 1rem; border-radius: var(--radius-md); 
+            margin-bottom: 0.5rem; cursor: pointer; display: flex; justify-content: space-between; 
+            align-items: center; font-size: 0.85rem; border: 1px solid var(--border-soft); 
+            transition: all 0.2s; box-shadow: var(--shadow-sm);
+        }
         .patient-badge:hover { border-color: var(--primary-light); background: var(--primary-light); transform: translateY(-1px);}
         .patient-badge.active-patient { border-color: var(--primary); background: var(--primary-light); font-weight: 600; box-shadow: 0 0 0 1px var(--primary); }
 
@@ -77,44 +137,93 @@
         .view-content { display: none; }
         .view-content.active-view { display: block; animation: fadeSlideIn 0.3s ease-out forwards; }
         
-        .sub-tabs-nav { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-soft); overflow-x: auto; padding-bottom: 0px;}
-        .sub-tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 0.75rem 1.25rem; cursor: pointer; font-size: 0.95rem; font-weight: 600; border-radius: var(--radius-md) var(--radius-md) 0 0; white-space: nowrap; transition: color 0.2s; position: relative; bottom: -2px;}
+        .sub-tabs-nav { 
+            display: flex; gap: 0.5rem; margin-bottom: 1.5rem; 
+            border-bottom: 2px solid var(--border-soft); padding-bottom: 0px; 
+            flex-wrap: wrap; /* Ensures tabs don't get hidden on mobile */
+        }
+        .sub-tab-btn { 
+            background: transparent; border: none; color: var(--text-muted); 
+            padding: 0.75rem 1.25rem; cursor: pointer; font-size: 0.95rem; 
+            font-weight: 600; border-radius: var(--radius-md) var(--radius-md) 0 0; 
+            white-space: nowrap; transition: color 0.2s; position: relative; bottom: -2px;
+        }
         .sub-tab-btn:hover { color: var(--text-main); }
         .sub-tab-btn.active { color: var(--primary); border-bottom: 2px solid var(--primary); background: transparent; }
         .sub-tab-content { display: none; animation: fadeSlideIn 0.2s ease-out forwards; }
         .sub-tab-content.active { display: block; }
 
-        .timeline-section { background: var(--bg-surface); padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); margin-bottom: 2rem; border: 1px solid rgba(0,0,0,0.02); }
-        .section-title { color: var(--primary); border-bottom: 1px solid var(--border-soft); padding-bottom: 0.75rem; margin-top: 0; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; font-size: 1.25rem; font-weight: 700;}
+        .timeline-section { 
+            background: var(--bg-surface); padding: 2rem; border-radius: var(--radius-lg); 
+            box-shadow: var(--shadow-lg); margin-bottom: 2rem; border: 1px solid rgba(0,0,0,0.02); 
+        }
+        .section-title { 
+            color: var(--primary); border-bottom: 1px solid var(--border-soft); 
+            padding-bottom: 0.75rem; margin-top: 0; margin-bottom: 1.5rem; 
+            display: flex; justify-content: space-between; align-items: center; 
+            font-size: 1.25rem; font-weight: 700;
+        }
 
         .chart-box-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
-        .chart-card-wrapper { background: white; padding: 1rem; border-radius: var(--radius-lg); border: 1px solid var(--border-soft); min-height: 320px; box-shadow: var(--shadow-sm);}
+        .chart-card-wrapper { 
+            background: white; padding: 1rem; border-radius: var(--radius-lg); 
+            border: 1px solid var(--border-soft); min-height: 320px; box-shadow: var(--shadow-sm);
+        }
 
-        .vaccine-row { display: grid; grid-template-columns: 1.8fr 1fr 1.5fr; align-items: center; padding: 1.25rem 0; border-bottom: 1px solid var(--border-soft); gap: 1rem; transition: background 0.2s;}
+        .vaccine-row { 
+            display: grid; grid-template-columns: 1.8fr 1fr 1.5fr; align-items: center; 
+            padding: 1.25rem 0; border-bottom: 1px solid var(--border-soft); gap: 1rem; transition: background 0.2s;
+        }
         .vaccine-row:hover { background: #fafafa; border-radius: 8px; padding-left: 10px; padding-right: 10px; margin-left: -10px; margin-right: -10px;}
         .vaccine-row:last-child { border-bottom: none; }
         .vaccine-info h4 { margin: 0 0 0.35rem 0; font-size: 1.05rem; color: var(--text-main);}
         .vaccine-meta { font-size: 0.85rem; color: var(--text-muted); }
-        .action-protocol-card { background: #fffbeb; border: 1px solid #fde68a; padding: 0.5rem 0.75rem; border-radius: 6px; font-size: 0.8rem; color: #b45309; display: inline-block; margin-top: 5px;}
+        .action-protocol-card { 
+            background: #fffbeb; border: 1px solid #fde68a; padding: 0.5rem 0.75rem; 
+            border-radius: 6px; font-size: 0.8rem; color: #b45309; display: inline-block; margin-top: 5px;
+        }
         .date-display-box { font-size: 1rem; font-weight: 700; color: var(--primary); }
         .date-display-box.shifted { color: var(--warning); }
         .date-picker-cell { text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 12px;}
         .date-picker-cell input[type="date"] { width: 100%; max-width: 140px; }
         .tick-box { width: 22px; height: 22px; cursor: pointer; accent-color: var(--success); border-radius: 4px;}
 
-        .formula-box { background: #0f172a; color: #f8fafc; padding: 1.5rem; border-radius: var(--radius-lg); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.6; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid var(--accent);}
+        .formula-box { 
+            background: #0f172a; color: #f8fafc; padding: 1.5rem; border-radius: var(--radius-lg); 
+            font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.6; 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid var(--accent);
+        }
         .formula-box b { color: #38bdf8; font-family: monospace; font-size: 1.05rem; }
         
-        .calc-control-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: var(--primary-light); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid #bfdbfe; margin-bottom: 1.5rem; }
-        .result-card { background: white; border: 2px solid var(--success); padding: 1.5rem; border-radius: var(--radius-lg); text-align: center; position: relative; box-shadow: var(--shadow-md);}
+        .calc-control-panel { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: var(--primary-light); 
+            padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid #bfdbfe; margin-bottom: 1.5rem; 
+        }
+        .result-card { 
+            background: white; border: 2px solid var(--success); padding: 1.5rem; 
+            border-radius: var(--radius-lg); text-align: center; position: relative; box-shadow: var(--shadow-md);
+        }
         
         .rx-cart-container { margin-top: 2rem; border-top: 2px dashed var(--border-soft); padding-top: 2rem;}
-        .rx-cart-item { background: white; border: 1px solid var(--border-soft); padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm);}
+        .rx-cart-item { 
+            background: white; border: 1px solid var(--border-soft); padding: 1.25rem; 
+            border-radius: var(--radius-md); margin-bottom: 1rem; display: flex; 
+            justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm);
+        }
         
-        .quick-calc-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: white; padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-soft); margin-bottom: 2rem; box-shadow: var(--shadow-sm);}
+        .quick-calc-inputs { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: white; 
+            padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-soft); 
+            margin-bottom: 2rem; box-shadow: var(--shadow-sm);
+        }
+        
         .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
         
-        .tool-result { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1.5rem; border-radius: var(--radius-lg); color: #166534; font-size: 1.1rem; text-align: center; margin-top: 1.5rem; font-weight: 600; box-shadow: var(--shadow-sm);}
+        .tool-result { 
+            background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1.5rem; border-radius: var(--radius-lg); 
+            color: #166534; font-size: 1.1rem; text-align: center; margin-top: 1.5rem; 
+            font-weight: 600; box-shadow: var(--shadow-sm);
+        }
         .tool-result.danger { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
         .tool-result.warning { background: #fffbeb; border-color: #fde68a; color: #9a3412; }
         .tool-result.neutral { background: #f1f5f9; border-color: var(--border-soft); color: var(--text-main); }
@@ -141,7 +250,7 @@
         .search-bar { width: 100%; padding: 12px 16px; border: 2px solid var(--primary-light); border-radius: var(--radius-md); font-size: 1rem; margin-bottom: 1.5rem; box-sizing: border-box; background: white; transition: all 0.2s;}
         .search-bar:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);}
 
-        /* MOBILE APP UI OVERHAUL */
+        /* MOBILE APP UI OVERHAUL (THE FIX) */
         .mobile-toggle-btn { display: none; }
         
         @media (max-width: 900px) {
@@ -150,34 +259,55 @@
 
         @media (max-width: 768px) {
             .app-shell { display: flex; flex-direction: column; }
-            header { padding: 1rem; position: sticky; top: 0; z-index: 100;}
-            header h1 { font-size: 1.35rem; }
+            header { padding: 1.25rem 1rem; position: sticky; top: 0; z-index: 100;}
+            header h1 { font-size: 1.4rem; }
             header p { display: none; } /* Clean header on phone */
             
-            /* Sidebar becomes App Navigation Header */
-            .sidebar { padding: 0; height: auto; border-right: none; position: static; box-shadow: var(--shadow-md); z-index: 50;}
+            /* Sidebar becomes a natural flow block */
+            .sidebar { 
+                padding: 0; height: auto; border-right: none; 
+                position: static; box-shadow: var(--shadow-md); z-index: 50;
+            }
             
-            /* Horizontal Swipeable App Tabs */
-            .app-features-nav { flex-direction: row; overflow-x: auto; padding: 0.75rem 1rem; border-bottom: none; gap: 0.5rem; background: var(--bg-surface); -webkit-overflow-scrolling: touch;}
-            .app-features-nav::-webkit-scrollbar { display: none; }
-            .feature-btn { white-space: nowrap; padding: 0.6rem 1.25rem; font-size: 0.85rem; border-radius: 99px; background: var(--bg-body); border: 1px solid var(--border-soft); box-shadow: none; justify-content: center;}
+            /* BEAUTIFUL MOBILE GRID FOR NAV */
+            .app-features-nav { 
+                display: grid; 
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); 
+                gap: 0.5rem; padding: 1rem; border-bottom: none; 
+                background: var(--bg-surface); 
+            }
+            .feature-btn { 
+                padding: 0.6rem 0.5rem; font-size: 0.85rem; border-radius: 8px; 
+                background: var(--bg-body); border: 1px solid var(--border-soft); 
+                box-shadow: none; justify-content: center; text-align: center;
+            }
             .feature-btn.active { background: var(--primary); color: white; border: none;}
             .feature-btn.special { border-color: #a7f3d0; background: white; }
             .feature-btn.special.active { background: var(--success); color: white; border:none;}
             
-            /* The Smart Patient Drawer Button */
-            .mobile-toggle-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1rem 1.5rem; background: var(--primary-light); color: var(--primary-dark); font-weight: 700; border: none; border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); font-size: 0.95rem; cursor: pointer;}
+            /* Smart Patient Drawer Button */
+            .mobile-toggle-btn { 
+                display: flex; justify-content: space-between; align-items: center; 
+                width: 100%; padding: 1.25rem 1.5rem; background: var(--primary-light); 
+                color: var(--primary-dark); font-weight: 700; border: none; 
+                border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); 
+                font-size: 0.95rem; cursor: pointer;
+            }
             
             /* Hidden Registry until tapped */
-            .panel { display: none; border-radius: 0; box-shadow: inset 0 4px 6px -4px rgba(0,0,0,0.1); padding: 1.5rem 1rem; border:none; border-bottom: 1px solid var(--border-soft);}
+            .panel { 
+                display: none; border-radius: 0; box-shadow: inset 0 4px 6px -4px rgba(0,0,0,0.1); 
+                padding: 1.5rem 1.25rem; border:none; border-bottom: 1px solid var(--border-soft);
+            }
             .panel.mobile-open { display: block; }
             
             /* Main Content Adjustments for Phone */
             .main-content { padding: 1rem; }
-            .timeline-section { padding: 1.25rem; }
+            .timeline-section { padding: 1.25rem; margin-bottom: 1rem; }
             
-            .sub-tabs-nav { padding-bottom: 0; }
-            .sub-tab-btn { font-size: 0.85rem; padding: 0.5rem 0.75rem; }
+            .sub-tab-btn { font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: 8px;}
+            .sub-tabs-nav { gap: 0.3rem; margin-bottom: 1rem; border-bottom: none;}
+            .sub-tab-btn.active { border-bottom: none; background: var(--primary); color: white;}
             
             /* Stacked Grids */
             .row-inputs, .quick-calc-inputs, .calc-control-panel, .tool-grid { grid-template-columns: 1fr; gap: 1rem;}
@@ -217,7 +347,7 @@
 <header>
     <h1>Pediatric Clinical Hub</h1>
     <p style="font-weight:700; font-size:1.1rem; margin-bottom:5px; color:#93c5fd;">Developed by Dr. Peter Suraj Joseph</p>
-    <p style="font-size:0.9rem;">NIS Tracker | Drug Dosages | Milestones | Nutrition | Anthropometry | Asthma | Fluids</p>
+    <p style="font-size:0.9rem;">NIS Tracker | Drug Dosages | Milestones | Nutrition | Anthropometry | Asthma</p>
 </header>
 
 <div class="app-shell">
@@ -232,7 +362,7 @@
             <button class="feature-btn" onclick="switchMainFeature('fluidsFeatureView', this)">💧 IV Fluids</button>
             <button class="feature-btn" onclick="switchMainFeature('asthmaFeatureView', this)">🫁 PRAM</button>
             <button class="feature-btn" onclick="switchMainFeature('jaundiceFeatureView', this)">🍼 Jaundice</button>
-            <button class="feature-btn" style="background:#fef3c7; color:#b45309; border: 1px solid #fde68a;" onclick="switchMainFeature('libraryFeatureView', this)">📘 PDF Manual</button>
+            <button class="feature-btn" style="background:#fef3c7; color:#b45309; border: 1px solid #fde68a;" onclick="switchMainFeature('libraryFeatureView', this)">📘 Manual</button>
         </div>
 
         <button class="mobile-toggle-btn" onclick="toggleMobileRegistry()">
@@ -303,7 +433,7 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:10px;">
                     <h2 style="margin:0; color:var(--primary);">Vaccination Status</h2>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <button onclick="sendWhatsAppReminder()" class="whatsapp-btn" style="margin:0; padding:0.5rem 1rem;">💬 WhatsApp Reminder</button>
+                        <button onclick="sendWhatsAppReminder()" class="whatsapp-btn" style="margin:0; padding:0.5rem 1rem; width:auto;">💬 WhatsApp Reminder</button>
                         <button onclick="executePrint('tracker')" class="secondary" style="background:var(--primary); color:white; border:none; box-shadow:var(--shadow-sm);">🖨️ Print Schedule</button>
                     </div>
                 </div>
@@ -525,7 +655,7 @@
 
             <div id="growthFeatureView" class="view-content">
                 <div class="timeline-section">
-                    <h3 class="section-title">📈 Anthropometry & WHO Growth Curves</h3>
+                    <h3 class="section-title">📈 Anthropometry & WHO Growth Chart Curves</h3>
                     <div class="tool-grid" style="grid-template-columns: 1fr 2fr;">
                         <div>
                             <div class="quick-calc-inputs" style="grid-template-columns: 1fr; margin-bottom: 0;">
@@ -561,7 +691,7 @@
                 <div class="timeline-section">
                     <h3 class="section-title">🫁 Pediatric Respiratory Assessment Measure (PRAM)</h3>
                     <div class="tool-grid" style="grid-template-columns: 1.5fr 1fr;">
-                        <div style="background:white; padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft); box-shadow:var(--shadow-sm);">
+                        <div style="background:#f8fafc; padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft); box-shadow:inset 0 2px 4px rgba(0,0,0,0.02);">
                             <label>O2 Saturation (Room Air)</label><select id="pramO2" onchange="calcPRAM()" style="margin-bottom:1rem;"><option value="0">≥ 95% (0 pts)</option><option value="1">92-94% (1 pt)</option><option value="2">< 92% (2 pts)</option></select>
                             <label>Suprasternal Retractions</label><select id="pramSupra" onchange="calcPRAM()" style="margin-bottom:1rem;"><option value="0">Absent (0 pts)</option><option value="2">Present (2 pts)</option></select>
                             <label>Scalene Muscle Use</label><select id="pramScalene" onchange="calcPRAM()" style="margin-bottom:1rem;"><option value="0">Absent (0 pts)</option><option value="2">Present (2 pts)</option></select>
@@ -595,7 +725,7 @@
                     
                     <div style="background:#fef3c7; border:2px dashed #f59e0b; padding:3rem 2rem; text-align:center; border-radius:var(--radius-lg); transition: background 0.3s;">
                         <input type="file" id="localPdfFileUploader" accept="application/pdf" style="display:none;" onchange="loadLocalClinicalPDF(this)">
-                        <button class="secondary" style="background:#d97706; color:white; font-weight:bold; width:auto; padding:1rem 2.5rem; border-radius:99px; font-size:1.05rem; box-shadow:0 4px 6px rgba(217, 119, 6, 0.2); border:none; transition:transform 0.2s;" onclick="document.getElementById('localPdfFileUploader').value=''; document.getElementById('localPdfFileUploader').click()" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">📁 Select PDF Manual</button>
+                        <button class="secondary" style="background:#d97706; color:white; font-weight:bold; width:auto; padding:1rem 2.5rem; border-radius:99px; font-size:1.05rem; box-shadow:0 4px 6px rgba(217, 119, 6, 0.2); border:none; transition:transform 0.2s;" onclick="document.getElementById('localPdfFileUploader').value=''; document.getElementById('localPdfFileUploader').click()">📁 Select PDF Manual</button>
                         <p style="font-size:0.85rem; color:#b45309; margin-top:1rem; margin-bottom:0; font-weight:500;">Processed entirely locally. Your document data never leaves your computer.</p>
                     </div>
 
@@ -611,39 +741,222 @@
 <div id="printEngine"></div>
 
 <script>
-    // --- 1. FULL DATABASES ---
+    // --- 1. FULL DATABASES (Broken into smaller lines for Android Clipboard) ---
+    
+    // Milestones Database
     const milestonesDb = {
-        2: [ { id: "m2_1", domain: "Social", text: "Social smile.", sig: "Visual/cognitive deficit." }, { id: "m2_2", domain: "Lang", text: "Coos.", sig: "Hearing deficit." }, { id: "m2_3", domain: "Motor", text: "Head steady.", sig: "Hypotonia." } ],
-        4: [ { id: "m4_1", domain: "Social", text: "Laughs out loud.", sig: "Social delay." }, { id: "m4_2", domain: "Motor", text: "Reaches for toys.", sig: "Motor delay." }, { id: "m4_3", domain: "Motor", text: "Rolls tummy to back.", sig: "Hyper/hypotonia." } ],
-        6: [ { id: "m6_1", domain: "Motor", text: "Sits without support.", sig: "CP red flag." }, { id: "m6_2", domain: "Lang", text: "Babbles with consonants.", sig: "Hearing loss risk." }, { id: "m6_3", domain: "Motor", text: "Transfers objects.", sig: "Hemiplegia risk if hand preference." } ],
-        9: [ { id: "m9_1", domain: "Motor", text: "Pincer grasp (Fine prehension pellet).", sig: "Fine motor delay." }, { id: "m9_2", domain: "Motor", text: "Pulls to stand (standing by furniture).", sig: "Lower limb hypotonia." }, { id: "m9_3", domain: "Lang", text: "Turns head to sound of bell rattle / Responds to name.", sig: "Hearing/ASD risk." }, { id: "m9_4", domain: "Motor", text: "Pats a cake (Trivandrum).", sig: "Coordination delay." }, { id: "m9_5", domain: "Motor", text: "Raises self to sitting position.", sig: "Gross motor delay." } ],
-        12: [ { id: "m12_1", domain: "Lang", text: "1 or 2 clear words.", sig: "Speech delay." }, { id: "m12_2", domain: "Motor", text: "Cruises / Walks with help.", sig: "Motor pathology." }, { id: "m12_3", domain: "Social", text: "Points to objects.", sig: "ASD early indicator." } ],
-        18: [ { id: "m18_1", domain: "Motor", text: "Walks alone & walks backwards.", sig: "Needs neuro workup if not walking." }, { id: "m18_2", domain: "Lang", text: "10-15 words.", sig: "Speech delay." }, { id: "m18_3", domain: "Motor", text: "Walks upstairs with help, uses spoon.", sig: "Coordination delay." }, { id: "m18_4", domain: "Motor", text: "Throws ball.", sig: "Coordination delay." } ],
-        24: [ { id: "m24_1", domain: "Lang", text: "2-word sentences.", sig: "Needs speech eval." }, { id: "m24_2", domain: "Cognitive", text: "Points to 3 parts of doll/body.", sig: "Cognitive/Language delay." }, { id: "m24_3", domain: "Social", text: "Parallel play.", sig: "Social withdrawal; monitor for ASD." } ],
-        36: [ { id: "m36_1", domain: "Lang", text: "3-4 word sentences.", sig: "Articulation delay." }, { id: "m36_2", domain: "Motor", text: "Pedals tricycle.", sig: "Coordination delay." }, { id: "m36_3", domain: "Motor", text: "Copies a circle.", sig: "Visual-motor delay." } ]
+        2: [
+            { id: "m2_1", domain: "Social", text: "Social smile.", sig: "Visual/cognitive deficit." },
+            { id: "m2_2", domain: "Lang", text: "Coos.", sig: "Hearing deficit." },
+            { id: "m2_3", domain: "Motor", text: "Head steady.", sig: "Hypotonia." }
+        ],
+        4: [
+            { id: "m4_1", domain: "Social", text: "Laughs out loud.", sig: "Social delay." },
+            { id: "m4_2", domain: "Motor", text: "Reaches for toys.", sig: "Motor delay." },
+            { id: "m4_3", domain: "Motor", text: "Rolls tummy to back.", sig: "Hyper/hypotonia." }
+        ],
+        6: [
+            { id: "m6_1", domain: "Motor", text: "Sits without support.", sig: "CP red flag." },
+            { id: "m6_2", domain: "Lang", text: "Babbles with consonants.", sig: "Hearing loss risk." },
+            { id: "m6_3", domain: "Motor", text: "Transfers objects.", sig: "Hemiplegia risk if hand preference." }
+        ],
+        9: [
+            { id: "m9_1", domain: "Motor", text: "Pincer grasp (Fine prehension pellet).", sig: "Fine motor delay." },
+            { id: "m9_2", domain: "Motor", text: "Pulls to stand (standing by furniture).", sig: "Lower limb hypotonia." },
+            { id: "m9_3", domain: "Lang", text: "Turns head to sound of bell rattle / Responds to name.", sig: "Hearing/ASD risk." },
+            { id: "m9_4", domain: "Motor", text: "Pats a cake (Trivandrum).", sig: "Coordination delay." },
+            { id: "m9_5", domain: "Motor", text: "Raises self to sitting position.", sig: "Gross motor delay." }
+        ],
+        12: [
+            { id: "m12_1", domain: "Lang", text: "1 or 2 clear words.", sig: "Speech delay." },
+            { id: "m12_2", domain: "Motor", text: "Cruises / Walks with help.", sig: "Motor pathology." },
+            { id: "m12_3", domain: "Social", text: "Points to objects.", sig: "ASD early indicator." }
+        ],
+        18: [
+            { id: "m18_1", domain: "Motor", text: "Walks alone & walks backwards.", sig: "Needs neuro workup if not walking." },
+            { id: "m18_2", domain: "Lang", text: "10-15 words.", sig: "Speech delay." },
+            { id: "m18_3", domain: "Motor", text: "Walks upstairs with help, uses spoon.", sig: "Coordination delay." },
+            { id: "m18_4", domain: "Motor", text: "Throws ball.", sig: "Coordination delay." }
+        ],
+        24: [
+            { id: "m24_1", domain: "Lang", text: "2-word sentences.", sig: "Needs speech eval." },
+            { id: "m24_2", domain: "Cognitive", text: "Points to 3 parts of doll/body.", sig: "Cognitive/Language delay." },
+            { id: "m24_3", domain: "Social", text: "Parallel play.", sig: "Social withdrawal; monitor for ASD." }
+        ],
+        36: [
+            { id: "m36_1", domain: "Lang", text: "3-4 word sentences.", sig: "Articulation delay." },
+            { id: "m36_2", domain: "Motor", text: "Pedals tricycle.", sig: "Coordination delay." },
+            { id: "m36_3", domain: "Motor", text: "Copies a circle.", sig: "Visual-motor delay." }
+        ]
     };
 
+    // Drug Database
     const drugDb = {
-        "antibiotics": [ { name: "Amoxicillin 125mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 }, { name: "Amoxicillin 250mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 }, { name: "Amox+Clav 62.5mg/ml drops", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 62.5, vol: 1 }, { name: "Amox+Clav 156mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 156, vol: 5 }, { name: "Amox+Clav (200/28)mg/5ml", doseMg: 40, doseType: "perDay", div: 2, freq: "BID", conc: 200, vol: 5 }, { name: "Amox+Clav 312mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 312, vol: 5 }, { name: "Amox+Clav (400/57)mg/5ml", doseMg: 40, doseType: "perDay", div: 2, freq: "BID", conc: 400, vol: 5 }, { name: "Amox+Clav (600/42.9)mg/5ml", doseMg: 90, doseType: "perDay", div: 2, freq: "BID", conc: 600, vol: 5 }, { name: "Cefixime 100mg/5ml", doseMg: 8, doseType: "perDay", div: 2, freq: "BID", conc: 100, vol: 5 }, { name: "Cefaclor 125mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 }, { name: "Cefaclor 250mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 }, { name: "Cefaclor 375mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 375, vol: 5 }, { name: "Cefuroxime 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 }, { name: "Cefuroxime 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 }, { name: "Cefdinir 125mg/5ml", doseMg: 14, doseType: "perDay", div: 1, freq: "QD or BID", conc: 125, vol: 5 }, { name: "Cefdinir 250mg/5ml", doseMg: 14, doseType: "perDay", div: 1, freq: "QD or BID", conc: 250, vol: 5 }, { name: "Cephalexin 125mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 }, { name: "Cephalexin 250mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 }, { name: "Cefadroxil 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 }, { name: "Cefadroxil 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 }, { name: "Cefadroxil 500mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 500, vol: 5 }, { name: "Cephradine 125mg/5ml", doseMg: 25, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 }, { name: "Cephradine 250mg/5ml", doseMg: 25, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 }, { name: "Cefpodoxime 40mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 40, vol: 5 }, { name: "Cefpodoxime 50mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 50, vol: 5 }, { name: "Cefpodoxime 100mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 100, vol: 5 }, { name: "Cefprozil 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 }, { name: "Cefprozil 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 }, { name: "Azithromycin 100mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "QD (3-5 days)", conc: 100, vol: 5 }, { name: "Azithromycin 200mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "QD (3-5 days)", conc: 200, vol: 5 }, { name: "Erythromycin 200mg/5ml", doseMg: 40, doseType: "perDay", div: 4, freq: "QID", conc: 200, vol: 5 }, { name: "Erythromycin 400mg/5ml", doseMg: 40, doseType: "perDay", div: 4, freq: "QID", conc: 400, vol: 5 }, { name: "Clarithromycin 125mg/5ml", doseMg: 15, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 }, { name: "Clarithromycin 250mg/5ml", doseMg: 15, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 }, { name: "Mebendazole 100mg/5ml", doseMg: 100, doseType: "perDose", div: 1, freq: "Stat (Repeat in 2wks) - FIXED DOSE", conc: 100, vol: 5 }, { name: "Metronidazole 125mg/5ml", doseMg: 30, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 }, { name: "Metronidazole 200mg/5ml", doseMg: 30, doseType: "perDay", div: 3, freq: "TID", conc: 200, vol: 5 }, { name: "Co-trimoxazole (40/200)mg/5ml", doseMg: 8, doseType: "perDay", div: 2, freq: "BID (Dosed on TMP)", conc: 40, vol: 5 } ],
-        "antipyretics": [ { name: "Paracetamol 100mg/ml drops", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 100, vol: 1 }, { name: "Paracetamol 120mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 120, vol: 5 }, { name: "Paracetamol 125mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 125, vol: 5 }, { name: "Paracetamol 250mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 250, vol: 5 }, { name: "Paracetamol Suppository 80mg", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 80, vol: 1 }, { name: "Paracetamol Suppository 120mg", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 120, vol: 1 }, { name: "Paracetamol Suppository 250mg", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 250, vol: 1 }, { name: "Ibuprofen 40mg/ml drops", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H (with food)", conc: 40, vol: 1 }, { name: "Ibuprofen 100mg/5ml susp", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H (with food)", conc: 100, vol: 5 }, { name: "Diclofenac Suppository 12.5mg", doseMg: 1, doseType: "perDose", div: 1, freq: "BID or TID", conc: 12.5, vol: 1 }, { name: "Diclofenac Suppository 25mg", doseMg: 1, doseType: "perDose", div: 1, freq: "BID or TID", conc: 25, vol: 1 } ],
-        "antihistamines": [ { name: "Dimetindene maleate 1mg/ml drops", doseMg: 0.1, doseType: "perDay", div: 3, freq: "TID", conc: 1, vol: 1 }, { name: "Dimetindene maleate 0.1mg/ml syrup", doseMg: 0.1, doseType: "perDay", div: 3, freq: "TID", conc: 0.1, vol: 1 }, { name: "Chlorpheniramine 2mg/5ml syrup", doseMg: 0.35, doseType: "perDay", div: 4, freq: "Q6H", conc: 2, vol: 5 }, { name: "Cetirizine 10mg/ml drops", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 10, vol: 1 }, { name: "Cetirizine 1mg/ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 1, vol: 1 }, { name: "Cetirizine 5mg/5ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 5, vol: 5 }, { name: "Levocetirizine 2.5mg/5ml syrup", doseMg: 0.125, doseType: "perDose", div: 1, freq: "QD", conc: 2.5, vol: 5 }, { name: "Loratadine 1mg/ml syrup", doseMg: 0.2, doseType: "perDose", div: 1, freq: "QD", conc: 1, vol: 1 }, { name: "Desloratadine 0.5mg/ml syrup", doseMg: 0.1, doseType: "perDose", div: 1, freq: "QD", conc: 0.5, vol: 1 }, { name: "Fexofenadine 30mg/5ml susp", doseMg: 2, doseType: "perDay", div: 2, freq: "BID", conc: 30, vol: 5 }, { name: "Promethazine 6.25mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 6.25, vol: 5 }, { name: "Ketotifen 1mg/5ml syrup", doseMg: 0.05, doseType: "perDose", div: 1, freq: "BID", conc: 1, vol: 5 }, { name: "Dexamethasone 0.5mg/5ml syrup", doseMg: 0.3, doseType: "perDose", div: 1, freq: "Stat or QD", conc: 0.5, vol: 5 }, { name: "Prednisolone 15mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 2, freq: "BID", conc: 15, vol: 5 } ],
-        "git": [ { name: "Domperidone 1mg/ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "TID (Before meals)", conc: 1, vol: 1 }, { name: "Metoclopramide 5mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID", conc: 5, vol: 5 }, { name: "Ondansetron 4mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID or Stat", conc: 4, vol: 5 }, { name: "Simethicone 40mg/ml drops", doseMg: 1, doseType: "perDose", div: 1, freq: "QID (After meals)", conc: 40, vol: 1 }, { name: "Hyoscine butylbromide 5mg/5ml", doseMg: 0.5, doseType: "perDose", div: 1, freq: "TID", conc: 5, vol: 5 }, { name: "Prifinium bromide 7.5mg/5ml", doseMg: 1, doseType: "perDose", div: 1, freq: "TID", conc: 7.5, vol: 5 }, { name: "Loperamide 1mg/5ml syrup", doseMg: 0.1, doseType: "perDose", div: 1, freq: "BID (Avoid <2 yrs)", conc: 1, vol: 5 }, { name: "Lactulose 66.7g/100ml syrup", doseMg: 667, doseType: "perDay", div: 2, freq: "BID (Target 1-3ml/kg/day)", conc: 667, vol: 1 }, { name: "Glycerin Suppository", doseMg: 1, doseType: "perDose", div: 1, freq: "PRN - FIXED DOSE", conc: 1, vol: 1 } ],
-        "respiratory": [ { name: "Ambroxol 7.5mg/ml drops", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 7.5, vol: 1 }, { name: "Ambroxol 15mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 15, vol: 5 }, { name: "Ambroxol 30mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 30, vol: 5 }, { name: "Bromhexine HCl 4mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 4, vol: 5 }, { name: "Butamirate citrate 5mg/ml drops", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 5, vol: 1 }, { name: "Butamirate citrate 7.5mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 7.5, vol: 5 }, { name: "Carbocisteine 2% (100mg/5ml)", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 100, vol: 5 }, { name: "Carbocisteine 5% (250mg/5ml)", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 }, { name: "Dextromethorphan 15mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 15, vol: 5 }, { name: "Guaifenesin 100mg/5ml syrup", doseMg: 10, doseType: "perDay", div: 4, freq: "QID", conc: 100, vol: 5 }, { name: "Terbutaline 1.5mg/5ml syrup", doseMg: 0.05, doseType: "perDose", div: 1, freq: "TID", conc: 1.5, vol: 5 }, { name: "Salbutamol 2mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID", conc: 2, vol: 5 }, { name: "Montelukast 4mg/5mg/10mg", doseMg: 0.2, doseType: "perDose", div: 1, freq: "QD (Evening)", conc: 4, vol: 1 }, { name: "Chlorpheniramine+Dextro (2/15)mg", doseMg: 1, doseType: "perDay", div: 3, freq: "TID (Dosed on Dextro)", conc: 15, vol: 5 }, { name: "Chlorphen+Pseudo (2/30)mg", doseMg: 4, doseType: "perDay", div: 3, freq: "TID (Dosed on Pseudoephedrine)", conc: 30, vol: 5 }, { name: "PCM+Chlorphen+Pseudo syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "TID (Dosed on PCM)", conc: 125, vol: 5 }, { name: "Triprolidine+Pseudo (1.25/30)mg", doseMg: 4, doseType: "perDay", div: 3, freq: "TID (Dosed on Pseudoephedrine)", conc: 30, vol: 5 }, { name: "Guai+Tripro+Pseudo syrup", doseMg: 10, doseType: "perDay", div: 3, freq: "TID (Dosed on Guaifenesin)", conc: 100, vol: 5 } ]
+        "antibiotics": [
+            { name: "Amoxicillin 125mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Amoxicillin 250mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Amox+Clav 62.5mg/ml drops", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 62.5, vol: 1 },
+            { name: "Amox+Clav 156mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 156, vol: 5 },
+            { name: "Amox+Clav (200/28)mg/5ml", doseMg: 40, doseType: "perDay", div: 2, freq: "BID", conc: 200, vol: 5 },
+            { name: "Amox+Clav 312mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 312, vol: 5 },
+            { name: "Amox+Clav (400/57)mg/5ml", doseMg: 40, doseType: "perDay", div: 2, freq: "BID", conc: 400, vol: 5 },
+            { name: "Amox+Clav (600/42.9)mg/5ml", doseMg: 90, doseType: "perDay", div: 2, freq: "BID", conc: 600, vol: 5 },
+            { name: "Cefixime 100mg/5ml", doseMg: 8, doseType: "perDay", div: 2, freq: "BID", conc: 100, vol: 5 },
+            { name: "Cefaclor 125mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Cefaclor 250mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Cefaclor 375mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 375, vol: 5 },
+            { name: "Cefuroxime 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cefuroxime 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Cefdinir 125mg/5ml", doseMg: 14, doseType: "perDay", div: 1, freq: "QD or BID", conc: 125, vol: 5 },
+            { name: "Cefdinir 250mg/5ml", doseMg: 14, doseType: "perDay", div: 1, freq: "QD or BID", conc: 250, vol: 5 },
+            { name: "Cephalexin 125mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Cephalexin 250mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Cefadroxil 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cefadroxil 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Cefadroxil 500mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 500, vol: 5 },
+            { name: "Cephradine 125mg/5ml", doseMg: 25, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cephradine 250mg/5ml", doseMg: 25, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Cefpodoxime 40mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 40, vol: 5 },
+            { name: "Cefpodoxime 50mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 50, vol: 5 },
+            { name: "Cefpodoxime 100mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 100, vol: 5 },
+            { name: "Cefprozil 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cefprozil 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Azithromycin 100mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "QD (3-5 days)", conc: 100, vol: 5 },
+            { name: "Azithromycin 200mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "QD (3-5 days)", conc: 200, vol: 5 },
+            { name: "Erythromycin 200mg/5ml", doseMg: 40, doseType: "perDay", div: 4, freq: "QID", conc: 200, vol: 5 },
+            { name: "Erythromycin 400mg/5ml", doseMg: 40, doseType: "perDay", div: 4, freq: "QID", conc: 400, vol: 5 },
+            { name: "Clarithromycin 125mg/5ml", doseMg: 15, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Clarithromycin 250mg/5ml", doseMg: 15, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Mebendazole 100mg/5ml", doseMg: 100, doseType: "perDose", div: 1, freq: "Stat (Repeat in 2wks) - FIXED DOSE", conc: 100, vol: 5 },
+            { name: "Metronidazole 125mg/5ml", doseMg: 30, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Metronidazole 200mg/5ml", doseMg: 30, doseType: "perDay", div: 3, freq: "TID", conc: 200, vol: 5 },
+            { name: "Co-trimoxazole (40/200)mg/5ml", doseMg: 8, doseType: "perDay", div: 2, freq: "BID (Dosed on TMP)", conc: 40, vol: 5 }
+        ],
+        "antipyretics": [
+            { name: "Paracetamol 100mg/ml drops", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 100, vol: 1 },
+            { name: "Paracetamol 120mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 120, vol: 5 },
+            { name: "Paracetamol 125mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 125, vol: 5 },
+            { name: "Paracetamol 250mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 250, vol: 5 },
+            { name: "Paracetamol Suppository 80mg", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 80, vol: 1 },
+            { name: "Paracetamol Suppository 120mg", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 120, vol: 1 },
+            { name: "Paracetamol Suppository 250mg", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 250, vol: 1 },
+            { name: "Ibuprofen 40mg/ml drops", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H (with food)", conc: 40, vol: 1 },
+            { name: "Ibuprofen 100mg/5ml susp", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H (with food)", conc: 100, vol: 5 },
+            { name: "Diclofenac Suppository 12.5mg", doseMg: 1, doseType: "perDose", div: 1, freq: "BID or TID", conc: 12.5, vol: 1 },
+            { name: "Diclofenac Suppository 25mg", doseMg: 1, doseType: "perDose", div: 1, freq: "BID or TID", conc: 25, vol: 1 }
+        ],
+        "antihistamines": [
+            { name: "Dimetindene maleate 1mg/ml drops", doseMg: 0.1, doseType: "perDay", div: 3, freq: "TID", conc: 1, vol: 1 },
+            { name: "Dimetindene maleate 0.1mg/ml syrup", doseMg: 0.1, doseType: "perDay", div: 3, freq: "TID", conc: 0.1, vol: 1 },
+            { name: "Chlorpheniramine 2mg/5ml syrup", doseMg: 0.35, doseType: "perDay", div: 4, freq: "Q6H", conc: 2, vol: 5 },
+            { name: "Cetirizine 10mg/ml drops", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 10, vol: 1 },
+            { name: "Cetirizine 1mg/ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 1, vol: 1 },
+            { name: "Cetirizine 5mg/5ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 5, vol: 5 },
+            { name: "Levocetirizine 2.5mg/5ml syrup", doseMg: 0.125, doseType: "perDose", div: 1, freq: "QD", conc: 2.5, vol: 5 },
+            { name: "Loratadine 1mg/ml syrup", doseMg: 0.2, doseType: "perDose", div: 1, freq: "QD", conc: 1, vol: 1 },
+            { name: "Desloratadine 0.5mg/ml syrup", doseMg: 0.1, doseType: "perDose", div: 1, freq: "QD", conc: 0.5, vol: 1 },
+            { name: "Fexofenadine 30mg/5ml susp", doseMg: 2, doseType: "perDay", div: 2, freq: "BID", conc: 30, vol: 5 },
+            { name: "Promethazine 6.25mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 6.25, vol: 5 },
+            { name: "Ketotifen 1mg/5ml syrup", doseMg: 0.05, doseType: "perDose", div: 1, freq: "BID", conc: 1, vol: 5 },
+            { name: "Dexamethasone 0.5mg/5ml syrup", doseMg: 0.3, doseType: "perDose", div: 1, freq: "Stat or QD", conc: 0.5, vol: 5 },
+            { name: "Prednisolone 15mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 2, freq: "BID", conc: 15, vol: 5 }
+        ],
+        "git": [
+            { name: "Domperidone 1mg/ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "TID (Before meals)", conc: 1, vol: 1 },
+            { name: "Metoclopramide 5mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID", conc: 5, vol: 5 },
+            { name: "Ondansetron 4mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID or Stat", conc: 4, vol: 5 },
+            { name: "Simethicone 40mg/ml drops", doseMg: 1, doseType: "perDose", div: 1, freq: "QID (After meals)", conc: 40, vol: 1 },
+            { name: "Hyoscine butylbromide 5mg/5ml", doseMg: 0.5, doseType: "perDose", div: 1, freq: "TID", conc: 5, vol: 5 },
+            { name: "Prifinium bromide 7.5mg/5ml", doseMg: 1, doseType: "perDose", div: 1, freq: "TID", conc: 7.5, vol: 5 },
+            { name: "Loperamide 1mg/5ml syrup", doseMg: 0.1, doseType: "perDose", div: 1, freq: "BID (Avoid <2 yrs)", conc: 1, vol: 5 },
+            { name: "Lactulose 66.7g/100ml syrup", doseMg: 667, doseType: "perDay", div: 2, freq: "BID (Target 1-3ml/kg/day)", conc: 667, vol: 1 },
+            { name: "Glycerin Suppository", doseMg: 1, doseType: "perDose", div: 1, freq: "PRN - FIXED DOSE", conc: 1, vol: 1 }
+        ],
+        "respiratory": [
+            { name: "Ambroxol 7.5mg/ml drops", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 7.5, vol: 1 },
+            { name: "Ambroxol 15mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 15, vol: 5 },
+            { name: "Ambroxol 30mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 30, vol: 5 },
+            { name: "Bromhexine HCl 4mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 4, vol: 5 },
+            { name: "Butamirate citrate 5mg/ml drops", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 5, vol: 1 },
+            { name: "Butamirate citrate 7.5mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 7.5, vol: 5 },
+            { name: "Carbocisteine 2% (100mg/5ml)", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 100, vol: 5 },
+            { name: "Carbocisteine 5% (250mg/5ml)", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Dextromethorphan 15mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 15, vol: 5 },
+            { name: "Guaifenesin 100mg/5ml syrup", doseMg: 10, doseType: "perDay", div: 4, freq: "QID", conc: 100, vol: 5 },
+            { name: "Terbutaline 1.5mg/5ml syrup", doseMg: 0.05, doseType: "perDose", div: 1, freq: "TID", conc: 1.5, vol: 5 },
+            { name: "Salbutamol 2mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID", conc: 2, vol: 5 },
+            { name: "Montelukast 4mg/5mg/10mg", doseMg: 0.2, doseType: "perDose", div: 1, freq: "QD (Evening)", conc: 4, vol: 1 },
+            { name: "Chlorpheniramine+Dextro (2/15)mg", doseMg: 1, doseType: "perDay", div: 3, freq: "TID (Dosed on Dextro)", conc: 15, vol: 5 },
+            { name: "Chlorphen+Pseudo (2/30)mg", doseMg: 4, doseType: "perDay", div: 3, freq: "TID (Dosed on Pseudoephedrine)", conc: 30, vol: 5 },
+            { name: "PCM+Chlorphen+Pseudo syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "TID (Dosed on PCM)", conc: 125, vol: 5 },
+            { name: "Triprolidine+Pseudo (1.25/30)mg", doseMg: 4, doseType: "perDay", div: 3, freq: "TID (Dosed on Pseudoephedrine)", conc: 30, vol: 5 },
+            { name: "Guai+Tripro+Pseudo syrup", doseMg: 10, doseType: "perDay", div: 3, freq: "TID (Dosed on Guaifenesin)", conc: 100, vol: 5 }
+        ]
     };
 
     const foodsDb = [
-        {name:"Boiled rice", cat:"Cereals", p:8.5, c:77, f:0, k:349}, {name:"Raw rice", cat:"Cereals", p:7.5, c:76, f:0, k:346}, {name:"Wheat", cat:"Cereals", p:12, c:71, f:0, k:346}, {name:"Ragi", cat:"Cereals", p:7, c:72, f:0, k:328}, {name:"Jowar", cat:"Cereals", p:10, c:72, f:0, k:349},
-        {name:"Banana", cat:"Fruits", p:1.2, c:27, f:0, k:116}, {name:"Apple", cat:"Fruits", p:0.2, c:13, f:0, k:59}, {name:"Mango", cat:"Fruits", p:0.6, c:17, f:0, k:74}, {name:"Dates(Dried)", cat:"Fruits", p:2.5, c:76, f:0, k:317}, {name:"Sweet Lime", cat:"Fruits", p:1.5, c:11, f:0, k:60},
-        {name:"Bengal gram", cat:"Pulses", p:17, c:61, f:0, k:360}, {name:"Green gram", cat:"Pulses", p:24, c:60, f:0, k:348}, {name:"Soya bean", cat:"Pulses", p:43, c:21, f:0, k:432}, {name:"Rajmah", cat:"Pulses", p:23, c:60, f:0, k:346},
-        {name:"Almond", cat:"Nuts", p:21, c:10, f:60, k:658}, {name:"Groundnut", cat:"Nuts", p:25, c:26, f:40, k:567}, {name:"Walnut", cat:"Nuts", p:34, c:11, f:64, k:687},
-        {name:"Cow's milk", cat:"Dairy", p:3.3, c:4.4, f:4.1, k:67}, {name:"Buffalo milk", cat:"Dairy", p:4.3, c:5.0, f:6.5, k:117}, {name:"Breast milk", cat:"Dairy", p:1.1, c:7.4, f:3.4, k:65}, {name:"Curds", cat:"Dairy", p:3.1, c:3.0, f:4.0, k:60},
-        {name:"Chicken", cat:"Meat", p:25, c:0, f:0.6, k:109}, {name:"Egg hen", cat:"Meat", p:13, c:0, f:13, k:173}, {name:"Mutton", cat:"Meat", p:20, c:0, f:13, k:194},
-        {name:"Potato", cat:"Vegetables", p:1, c:22, f:0.1, k:97}, {name:"Carrot", cat:"Vegetables", p:1, c:11, f:0.2, k:48}, {name:"Sweet potato", cat:"Vegetables", p:1, c:28, f:0.3, k:120}
+        {name:"Boiled rice", cat:"Cereals", p:8.5, c:77, f:0, k:349},
+        {name:"Raw rice", cat:"Cereals", p:7.5, c:76, f:0, k:346},
+        {name:"Wheat", cat:"Cereals", p:12, c:71, f:0, k:346},
+        {name:"Ragi", cat:"Cereals", p:7, c:72, f:0, k:328},
+        {name:"Jowar", cat:"Cereals", p:10, c:72, f:0, k:349},
+        {name:"Banana", cat:"Fruits", p:1.2, c:27, f:0, k:116},
+        {name:"Apple", cat:"Fruits", p:0.2, c:13, f:0, k:59},
+        {name:"Mango", cat:"Fruits", p:0.6, c:17, f:0, k:74},
+        {name:"Dates(Dried)", cat:"Fruits", p:2.5, c:76, f:0, k:317},
+        {name:"Sweet Lime", cat:"Fruits", p:1.5, c:11, f:0, k:60},
+        {name:"Bengal gram", cat:"Pulses", p:17, c:61, f:0, k:360},
+        {name:"Green gram", cat:"Pulses", p:24, c:60, f:0, k:348},
+        {name:"Soya bean", cat:"Pulses", p:43, c:21, f:0, k:432},
+        {name:"Rajmah", cat:"Pulses", p:23, c:60, f:0, k:346},
+        {name:"Almond", cat:"Nuts", p:21, c:10, f:60, k:658},
+        {name:"Groundnut", cat:"Nuts", p:25, c:26, f:40, k:567},
+        {name:"Walnut", cat:"Nuts", p:34, c:11, f:64, k:687},
+        {name:"Cow's milk", cat:"Dairy", p:3.3, c:4.4, f:4.1, k:67},
+        {name:"Buffalo milk", cat:"Dairy", p:4.3, c:5.0, f:6.5, k:117},
+        {name:"Breast milk", cat:"Dairy", p:1.1, c:7.4, f:3.4, k:65},
+        {name:"Curds", cat:"Dairy", p:3.1, c:3.0, f:4.0, k:60},
+        {name:"Chicken", cat:"Meat", p:25, c:0, f:0.6, k:109},
+        {name:"Egg hen", cat:"Meat", p:13, c:0, f:13, k:173},
+        {name:"Mutton", cat:"Meat", p:20, c:0, f:13, k:194},
+        {name:"Potato", cat:"Vegetables", p:1, c:22, f:0.1, k:97},
+        {name:"Carrot", cat:"Vegetables", p:1, c:11, f:0.2, k:48},
+        {name:"Sweet potato", cat:"Vegetables", p:1, c:28, f:0.3, k:120}
+    ];
+
+    const baseVaccineSchema = [
+        { id: "bcg", name: "BCG", window: "At Birth", group: "Infant", baseOffsetWeeks: 0, strategy: "Give ASAP." },
+        { id: "opv0", name: "OPV-0", window: "At Birth", group: "Infant", baseOffsetWeeks: 0, strategy: "Max 15 days." },
+        { id: "hepB0", name: "Hepatitis B-0", window: "At Birth", group: "Infant", baseOffsetWeeks: 0, strategy: "Give within 24h." },
+        { id: "penta1", name: "Pentavalent-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Max 1 yr." },
+        { id: "opv1", name: "OPV-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Up to 5 yrs." },
+        { id: "fipv1", name: "fIPV-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Fractional dose (ID)." },
+        { id: "pcv1", name: "PCV-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Max 1 yr." },
+        { id: "penta2", name: "Pentavalent-2", window: "10 Wks", group: "Infant", baseOffsetWeeks: 10, dependsOn: "penta1", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "opv2", name: "OPV-2", window: "10 Wks", group: "Infant", baseOffsetWeeks: 10, dependsOn: "opv1", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "penta3", name: "Pentavalent-3", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "penta2", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "opv3", name: "OPV-3", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "opv2", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "fipv2", name: "fIPV-2", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "fipv1", minIntervalWeeks: 8, strategy: "8wk gap." },
+        { id: "pcv2", name: "PCV-2", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "pcv1", minIntervalWeeks: 8, strategy: "8wk gap." },
+        { id: "mr1", name: "MR-1", window: "9 Mos", group: "Infant", baseOffsetWeeks: 39, strategy: "Up to 5 yrs." },
+        { id: "pcvB", name: "PCV Booster", window: "9 Mos", group: "Infant", baseOffsetWeeks: 39, dependsOn: "pcv2", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "je1", name: "JE-1", window: "9 Mos", group: "Infant", baseOffsetWeeks: 39, condition: "je", strategy: "Endemic areas." },
+        { id: "mr2", name: "MR-2", window: "16-24 Mos", group: "Toddler", baseOffsetWeeks: 69, dependsOn: "mr1", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "dptB1", name: "DPT Booster-1", window: "16-24 Mos", group: "Toddler", baseOffsetWeeks: 69, dependsOn: "penta3", minIntervalWeeks: 24, strategy: "6mo gap required." },
+        { id: "je2", name: "JE-2", window: "16-24 Mos", group: "Toddler", baseOffsetWeeks: 69, condition: "je", dependsOn: "je1", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "dptB2", name: "DPT Booster-2", window: "5-6 Yrs", group: "Toddler", baseOffsetWeeks: 260, strategy: "Max 7 yrs." },
+        { id: "hpv1", name: "HPV-1", window: "9-14 Yrs", group: "Adolescent", baseOffsetWeeks: 468, condition: "female", strategy: "Girls only." },
+        { id: "hpv2", name: "HPV-2", window: "6 Mos Post Dose 1", group: "Adolescent", baseOffsetWeeks: 494, condition: "female", dependsOn: "hpv1", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "td10", name: "Td-10", window: "10 Yrs", group: "Adolescent", baseOffsetWeeks: 520, strategy: "Tetanus/Diphtheria." },
+        { id: "td16", name: "Td-16", window: "16 Yrs", group: "Adolescent", baseOffsetWeeks: 832, strategy: "Tetanus/Diphtheria." }
     ];
 
     let globalPatientsStore = JSON.parse(localStorage.getItem('nis_patients')) || {};
-    let activePatientId = null; let currentPatientAgeInMonths = 0; let pendingPrescriptionDrug = null;
-    let wtChartInstance = null; let htChartInstance = null;
+    let activePatientId = null; 
+    let currentPatientAgeInMonths = 0; 
+    let pendingPrescriptionDrug = null;
+    let wtChartInstance = null; 
+    let htChartInstance = null;
 
     // --- HELPER: WEECH'S FORMULAS ---
     function getExpectedWeight(totalM) {
@@ -661,7 +974,10 @@
         renderFoodDB(foodsDb);
         populateFoodSelect();
         buildMilestoneReference();
-        if(Object.keys(globalPatientsStore).length === 0) { document.getElementById('calcWeight').value = "10"; calculateDose(); }
+        if(Object.keys(globalPatientsStore).length === 0) { 
+            document.getElementById('calcWeight').value = "10"; 
+            calculateDose(); 
+        }
     };
 
     // --- MOBILE UI DRAWER TOGGLE ---
@@ -703,7 +1019,17 @@
             }
         }
     }
-    function switchSubTab(subTabId, el) { document.querySelectorAll('.sub-tab-content').forEach(stc => stc.classList.remove('active')); document.querySelectorAll('.sub-tab-btn').forEach(stb => stb.classList.remove('active')); document.getElementById(subTabId).classList.add('active'); el.classList.add('active'); }
+    function switchSubTab(subTabId, el) { 
+        // Close siblings
+        const parent = el.parentElement;
+        parent.querySelectorAll('.sub-tab-btn').forEach(stb => stb.classList.remove('active')); 
+        const container = parent.parentElement;
+        container.querySelectorAll('.sub-tab-content').forEach(stc => stc.classList.remove('active')); 
+        
+        // Open active
+        document.getElementById(subTabId).classList.add('active'); 
+        el.classList.add('active'); 
+    }
 
     // --- NEW PATIENT WORKFLOW ---
     function prepNewPatient() {
@@ -762,10 +1088,8 @@
         document.getElementById('mobileBannerText').innerText = `👤 ${pName} (${parseInt(document.getElementById('ageYrs').value) || 0}Y ${parseInt(document.getElementById('ageMos').value) || 0}M)`;
         
         if(!isBackgroundUpdate) { 
-            // Auto close drawer on mobile save
             document.getElementById('registryPanel').classList.remove('mobile-open');
             document.getElementById('mobileBannerIcon').innerText = "▼";
-            
             renderPatientBadges(); triggerActiveWorkspaceBuild(id); 
         } else { calculateDose(); renderMilestoneDashboard(); calcGrowth(); calcMalnutrition(); calcNutrition(); renderDietRecall(); }
     }
@@ -890,7 +1214,7 @@
         window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`, '_blank');
     }
 
-    // --- NUTRITION ENGINE (ICMR RDA) ---
+    // --- NUTRITION ENGINE (ICMR RDA & 24H RECALL) ---
     function calcNutrition() {
         let totalM = currentPatientAgeInMonths;
         if(totalM === 0) totalM = parseInt(document.getElementById('calcQuickAge').value) || 0;
@@ -1046,13 +1370,16 @@
     function calcMalnutrition() {
         if(!activePatientId) return;
         const p = globalPatientsStore[activePatientId];
-        const wt = parseFloat(p.weight); const ht = parseFloat(document.getElementById('htCm').value || p.htCm); const hc = parseFloat(document.getElementById('hcCm').value || p.hcCm);
+        const wt = parseFloat(p.weight); 
+        const ht = parseFloat(document.getElementById('htCm').value || p.htCm); 
+        const hc = parseFloat(document.getElementById('hcCm').value || p.hcCm);
         const totalM = p.totalMonths; const y = Math.floor(totalM / 12);
         const oedema = document.getElementById('malnOedemaToggle').checked;
         const outGrid = document.getElementById('malnGridOutput');
         
         let html = "";
 
+        // 1. Expected Weight (Weech) & IAP/Wellcome
         if(wt && totalM > 0) {
             let expWt = getExpectedWeight(totalM);
             let wtPercent = (wt / expWt) * 100;
@@ -1070,22 +1397,26 @@
             html += `<div class="tool-result" style="border-color:${iapColor}; color:${iapColor};"><h4 style="margin:0 0 5px 0;">Weight-for-Age Assessment</h4><b>${wtPercent.toFixed(1)}%</b> of Expected (${expWt.toFixed(1)} kg)<br><small style="color:var(--text-main); margin-top:5px; display:block;"><b>IAP:</b> ${iapGrade} | <b>Wellcome:</b> ${wellcome}</small></div>`;
         }
 
+        // 2. MAC (If 1-5 years)
         if(y >= 1 && y <= 5) {
             html += `<div class="tool-result neutral" style="text-align:left;"><label style="margin-top:0;">Enter Mid-Arm Circ. (cm)</label><input type="number" step="0.1" id="macInput" oninput="evalMAC(this.value)"><div id="macOutput" style="margin-top:10px; font-weight:bold;"></div></div>`;
         }
 
+        // 3. Ponderal Index (Neonates)
         if(totalM < 1 && wt && ht) {
             let pi = ((wt * 1000) * 100) / Math.pow(ht, 3);
             let piStat = pi >= 2 ? "Symmetric IUGR" : (pi < 1.9 ? "Asymmetric IUGR" : "Normal / Appropriate");
             html += `<div class="tool-result neutral"><h4 style="margin:0 0 5px 0;">Ponderal Index (Neonate)</h4><b>PI = ${pi.toFixed(2)}</b><br><small style="color:var(--primary); font-weight:bold;">${piStat}</small></div>`;
         }
 
+        // 4. Head Circumference (Dyne's if < 1yr)
         if(totalM < 12 && ht) {
             let expHc = (ht / 2) + 9.5;
             let hcStat = hc ? (hc < expHc - 3 ? "Microcephaly Risk" : (hc > expHc + 3 ? "Macrocephaly Risk" : "Normal variance")) : "Enter HC to evaluate";
             html += `<div class="tool-result neutral"><h4 style="margin:0 0 5px 0;">Expected Head Circumference</h4><b>${expHc.toFixed(1)} cm (±2.5cm)</b><br><small style="color:var(--text-main); font-weight:bold;">${hcStat}</small></div>`;
         }
 
+        // 5. BSA & Calorics
         if(wt) {
             let bsa = ht ? Math.sqrt((ht * wt) / 3600) : (wt <= 5 ? (0.05*wt)+0.05 : (wt <= 10 ? (0.04*wt)+0.1 : (wt <= 20 ? (0.03*wt)+0.2 : (0.02*wt)+0.4)));
             let maint = wt <= 10 ? wt * 100 : (wt <= 20 ? 1000 + ((wt-10)*50) : 1500 + ((wt-20)*20));
@@ -1095,6 +1426,7 @@
         outGrid.innerHTML = html || "<div class='tool-result neutral'>Enter Age, Weight, and Height in the Registry to auto-calculate triage metrics.</div>";
     }
 
+    // Helper for dynamic MAC inside triage
     window.evalMAC = function(val) {
         let v = parseFloat(val); let out = document.getElementById('macOutput');
         if(!v) { out.innerHTML = ""; return; }
@@ -1144,7 +1476,7 @@
     }
     function addPendingToRxCart() { if(!activePatientId || !pendingPrescriptionDrug) return; globalPatientsStore[activePatientId].rxList.push(pendingPrescriptionDrug); localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); document.getElementById('drugFormulation').value = ""; document.getElementById('calcOutputArea').style.display = 'none'; pendingPrescriptionDrug = null; renderRxCartList(); }
     function removeDrugFromCart(idx) { globalPatientsStore[activePatientId].rxList.splice(idx, 1); localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderRxCartList(); }
-    function renderRxCartList() { const cartContainer = document.getElementById('rxCartList'); if(!activePatientId) return; const list = globalPatientsStore[activePatientId].rxList; if (list.length === 0) { cartContainer.innerHTML = "<div style='font-style:italic; color:#64748b;'>Prescription pad empty.</div>"; return; } let html = ""; list.forEach((drug, index) => { html += `<div class="rx-cart-item"><div class="rx-cart-item-details"><h4 style="color:var(--text-main);">${index + 1}. ${drug.name}</h4><div style="color:var(--primary); font-weight:bold;">Take ${drug.vol} mL &mdash; ${drug.freq}</div><div>Targeting: ${drug.details}</div></div><button onclick="removeDrugFromCart(${index})" class="secondary" style="background:var(--danger); color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">Remove</button></div>`; }); cartContainer.innerHTML = html; }
+    function renderRxCartList() { const cartContainer = document.getElementById('rxCartList'); if(!activePatientId) return; const list = globalPatientsStore[activePatientId].rxList; if (list.length === 0) { cartContainer.innerHTML = "<div style='font-style:italic; color:#64748b;'>Prescription pad empty.</div>"; return; } let html = ""; list.forEach((drug, index) => { html += `<div class="rx-cart-item"><div class="rx-cart-item-details"><h4 style="color:var(--text-main); margin-top:0;">${index + 1}. ${drug.name}</h4><div style="color:var(--primary); font-weight:bold; font-size:1.05rem;">Take ${drug.vol} mL &mdash; ${drug.freq}</div><div style="margin-top:4px;">Targeting: ${drug.details}</div></div><button onclick="removeDrugFromCart(${index})" class="secondary" style="background:var(--danger); color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">Remove</button></div>`; }); cartContainer.innerHTML = html; }
 
     // --- GROWTH CHARTS ---
     function drawGrowthCharts(patientAgeMonths, currentWeight, currentHeight, patientGender) {
@@ -1249,13 +1581,25 @@
         availableAges.forEach(age => {
             let aHTML = ""; milestonesDb[age].forEach(m => { if(achieved[m.id]) aHTML += `<div>✅ <b>${m.domain}</b>: ${m.text}</div>`; });
             if(aHTML) completedHTML += `<h5 style="margin:1rem 0 0.25rem 0; color:var(--success); font-size:0.95rem; border-bottom:1px solid #bbf7d0; padding-bottom:5px;">Achieved via ${age}m vectors:</h5>${aHTML}`;
-            if(age <= currentBracket) { milestonesDb[age].forEach(m => { if(!achieved[m.id]) missedHTML += `<div class="red-flag-card"><h4>🚨 Flagged Target: ${m.text} (Expected by ${age} Mos)</h4><span class="milestone-domain">${m.domain}</span><div class="sig-text"><b>Significance:</b> ${m.sig}</div></div>`; }); }
+            if(age <= currentBracket) { milestonesDb[age].forEach(m => { if(!achieved[m.id]) missedHTML += `<div class="red-flag-card" style="padding:10px; border:1px solid #fecaca; background:#fef2f2; border-radius:8px; margin-bottom:10px;"><h4 style="margin:0 0 5px 0; color:#991b1b;">🚨 Flagged Target: ${m.text} (Expected by ${age} Mos)</h4><span class="milestone-domain">${m.domain}</span><div class="sig-text" style="font-size:0.85rem; margin-top:5px; color:#7f1d1d;"><b>Significance:</b> ${m.sig}</div></div>`; }); }
         });
         document.getElementById('msCompletedContainer').innerHTML = completedHTML || "<p>No milestones recorded.</p>";
         document.getElementById('msMissedContainer').innerHTML = missedHTML || "<div style='padding:1.5rem; background:#f0fdf4; border:1px solid #16a34a; border-radius:var(--radius-lg); color:#166534; font-weight:bold;'>✅ All verification targets achieved.</div>";
         document.getElementById('msUpcomingContainer').innerHTML = upcomingBracket ? `<h4 style="margin:1rem 0 0.5rem 0; color:var(--primary); font-size:1.1rem; border-bottom:1px solid var(--border-soft); padding-bottom:5px;">Targeting Milestone Marker: ${upcomingBracket} Months</h4>` + milestonesDb[upcomingBracket].map(m => `<div style="padding:1rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); margin-bottom:0.75rem; background:white; font-size:0.95rem; box-shadow:var(--shadow-sm);"><span class="milestone-domain">${m.domain}</span><div style="font-weight:600; margin-top:5px; color:var(--text-main);">${m.text}</div></div>`).join("") : "<p>Advanced baseline clearance parameters.</p>";
     }
     function toggleMilestone(mId, isChecked) { globalPatientsStore[activePatientId].achievedMilestones[mId] = isChecked; localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderMilestoneDashboard(); }
+    
+    function buildMilestoneReference() {
+        let tableHTML = `<table class="nis-table"><thead><tr><th>Age Bracket</th><th>Domain</th><th>Milestone Marker</th></tr></thead><tbody>`;
+        Object.keys(milestonesDb).forEach(age => {
+            milestonesDb[age].forEach((m, idx) => {
+                if(idx === 0) { tableHTML += `<tr><td rowspan="${milestonesDb[age].length}"><b>${age} Months</b></td><td><span class="milestone-domain">${m.domain}</span></td><td>${m.text}</td></tr>`; } 
+                else { tableHTML += `<tr><td><span class="milestone-domain">${m.domain}</span></td><td>${m.text}</td></tr>`; }
+            });
+        });
+        const refContainer = document.getElementById('msReferenceContainer');
+        if(refContainer) refContainer.innerHTML = tableHTML + `</tbody></table>`;
+    }
     
     // --- PRINT ENGINE ---
     function getPrintHeaderHTML(title) {
