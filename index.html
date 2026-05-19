@@ -225,6 +225,32 @@
         .modal-content { background: var(--bg-surface); width: 90%; max-width: 600px; border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto; }
         .modal-content h2 { margin-top: 0; color: var(--primary); border-bottom: 1px solid var(--border-soft); padding-bottom: 10px; }
         .close-modal { float: right; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+        
+        .checkbox-container { display: flex; align-items: center; gap: 8px; margin-top: 5px; background: var(--bg-surface); padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-soft);}
+        .checkbox-container input { width: 18px; height: 18px; margin: 0; }
+        .checkbox-container label { margin: 0; }
+
+        @media print {
+            body > *:not(#printEngine) { display: none !important; }
+            body { background: white !important; color: black !important; }
+            #printEngine { display: block !important; width: 100%; color: black; background: white;}
+            .print-header-container { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid var(--primary); padding-bottom: 15px; margin-bottom: 20px;}
+            .print-logo { max-width: 100px; max-height: 100px; object-fit: contain; }
+            .print-clinic-details { text-align: right; }
+            .print-clinic-name { font-size: 24px; font-weight: bold; margin: 0 0 5px 0; color: var(--primary); }
+            .print-doc-name { font-size: 16px; font-weight: bold; margin: 0; }
+            .print-tagline { font-size: 12px; color: #555; margin: 2px 0 0 0; }
+            #printEngine h2, #printEngine h3 { color: black !important; border-bottom: 1px solid #ccc; padding-bottom: 4px; margin-top: 20px; font-family: serif;}
+            #printEngine .page-break { page-break-after: always; }
+            #printEngine .vaccine-row { grid-template-columns: 2fr 1fr; border-bottom: 1px solid #ccc; padding: 8px 0; page-break-inside: avoid; transition: none;}
+            #printEngine .date-picker-cell, #printEngine .action-protocol-card { display: none !important; }
+            #printEngine .date-display-box::before { content: "Due: "; font-weight: normal; color: #555; }
+            #printEngine .rx-pad { border: 2px solid #000; padding: 2rem; border-radius: 12px; margin-top: 2rem; }
+            #printEngine .rx-symbol { font-size: 3.5rem; font-family: serif; font-weight: bold; line-height: 1; margin-bottom: 1.5rem; }
+            #printEngine .rx-drug-name { font-size: 1.4rem; font-weight: bold; margin-bottom: 0.35rem;}
+            #printEngine .rx-dosage { font-size: 1.5rem; font-weight: bold; border-bottom: 2px dashed #ccc; display: inline-block; padding-bottom: 5px; margin-bottom: 0.5rem;}
+            #printEngine .tool-result { border: 1px solid #000; background: none !important; color: black !important; page-break-inside: avoid; margin-bottom: 10px; padding: 15px; text-align: left; box-shadow: none;}
+        }
     </style>
 </head>
 <body>
@@ -248,7 +274,7 @@
             <button class="feature-btn" onclick="switchMainFeature('asthmaFeatureView', this)">🫁 PRAM</button>
             <button class="feature-btn" onclick="switchMainFeature('jaundiceFeatureView', this)">🍼 Jaundice</button>
             <button class="feature-btn" style="background:#f0fdf4; color:#16a34a; font-weight:700;" onclick="switchMainFeature('aboutFeatureView', this)">ℹ️ About App</button>
-            <button class="feature-btn" style="color:var(--primary); margin-top:1rem; border:1px dashed var(--primary);" onclick="openSettingsModal()">⚙️ Settings Tab</button>
+            <button class="feature-btn" style="color:var(--primary); margin-top:1rem; border:1px dashed var(--border-soft);" onclick="openSettingsModal()">⚙️ Settings Tab</button>
         </div>
 
         <button class="mobile-toggle-btn" onclick="toggleMobileRegistry()">
@@ -289,7 +315,7 @@
             <button class="whatsapp-btn" onclick="sendWACompReport()" id="btnMasterWA" style="display:none;">💬 WhatsApp Report</button>
             <div class="patient-list">
                 <div id="patientListContainer"></div>
-                <button class="secondary" onclick="clearAllData()" style="font-size:0.75rem; padding:4px; width:100%; margin-top:0.5rem; background:transparent; color:var(--danger); border:1px dashed #border-soft;">Delete System Data</button>
+                <button class="secondary" onclick="clearAllData()" style="font-size:0.75rem; padding:4px; width:100%; margin-top:0.5rem; background:transparent; color:var(--danger); border:1px dashed var(--border-soft);">Delete System Data</button>
             </div>
         </div>
     </div>
@@ -314,7 +340,7 @@
                 <div id="erCrashTab" class="sub-tab-content active">
                     <div class="timeline-section" style="border: 2px solid var(--danger); background: rgba(239, 68, 68, 0.02);">
                         <div class="tool-grid">
-                            <div style="background:var(--bg-surface); padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft);">
+                            <div style="background:var(--bg-surface); padding:1.5rem; border-radius:var(--radius-lg); border:1.5px solid var(--border-soft);">
                                 <label>Staged Weight Parameter (kg)</label>
                                 <input type="number" id="crashWeight" oninput="calcCrash()">
                                 <label style="margin-top:1rem;">Staged Age Parameter (Years)</label>
@@ -327,7 +353,7 @@
                 <div id="erNicuTab" class="sub-tab-content">
                     <div class="timeline-section">
                         <div class="tool-grid">
-                            <div style="background:var(--bg-surface); padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft);">
+                            <div style="background:var(--bg-surface); padding:1.5rem; border-radius:var(--radius-lg); border:1.5px solid var(--border-soft);">
                                 <h4>Glucose Infusion Rate (GIR)</h4>
                                 <label>Weight (kg)</label><input type="number" id="girWt" oninput="calcGIR()">
                                 <label>Fluid Rate (mL/hr)</label><input type="number" id="girRate" oninput="calcGIR()">
@@ -361,7 +387,7 @@
                 </div>
             </div>
 
-            <div id="trackerFeatureView" class="view-content">
+            <div id="trackerFeatureView" class="view-content active-view">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
                     <h2 style="margin:0; color:var(--primary);">📅 Universal Immunization Tracking Timeline</h2>
                     <button onclick="executePrint('tracker')" class="secondary">🖨️ Print Schedule</button>
@@ -484,10 +510,10 @@
 
             <div id="fluidsFeatureView" class="view-content">
                 <div class="timeline-section">
-                    <h3 class="section-title">📊 Holliday-Segar Maintenance Fluid Calculator</h3>
+                    <h3 class="section-title">💧 Holliday-Segar Maintenance Fluid Calculator</h3>
                     <div class="tool-grid">
                         <div>
-                            <label>Degree of Dehydration</label><select id="fluidDehydration" onchange="calcFluids()"><option value="0">None (Maintenance Only)</option><option value="5">Mild Fluid Loss (5%)</option><option value="10">Moderate Fluid Loss (10%)</option><option value="15">Severe Fluid Deficit (15%)</option></select>
+                            <label>Clinical Dehydration Grading</label><select id="fluidDehydration" onchange="calcFluids()"><option value="0">Euvolia (Maintenance Static)</option><option value="5">Mild Fluid Loss (5%)</option><option value="10">Moderate Fluid Loss (10%)</option><option value="15">Severe Fluid Deficit (15%)</option></select>
                             <label style="margin-top:1rem;">Fluid Mass Target (kg)</label><input type="number" id="fluidWeight" oninput="calcFluids()">
                         </div>
                         <div id="fluidResultArea" class="tool-result neutral">Compile inputs parameter block.</div>
@@ -504,7 +530,7 @@
                             <label>Suprasternal Retractions</label><select id="pramSupra" onchange="calcPRAM()"><option value="0">Absent</option><option value="2">Present</option></select>
                             <label>Scalene Muscle Access</label><select id="pramScalene" onchange="calcPRAM()"><option value="0">Absent</option><option value="2">Present</option></select>
                             <label>Air Entry Index</label><select id="pramAir" onchange="calcPRAM()"><option value="0">Symmetric Normal</option><option value="1">Decreased Bases</option><option value="2">Widespread Loss</option><option value="3">Silent Chest</option></select>
-                            <label>Wheeze Auscultation</label><select id="pramWheeze" onchange="calcPRAM()"><option value="0">Absent</option><option value="1">Expiratory Only</option><option value="2">Pan-Inspiratory Cycle</option><option value="3">Silent / Audible Without Scope</option></select>
+                            <label>Wheeze Auscultation</label><select id="pramWheeze" onchange="calcPRAM()"><option value="0">Absent</option><option value="1">Expiratory Only</option><option value="2">Pan-Inspiratory Cycle</option><option value="3">Silent / Audible Audible Without Scope</option></select>
                         </div>
                         <div id="pramResultArea" class="tool-result neutral">Staging clinical entry score.</div>
                     </div>
@@ -586,12 +612,12 @@
         </div>
         
         <label>Clinic / Hospital Name</label>
-        <input type="text" id="setClinic" placeholder="E.g., Sunrise Clinic" style="margin-bottom: 1rem;">
+        <input type="text" id="setClinic" placeholder="E.g., Sunrise Clinic">
         
-        <label>Tagline / Specialty</label>
-        <input type="text" id="setTagline" placeholder="E.g., Child Development Center" style="margin-bottom: 1rem;">
+        <label style="margin-top:1rem;">Tagline / Specialty</label>
+        <input type="text" id="setTagline" placeholder="E.g., Child Development Center">
         
-        <div class="row-inputs" style="margin-bottom: 1rem;">
+        <div class="row-inputs" style="margin-top: 1rem; margin-bottom: 1rem;">
             <div><label>Phone Number</label><input type="text" id="setPhone" placeholder="Clinic Phone"></div>
             <div><label>Address</label><input type="text" id="setAddress" placeholder="Mangaluru, Karnataka"></div>
         </div>
@@ -607,12 +633,156 @@
 <div id="printEngine"></div>
 
 <script>
-    // --- JAVASCRIPT MASTER SUITE - FULL RESOLUTION ---
+    // --- JAVASCRIPT MASTER SYSTEM ARCHITECTURE ---
+    
+    // Core Initializer State Variables
+    let appSettings = JSON.parse(localStorage.getItem('clinic_settings')) || { docName: "Dr. Peter Suraj Joseph", qual: "MBBS, MD (Pediatrics)", clinicName: "Pediatric Clinical Hub", tagline: "", phone: "", address: "", logo: "", isDark: false };
+    let globalPatientsStore = JSON.parse(localStorage.getItem('nis_patients')) || {};
+    let customDrugsStore = JSON.parse(localStorage.getItem('custom_drugs')) || { "antibiotics": [], "antipyretics": [], "antihistamines": [], "git": [], "respiratory": [] };
+    let activePatientId = null; 
+    let currentPatientAgeInMonths = 0; 
+    let pendingPrescriptionDrug = null;
+    let wtChartInstance = null; 
+    let htChartInstance = null;
+
+    const baseVaccineSchema = [
+        { id: "bcg", name: "BCG", window: "At Birth", group: "Infant", baseOffsetWeeks: 0, strategy: "Give ASAP." },
+        { id: "opv0", name: "OPV-0", window: "At Birth", group: "Infant", baseOffsetWeeks: 0, strategy: "Max 15 days." },
+        { id: "hepB0", name: "Hepatitis B-0", window: "At Birth", group: "Infant", baseOffsetWeeks: 0, strategy: "Give within 24h." },
+        { id: "penta1", name: "Pentavalent-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Max 1 yr." },
+        { id: "opv1", name: "OPV-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Up to 5 yrs." },
+        { id: "fipv1", name: "fIPV-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Fractional dose (ID)." },
+        { id: "pcv1", name: "PCV-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Max 1 yr." },
+        { id: "penta2", name: "Pentavalent-2", window: "10 Wks", group: "Infant", baseOffsetWeeks: 10, dependsOn: "penta1", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "opv2", name: "OPV-2", window: "10 Wks", group: "Infant", baseOffsetWeeks: 10, dependsOn: "opv1", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "penta3", name: "Pentavalent-3", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "penta2", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "opv3", name: "OPV-3", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "opv2", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "fipv2", name: "fIPV-2", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "fipv1", minIntervalWeeks: 8, strategy: "8wk gap." },
+        { id: "pcv2", name: "PCV-2", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "pcv1", minIntervalWeeks: 8, strategy: "8wk gap." },
+        { id: "mr1", name: "MR-1", window: "9 Mos", group: "Infant", baseOffsetWeeks: 39, strategy: "Up to 5 yrs." },
+        { id: "pcvB", name: "PCV Booster", window: "9 Mos", group: "Infant", baseOffsetWeeks: 39, dependsOn: "pcv2", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "je1", name: "JE-1", window: "9 Mos", group: "Infant", baseOffsetWeeks: 39, condition: "je", strategy: "Endemic areas." },
+        { id: "mr2", name: "MR-2", window: "16-24 Mos", group: "Toddler", baseOffsetWeeks: 69, dependsOn: "mr1", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "dptB1", name: "DPT Booster-1", window: "16-24 Mos", group: "Toddler", baseOffsetWeeks: 69, dependsOn: "penta3", minIntervalWeeks: 24, strategy: "6mo gap required." },
+        { id: "je2", name: "JE-2", window: "16-24 Mos", group: "Toddler", baseOffsetWeeks: 69, condition: "je", dependsOn: "je1", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "dptB2", name: "DPT Booster-2", window: "5-6 Yrs", group: "Toddler", baseOffsetWeeks: 260, strategy: "Max 7 yrs." },
+        { id: "hpv1", name: "HPV-1", window: "9-14 Yrs", group: "Adolescent", baseOffsetWeeks: 468, condition: "female", strategy: "Girls only." },
+        { id: "hpv2", name: "HPV-2", window: "6 Mos Post Dose 1", group: "Adolescent", baseOffsetWeeks: 494, condition: "female", dependsOn: "hpv1", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "td10", name: "Td-10", window: "10 Yrs", group: "Adolescent", baseOffsetWeeks: 520, strategy: "Tetanus/Diphtheria." },
+        { id: "td16", name: "Td-16", window: "16 Yrs", group: "Adolescent", baseOffsetWeeks: 832, strategy: "Tetanus/Diphtheria." }
+    ];
+
+    window.onload = function() { 
+        applySettingsToUI();
+        renderPatientBadges(); 
+        renderFoodDB(foodsDb);
+        populateFoodSelect();
+        buildMilestoneReference();
+        if(Object.keys(globalPatientsStore).length === 0) { 
+            document.getElementById('calcWeight').value = "10"; 
+            calculateDose(); 
+        }
+    };
+
+    function applySettingsToUI() {
+        if(appSettings.isDark) { document.body.classList.add('dark-mode'); document.getElementById('darkModeToggle').checked = true; }
+        else { document.body.classList.remove('dark-mode'); document.getElementById('darkModeToggle').checked = false; }
+    }
 
     function toggleDarkMode(isDark) {
         if(isDark) { document.body.classList.add('dark-mode'); appSettings.isDark = true; }
         else { document.body.classList.remove('dark-mode'); appSettings.isDark = false; }
         localStorage.setItem('clinic_settings', JSON.stringify(appSettings));
+    }
+
+    function openSettingsModal() { 
+        document.getElementById('setDocName').value = appSettings.docName || "";
+        document.getElementById('setQual').value = appSettings.qual || "";
+        document.getElementById('setClinic').value = appSettings.clinicName || "";
+        document.getElementById('setTagline').value = appSettings.tagline || "";
+        document.getElementById('setPhone').value = appSettings.phone || "";
+        document.getElementById('setAddress').value = appSettings.address || "";
+        if(appSettings.logo) document.getElementById('logoPreview').innerHTML = `<img src="${appSettings.logo}" style="max-height:80px;">`;
+        document.getElementById('settingsModal').style.display = "flex"; 
+    }
+    
+    function closeSettingsModal() { document.getElementById('settingsModal').style.display = "none"; }
+    
+    function handleLogoUpload(i) { 
+        const f = i.files[0]; 
+        if(f) { 
+            const reader = new FileReader(); 
+            reader.onload = e => { 
+                appSettings.logo = e.target.result; 
+                document.getElementById('logoPreview').innerHTML = `<img src="${e.target.result}" style="max-height:80px;">`; 
+            }; 
+            reader.readAsDataURL(f); 
+        } 
+    }
+    
+    function saveSettings() { 
+        appSettings.clinicName = document.getElementById('setClinic').value; 
+        appSettings.docName = document.getElementById('setDocName').value; 
+        appSettings.qual = document.getElementById('setQual').value; 
+        appSettings.tagline = document.getElementById('setTagline').value; 
+        appSettings.address = document.getElementById('setAddress').value; 
+        appSettings.phone = document.getElementById('setPhone').value; 
+        localStorage.setItem('clinic_settings', JSON.stringify(appSettings)); 
+        closeSettingsModal(); 
+    }
+
+    function toggleMobileRegistry() {
+        const panel = document.getElementById('registryPanel');
+        const icon = document.getElementById('mobileBannerIcon');
+        if(panel.classList.contains('mobile-open')) { panel.classList.remove('mobile-open'); icon.innerText = "▼"; } 
+        else { panel.classList.add('mobile-open'); icon.innerText = "▲"; }
+    }
+
+    function switchMainFeature(viewId, el) {
+        document.querySelectorAll('.view-content').forEach(vc => vc.classList.remove('active-view'));
+        document.querySelectorAll('.feature-btn').forEach(fb => fb.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active-view'); 
+        el.classList.add('active');
+        
+        const workspace = document.getElementById('activeWorkspace'); 
+        const emptyState = document.getElementById('emptyStatePlaceholder');
+        const unlocked = ['dosageFeatureView', 'growthFeatureView', 'fluidsFeatureView', 'asthmaFeatureView', 'jaundiceFeatureView', 'nutritionFeatureView', 'libraryFeatureView', 'erFeatureView', 'aboutFeatureView'];
+        
+        if(unlocked.includes(viewId)) {
+            workspace.style.display = 'block'; emptyState.style.display = 'none';
+            let w = document.getElementById('pWeight').value;
+            if(w) { document.getElementById('calcWeight').value = w; document.getElementById('fluidWeight').value = w; document.getElementById('crashWeight').value = w; }
+            if(viewId === 'dosageFeatureView') calculateDose();
+            if(viewId === 'fluidsFeatureView') calcFluids();
+            if(viewId === 'growthFeatureView') calcGrowth();
+            if(viewId === 'nutritionFeatureView') { calcNutrition(); renderDietRecall(); }
+            if(viewId === 'erFeatureView') calcCrash();
+        } else {
+            if(!activePatientId) { workspace.style.display = 'none'; emptyState.style.display = 'block'; } 
+            else { 
+                workspace.style.display = 'block'; emptyState.style.display = 'none'; 
+                if(viewId === 'milestoneFeatureView') renderMilestoneDashboard(); 
+                if(viewId === 'malnutritionFeatureView') { calcMalnutrition(); renderSensory(); }
+            }
+        }
+    }
+
+    function switchSubTab(subTabId, el) { 
+        const parent = el.parentElement;
+        parent.querySelectorAll('.sub-tab-btn').forEach(stb => stb.classList.remove('active')); 
+        const container = parent.parentElement;
+        container.querySelectorAll('.sub-tab-content').forEach(stc => stc.classList.remove('active')); 
+        document.getElementById(subTabId).classList.add('active'); 
+        el.classList.add('active'); 
+    }
+
+    function getExpectedWeight(totalM) {
+        if (!totalM) return 0;
+        let y = Math.floor(totalM / 12);
+        if (totalM < 12) return (totalM + 9) / 2;
+        if (y >= 1 && y <= 6) return (y * 2) + 8;
+        if (y >= 7 && y <= 12) return ((y * 7) - 5) / 2;
+        return (y * 2) + 8; 
     }
 
     function prepNewPatient() {
@@ -730,7 +900,7 @@
         let totalM = activePatientId ? globalPatientsStore[activePatientId].totalMonths : (parseInt(document.getElementById('calcQuickAge').value) || 0);
         if(!wt && totalM > 0) wt = getExpectedWeight(totalM);
         const out = document.getElementById('crashOutputArea');
-        if(!wt) { out.innerHTML = "Awaiting weight vectors."; return; }
+        if(!wt) { out.innerHTML = "Awaiting physical vectors weight parameter load."; return; }
         
         let defib1 = wt * 2; let defib2 = wt * 4;
         let adr = wt * 0.1; let amio = wt * 5; let fluid = wt * 20;
@@ -764,7 +934,7 @@
         let rate = parseFloat(document.getElementById('girRate').value);
         let dex = parseFloat(document.getElementById('girDex').value);
         let out = document.getElementById('girOutput');
-        if(!wt || !rate || !dex) return out.innerHTML = "Enter parameters to run calculations.";
+        if(!wt || !rate || !dex) { out.innerHTML = "GIR = [Rate × Dextrose%] / [Weight × 6]"; out.className = "tool-result neutral"; return; }
         let gir = (rate * dex) / (wt * 6);
         out.innerHTML = `GIR = <b style="color:var(--primary); font-size:1.2rem;">${gir.toFixed(2)}</b> mg/kg/min`;
         out.className = gir < 4 || gir > 8 ? "tool-result warning" : "tool-result success";
@@ -822,21 +992,27 @@
         
         let volMl = 0; let details = "";
         if (drug.doseType === 'fixed') {
-            volMl = drug.vol; details = "Fixed Formulation Dose";
-            resultCard.innerHTML = `<p>Administer Quantity Protocol:</p><h2>${volMl.toFixed(1)} Unit Base mL/Tab</h2><p>Frequency: ${drug.freq}</p>`;
+            volMl = drug.vol; details = "Fixed Clinical Direct Output";
+            resultCard.innerHTML = `<p style="margin-top:0; color:var(--text-muted); font-weight:600; font-size:0.85rem; letter-spacing:0.05em;">Administer Quantity Protocol</p><h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${volMl.toFixed(1)} ${drug.vol===1?'Unit':'mL'}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}</p>`;
         } else {
             let targetMg = drug.doseType === 'perDay' ? (weight * drug.doseMg) / drug.div : (weight * drug.doseMg);
-            volMl = (targetMg * drug.vol) / drug.conc; details = `${targetMg.toFixed(1)} mg/dose`;
-            resultCard.innerHTML = `<p>Administer Volume:</p><h2>${volMl.toFixed(1)} mL</h2><p>Frequency Label: ${drug.freq}</p>`;
+            volMl = (targetMg * drug.vol) / drug.conc; details = `${targetMg.toFixed(1)} mg/dose Vector`;
+            resultCard.innerHTML = `<p style="margin-top:0; color:var(--text-muted); font-weight:600; font-size:0.85rem; letter-spacing:0.05em;">Administer Calculated Volume</p><h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${volMl.toFixed(1)} ${drug.vol===1?'Tab/Supp':'mL'}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency Label: ${drug.freq}</p><div style="font-size:0.85rem; color:#64748b; margin-top:1rem; border-top:1px dashed #cbd5e1; padding-top:1rem;">[(${weight}kg × ${drug.doseMg}mg) × ${drug.vol}] ÷ ${drug.conc}mg</div>`;
         }
-        pendingPrescriptionDrug = { name: drug.name, vol: volMl.toFixed(1), freq: drug.freq, details: details };
+        pendingPrescriptionDrug = { name: drug.name, vol: volMl.toFixed(1), freq: drug.freq, details: details, unit: drug.vol===1?'Unit/Tab':'mL' };
         addButtonArea.innerHTML = activePatientId ? `<button onclick='addPendingToRxCart()' class='action'>➕ Add to Prescription Pad</button>` : "";
         outputArea.style.display = 'block';
     }
 
-    function addPendingToRxCart() { if(!activePatientId || !pendingPrescriptionDrug) return; globalPatientsStore[activePatientId].rxList.push(pendingPrescriptionDrug); localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderRxCartList(); }
+    function addPendingToRxCart() { if(!activePatientId || !pendingPrescriptionDrug) return; globalPatientsStore[activePatientId].rxList.push(pendingPrescriptionDrug); localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); document.getElementById('drugFormulation').value = ""; document.getElementById('calcOutputArea').style.display = 'none'; pendingPrescriptionDrug = null; renderRxCartList(); }
+    
     function removeDrugFromCart(idx) { globalPatientsStore[activePatientId].rxList.splice(idx,1); localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderRxCartList(); }
-    function renderRxCartList() { const container = document.getElementById('rxCartList'); if(!activePatientId) return; let list = globalPatientsStore[activePatientId].rxList || []; container.innerHTML = list.length === 0 ? "Empty Pad" : list.map((r,i)=>`<div class='rx-cart-item'><div><b>${r.name}</b><br>Take: ${r.vol} mL via ${r.freq}</div><button onclick='removeDrugFromCart(${i})' class='secondary' style='background:var(--danger); color:white;'>Delete</button></div>`).join(""); }
+    
+    function renderRxCartList() { 
+        const container = document.getElementById('rxCartList'); if(!activePatientId) return; 
+        let list = globalPatientsStore[activePatientId].rxList || []; 
+        container.innerHTML = list.length === 0 ? "<div style='color:var(--text-muted); padding:1rem;'>Prescription pad empty.</div>" : list.map((r,i)=>`<div class='rx-cart-item'><div><h4 style="margin:0 0 5px 0;">${i + 1}. ${r.name}</h4><div style="color:var(--primary); font-weight:bold; font-size:1.05rem;">Take ${r.vol} ${r.unit || 'mL'} &mdash; ${r.freq}</div><div style="margin-top:4px; font-size:0.85rem; color:var(--text-muted);">Targeting: ${r.details}</div></div><button onclick='removeDrugFromCart(${i})' class='secondary' style='background:var(--danger); color:white; border:none; padding:8px 12px;'>Delete</button></div>`).join(""); 
+    }
 
     function calculateAndRenderTimeline(pId) {
         const patient = globalPatientsStore[pId]; const baseDate = new Date(patient.dob || new Date()); const today = new Date();
@@ -863,60 +1039,195 @@
             vaxList.forEach(v => {
                 const prettyDue = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
                 const isDone = v.actual !== "";
-                card.innerHTML += `<div class="vaccine-row"><div><h4>${v.name}</h4><small class="vaccine-meta">Window: ${v.window}</small><br><div class="action-protocol-card">Strategy: ${v.strategy}</div></div><div class="date-display-box">${isDone ? '✅ Given' : prettyDue}</div><div class="date-picker-cell"><input type="checkbox" class="tick-box" ${isDone?'checked':''} onchange="toggleVaccineAdministered('${pId}','${v.id}',this.checked)"><input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}','${v.id}',this.value)"></div></div>`;
+                card.innerHTML += `<div class="vaccine-row"><div class="vaccine-info"><h4>${v.name}</h4><div class="vaccine-meta" style="margin-bottom:0.4rem;">Window: ${v.window}</div><div class="action-protocol-card"><b>If Missed:</b> ${v.strategy}</div></div><div class="date-display-box ${v.isDelayed ? 'shifted':''}">${isDone ? '✅ Completed' : prettyDue}</div><div class="date-picker-cell"><input type="checkbox" title="Quick check for today" class="tick-box" ${isDone ? 'checked' : ''} onchange="toggleVaccineAdministered('${pId}', '${v.id}', this.checked)"><div style="text-align:left;"><label style="margin:0; font-size:10px; color:var(--text-muted);">Administered On:</label><input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}', '${v.id}', this.value)"></div></div></div>`;
             });
             document.getElementById('timelineOutput').appendChild(card);
         }
 
         patient.upcomingVaccinesForWhatsapp = [];
-        const odBox = document.createElement('div'); odBox.innerHTML = "<h4>⚠️ Overdue Gaps</h4>";
-        const dnBox = document.createElement('div'); dnBox.innerHTML = "<h4>✅ Completed Pass</h4>";
-        const upBox = document.createElement('div'); upBox.innerHTML = "<h4>📅 Future Track</h4>";
+        const odBox = document.createElement('div'); odBox.innerHTML = "<h4 style='color:var(--danger); margin-bottom:1rem;'>⚠️ Overdue Gaps</h4>";
+        const dnBox = document.createElement('div'); dnBox.innerHTML = "<h4 style='color:var(--success); margin-bottom:1rem;'>✅ Completed Pass</h4>";
+        const upBox = document.createElement('div'); upBox.innerHTML = "<h4 style='color:var(--primary); margin-bottom:1rem;'>📅 Future Doses</h4>";
         Object.values(computedTimeline).forEach(v => {
+            const prettyProj = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
             const card = document.createElement('div'); card.className = `audit-card ${v.status}`;
-            if(v.status === 'overdue') { card.innerHTML = `<div><b>${v.name}</b></div><span class="status-pill overdue">Missed</span>`; odBox.appendChild(card); patient.upcomingVaccinesForWhatsapp.push(v.name); }
-            else if(v.status === 'done') { card.innerHTML = `<div><b>${v.name}</b></div><span class="status-pill done">Done</span>`; dnBox.appendChild(card); }
-            else { card.innerHTML = `<div><b>${v.name}</b></div><span class="status-pill upcoming">Staged</span>`; upBox.appendChild(card); if(patient.upcomingVaccinesForWhatsapp.length < 3) patient.upcomingVaccinesForWhatsapp.push(v.name); }
+            if(v.status === 'overdue') { card.innerHTML = `<div><b style="color:var(--text-main);">${v.name}</b><br><small style="color:var(--text-muted);">Target was: ${prettyProj}</small></div> <span class="status-pill overdue">Missed</span>`; odBox.appendChild(card); patient.upcomingVaccinesForWhatsapp.push(v.name); }
+            else if(v.status === 'done') { card.innerHTML = `<div><b style="color:var(--text-main);">${v.name}</b><br><small style="color:var(--text-muted);">Given on: ${new Date(v.actual).toLocaleDateString('en-IN')}</small></div> <span class="status-pill done">Given</span>`; dnBox.appendChild(card); }
+            else { card.innerHTML = `<div><b style="color:var(--text-main);">${v.name}</b><br><small style="color:var(--text-muted);">Due: ${prettyProj}</small></div> <span class="status-pill upcoming">Upcoming</span>`; upBox.appendChild(card); if(patient.upcomingVaccinesForWhatsapp.length < 3) patient.upcomingVaccinesForWhatsapp.push(v.name); }
         });
         document.getElementById('auditOutput').appendChild(odBox); document.getElementById('auditOutput').appendChild(dnBox); document.getElementById('auditOutput').appendChild(upBox);
         globalPatientsStore[pId].upcomingVaccinesForWhatsapp = patient.upcomingVaccinesForWhatsapp;
     }
 
+    function toggleVaccineAdministered(pId, vId, c) { globalPatientsStore[pId].givenDates[vId]=c?new Date().toISOString().split('T')[0]:""; localStorage.setItem('nis_patients',JSON.stringify(globalPatientsStore)); calculateAndRenderTimeline(pId); }
+    function updateAdministrationDate(pId, vId, val) { globalPatientsStore[pId].givenDates[vId]=val; localStorage.setItem('nis_patients',JSON.stringify(globalPatientsStore)); calculateAndRenderTimeline(pId); }
+    
+    function sendWhatsAppReminder() {
+        if(!activePatientId) return alert("Select a patient first.");
+        const p = globalPatientsStore[activePatientId];
+        const vaxList = p.upcomingVaccinesForWhatsapp ? p.upcomingVaccinesForWhatsapp.join(", ") : "scheduled vaccines";
+        const msg = `Dear Parent, this is a reminder from the Pediatric Clinic that Baby ${p.name}'s upcoming vaccinations (${vaxList}) are due soon. Please visit the clinic to keep their schedule on track.`;
+        const targetPhone = p.phone ? p.phone.replace(/[^0-9]/g, "") : "";
+        window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+    
+    function sendWACompReport() {
+        if(!activePatientId) return alert("Select patient");
+        const p = globalPatientsStore[activePatientId];
+        let txt = `*Pediatric Clinical Report*\nName: ${p.name}\nAge: ${p.ageYrs}Y ${p.ageMos}M\nWeight: ${p.weight} kg\n\n`;
+        if(p.rxList && p.rxList.length > 0) {
+            txt += `*Active Prescriptions:*\n`;
+            p.rxList.forEach((rx, i) => { txt += `${i+1}. ${rx.name} - ${rx.vol} ${rx.unit || 'mL'} (${rx.freq})\n`; });
+            txt += `\n`;
+        }
+        if(p.upcomingVaccinesForWhatsapp && p.upcomingVaccinesForWhatsapp.length > 0) {
+            txt += `*Upcoming Vaccines:*\n${p.upcomingVaccinesForWhatsapp.join(", ")}\n\n`;
+        }
+        txt += `Please visit the clinic for your detailed follow-up.`;
+        const targetPhone = p.phone ? p.phone.replace(/[^0-9]/g, "") : "";
+        window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`, '_blank');
+    }
+
+    function calcNutrition() {
+        let totalM = currentPatientAgeInMonths || parseInt(document.getElementById('calcQuickAge').value) || 0;
+        let y = Math.floor(totalM / 12);
+        const wt = parseFloat(document.getElementById('pWeight').value || document.getElementById('calcWeight').value);
+        const gender = document.getElementById('gender').value || 'male';
+        const out = document.getElementById('nutriTargetArea');
+        if(totalM === 0 && !wt) { out.innerHTML = "<div class='tool-result neutral'>Enter Age and Weight to calculate ICMR nutritional targets.</div>"; return; }
+        
+        let kcal = 0; let protein = 0; let wtGain = "";
+        if (totalM < 3) { kcal = wt * 116; protein = wt * 2.3; wtGain = "30 g/day"; }
+        else if (totalM < 6) { kcal = wt * 99; protein = wt * 1.85; wtGain = "20 g/day"; }
+        else if (totalM < 9) { kcal = wt * 95; protein = wt * 1.65; wtGain = "15 g/day"; }
+        else if (totalM < 12) { kcal = wt * 101; protein = wt * 1.5; wtGain = "12 g/day"; }
+        else if (y < 3) { kcal = 1220; protein = 22; wtGain = "8 g/day"; }
+        else if (y < 6) { kcal = 1720; protein = 29; wtGain = "6 g/day"; }
+        else if (y < 10) { kcal = 2050; protein = 36; wtGain = "Avg 3 kg/year"; }
+        else { kcal = gender === 'male' ? 2420 : 2200; protein = 43; wtGain = "Pubertal spurt variance"; }
+        
+        out.innerHTML = `
+            <div class="result-card">
+                <p style="margin-top:0; color:var(--text-muted); font-weight:600; text-transform:uppercase; font-size:0.85rem; letter-spacing:0.05em;">Daily Caloric Requirement</p>
+                <h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${kcal.toFixed(0)} kcal</h2>
+                <div style="font-size:0.85rem; color:var(--text-muted);">(ICMR Target based on cohort)</div>
+            </div>
+            <div class="result-card" style="border-color:var(--primary);">
+                <p style="margin-top:0; color:var(--primary); font-weight:600; text-transform:uppercase; font-size:0.85rem; letter-spacing:0.05em;">Daily Protein Target</p>
+                <h2 style="font-size:2.5rem; margin:10px 0; color:var(--primary);">${protein.toFixed(1)} g</h2>
+                <div style="font-size:0.85rem; color:var(--text-muted);">Expected wt gain: <b style="color:var(--text-main);">${wtGain}</b></div>
+            </div>
+        `;
+    }
+
+    function populateFoodSelect() {
+        let sel = document.getElementById('recallFood');
+        sel.innerHTML = '<option value="">-- Select Food Item --</option>';
+        foodsDb.forEach((f, i) => { sel.innerHTML += `<option value="${i}">${f.name} (${f.k} kcal/100g)</option>`; });
+    }
+
     function addDietRecall() {
-        if(!activePatientId) return; let meal = document.getElementById('recallMeal').value;
-        let idx = document.getElementById('recallFood').value; let qty = parseFloat(document.getElementById('recallQty').value);
-        if(idx === "" || !qty) return; let food = foodsDb[idx];
+        if(!activePatientId) return alert("Select patient first to use the Diet Recall tool.");
+        let m = document.getElementById('recallMeal').value;
+        let fIdx = document.getElementById('recallFood').value;
+        let q = parseFloat(document.getElementById('recallQty').value);
+        if(fIdx === "" || !q) return; let food = foodsDb[fIdx];
         if(!globalPatientsStore[activePatientId].dietLogs) globalPatientsStore[activePatientId].dietLogs = [];
-        globalPatientsStore[activePatientId].dietLogs.push({ meal: meal, name: food.name, qty: qty, kcal: (food.k * qty)/100, prot: (food.p * qty)/100 });
+        globalPatientsStore[activePatientId].dietLogs.push({ meal: m, name: food.name, qty: q, kcal: (food.k * q)/100, prot: (food.p * q)/100 });
         localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderDietRecall();
     }
-    function removeDietRecall(idx) { globalPatientsStore[activePatientId].dietLogs.splice(idx, 1); localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderDietRecall(); }
+
+    function removeDietRecall(idx) { 
+        globalPatientsStore[activePatientId].dietLogs.splice(idx, 1); 
+        localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); 
+        renderDietRecall(); 
+    }
     
     function renderDietRecall() {
         let listArea = document.getElementById('recallListArea'); let sumArea = document.getElementById('recallSummaryArea');
-        if(!activePatientId) { listArea.innerHTML = ""; sumArea.innerHTML = "Select patient."; return; }
+        if(!activePatientId) { listArea.innerHTML = ""; sumArea.innerHTML = "Select patient."; sumArea.className = "tool-result neutral"; return; }
         let logs = globalPatientsStore[activePatientId].dietLogs || [];
-        if(logs.length === 0) { listArea.innerHTML = ""; sumArea.innerHTML = "Logs clear."; return; }
+        if(logs.length === 0) { listArea.innerHTML = ""; sumArea.innerHTML = "Log a food item to initialize deficiency analyzer."; sumArea.className = "tool-result neutral"; return; }
         
         let totK = 0; let totP = 0;
         let h = `<table class="nis-table"><thead><tr><th>Meal</th><th>Food</th><th>Mass</th><th>Protein</th><th>Energy</th><th>Action</th></tr></thead><tbody>`;
-        logs.forEach((l,i)=>{ totK+=l.kcal; totP+=l.prot; h+=`<tr><td>${l.meal}</td><td>${l.name}</td><td>${l.qty}g</td><td>${l.prot.toFixed(1)}g</td><td>${l.kcal.toFixed(0)} kcal</td><td><button class='secondary' onclick='removeDietRecall(${i})'>X</button></td></tr>`; });
+        logs.forEach((l,i)=>{ totK+=l.kcal; totP+=l.prot; h+=`<tr><td>${l.meal}</td><td>${l.name}</td><td>${l.qty}g</td><td>${l.prot.toFixed(1)}g</td><td>${l.kcal.toFixed(0)} kcal</td><td><button class='secondary' onclick='removeDietRecall(${i})' style='background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:4px;'>X</button></td></tr>`; });
         listArea.innerHTML = h + `</tbody></table>`;
+        
         let wt = parseFloat(globalPatientsStore[activePatientId].weight) || 10;
         let totalM = globalPatientsStore[activePatientId].totalMonths;
-        let tK = totalM < 12 ? wt * 100 : 1300; let tP = totalM < 12 ? wt * 1.5 : 25;
-        sumArea.innerHTML = `Logged Recall: <b>${totK.toFixed(0)} / ${tK.toFixed(0)} kcal</b> | <b>${totP.toFixed(1)} / ${tP.toFixed(1)} g Protein</b>`;
+        let y = Math.floor(totalM/12);
+        
+        let tKcal = 0; let tProt = 0;
+        if (totalM < 3) { tKcal = wt * 116; tProt = wt * 2.3; }
+        else if (totalM < 6) { tKcal = wt * 99; tProt = wt * 1.85; }
+        else if (totalM < 9) { tKcal = wt * 95; tProt = wt * 1.65; }
+        else if (totalM < 12) { tKcal = wt * 101; tProt = wt * 1.5; }
+        else if (y < 3) { tKcal = 1220; tProt = 22; }
+        else if (y < 6) { tKcal = 1720; tProt = 29; }
+        else if (y < 10) { tKcal = 2050; tProt = 36; }
+        else { tKcal = 2200; tProt = 43; }
+        
+        let kDiff = totK - tKcal; let pDiff = totP - tProt;
+        let kStat = kDiff < 0 ? `<span style="color:var(--danger)">Deficit of ${Math.abs(kDiff).toFixed(0)} kcal</span>` : `<span style="color:var(--success)">Surplus of ${kDiff.toFixed(0)} kcal</span>`;
+        let pStat = pDiff < 0 ? `<span style="color:var(--danger)">Deficit of ${Math.abs(pDiff).toFixed(1)} g</span>` : `<span style="color:var(--success)">Surplus of ${pDiff.toFixed(1)} g</span>`;
+        
+        sumArea.innerHTML = `
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; text-align:left;">
+                <div style="background:var(--bg-surface); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-soft); box-shadow:var(--shadow-sm);">
+                    <h4 style="margin:0 0 10px 0; color:var(--text-main); font-size:1.1rem;">Calories (kcal)</h4>
+                    <div style="color:var(--text-muted); font-size:0.9rem; margin-bottom:5px;">Target: ${tKcal.toFixed(0)} | Intake: ${totK.toFixed(0)}</div>
+                    <div style="font-weight:700; font-size:1.05rem;">${kStat}</div>
+                </div>
+                <div style="background:var(--bg-surface); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-soft); box-shadow:var(--shadow-sm);">
+                    <h4 style="margin:0 0 10px 0; color:var(--text-main); font-size:1.1rem;">Protein (g)</h4>
+                    <div style="color:var(--text-muted); font-size:0.9rem; margin-bottom:5px;">Target: ${tProt.toFixed(1)} | Intake: ${totP.toFixed(1)}</div>
+                    <div style="font-weight:700; font-size:1.05rem;">${pStat}</div>
+                </div>
+            </div>
+        `;
+        sumArea.className = "tool-result";
+    }
+
+    function renderFoodDB(dataArray) {
+        const tbody = document.getElementById('foodTableBody'); tbody.innerHTML = "";
+        dataArray.forEach(f => { tbody.innerHTML += `<tr><td><b style="color:var(--primary);">${f.name}</b></td><td>${f.cat}</td><td>${f.p}</td><td>${f.c}</td><td>${f.f || 0}</td><td><b style="color:var(--success);">${f.k}</b></td></tr>`; });
+    }
+
+    function filterFoodDB() {
+        let filter = document.getElementById('foodSearch').value.toUpperCase();
+        let filtered = foodsDb.filter(f => f.name.toUpperCase().includes(filter) || f.cat.toUpperCase().includes(filter));
+        renderFoodDB(filtered);
     }
 
     function calcMalnutrition() {
         if(!activePatientId) return; const p = globalPatientsStore[activePatientId];
-        const wt = parseFloat(p.weight); const ht = parseFloat(p.htCm); const hc = parseFloat(p.hcCm);
+        const wt = parseFloat(p.weight); const ht = parseFloat(document.getElementById('htCm').value || p.htCm); const hc = parseFloat(document.getElementById('hcCm').value || p.hcCm);
         let out = document.getElementById('malnGridOutput'); if(!wt) return;
         let expWt = getExpectedWeight(p.totalMonths); let percent = (wt / expWt) * 100;
         let oedema = document.getElementById('malnOedemaToggle').checked;
         let grade = percent <= 50 ? "Grade IV" : (percent <= 60 ? "Grade III" : (percent <= 70 ? "Grade II" : (percent <= 80 ? "Grade I" : "Normal")));
         out.innerHTML = `<div class='tool-result neutral' style='text-align:left;'><b>IAP Grade:</b> ${grade} (${percent.toFixed(1)}% of Weech standard)<br><b>Oedema Status:</b> ${oedema ? 'Kwashiorkor profile spectrum' : 'Dry wasting profile'}`;
         if(p.totalMonths < 1 && ht) { let pi = (wt*1000*100)/Math.pow(ht,3); out.innerHTML += `<br><b>Ponderal Index:</b> ${pi.toFixed(2)} (${pi < 1.9 ? 'Asymmetric restriction' : 'Symmetric balance'})`; }
+    }
+
+    window.evalMAC = function(val) {
+        let v = parseFloat(val); let out = document.getElementById('macOutput');
+        if(!v) { out.innerHTML = ""; return; }
+        if(v < 11.5) out.innerHTML = "<span style='color:var(--danger);'>🚨 Severe Acute Malnutrition (SAM)</span>";
+        else if(v <= 13.5) out.innerHTML = "<span style='color:var(--warning);'>⚠️ Borderline Malnutrition</span>";
+        else out.innerHTML = "<span style='color:var(--success);'>✅ Normal MAC</span>";
+    }
+
+    function renderSensory() {
+        if(!activePatientId) return;
+        const p = globalPatientsStore[activePatientId]; const out = document.getElementById('sensoryOutputArea'); let html = "";
+        if(p.totalMonths < 2) { html += `<b>Vision:</b> Look for cataracts, wandering eye, nystagmus. Follows objects 45&deg;.<br><br><b>Hearing:</b> Assess Startle response and Rattle test.`; } 
+        else if (p.totalMonths < 6) { html += `<b>Vision (12 wks):</b> Fixes and follows objects till 90&deg;.<br><br><b>Hearing:</b> Startle response/Rattle test.`; } 
+        else if (p.totalMonths < 12) { html += `<b>Vision (6-8 mos):</b> Follows 180&deg;. Fixates on small objects near face.<br><br><b>Hearing (8-10 mos):</b> Distraction hearing test (Child must turn head to sound out of visual range).`; } 
+        else if (p.totalMonths < 36) { html += `<b>Vision (2.5 yrs):</b> Test distant vision (3 meters) and fix/follow. Look for strabismus.<br><br><b>Hearing:</b> Refer for Pure-tone audiometry & speech discrimination if language delayed.`; } 
+        else { html += `<b>Vision:</b> Test distant vision (picture/letter test) and near vision (Snellen's). Should match colors.<br><br><b>Hearing:</b> Routine audiometry screening.`; }
+        out.innerHTML = `<div class="tool-result neutral" style="text-align:left; font-weight:normal; line-height:1.6; padding:1.5rem;">${html}</div>`;
     }
 
     function drawGrowthCharts(patientAgeMonths, currentWeight, currentHeight, patientGender) {
@@ -929,59 +1240,200 @@
         const height3rd  = patientGender === 'male' ? [46, 63, 71, 76, 81, 85, 89] : [45, 61, 69, 74, 79, 83, 87];
         const height97th = patientGender === 'male' ? [54, 71, 81, 88, 93, 99, 103] : [53, 69, 79, 86, 91, 97, 101];
 
-        wtChartInstance = new Chart(document.getElementById('weightChartCanvas').getContext('2d'), { type: 'line', data: { labels: standardXLabels, datasets: [ { label: 'Patient Value', data: [{x: patientAgeMonths, y: currentWeight}], backgroundColor: 'red', borderColor: 'red', pointRadius: 7, showLine: false }, { label: 'WHO 97th %', data: weight97th, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 }, { label: 'WHO 50th %', data: weight50th, borderColor: 'rgba(16, 185, 129, 0.8)', fill: false, pointRadius: 0 }, { label: 'WHO 3rd %', data: weight3rd, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Age (Mos)' }, min:0, max:36 } } } });
-        htChartInstance = new Chart(document.getElementById('heightChartCanvas').getContext('2d'), { type: 'line', data: { labels: standardXLabels, datasets: [ { label: 'Patient Value', data: [{x: patientAgeMonths, y: currentHeight}], backgroundColor: 'red', borderColor: 'red', pointRadius: 7, showLine: false }, { label: 'WHO 97th %', data: height97th, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 }, { label: 'WHO 50th %', data: height50th, borderColor: 'rgba(16, 185, 129, 0.8)', fill: false, pointRadius: 0 }, { label: 'WHO 3rd %', data: height3rd, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Age (Mos)' }, min:0, max:36 } } } });
+        const ctxW = document.getElementById('weightChartCanvas');
+        if(ctxW) {
+            wtChartInstance = new Chart(ctxW.getContext('2d'), { type: 'line', data: { labels: standardXLabels, datasets: [ { label: 'Patient Value', data: [{x: patientAgeMonths, y: currentWeight}], backgroundColor: 'red', borderColor: 'red', pointRadius: 7, showLine: false }, { label: 'WHO 97th %', data: weight97th, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 }, { label: 'WHO 50th %', data: weight50th, borderColor: 'rgba(16, 185, 129, 0.8)', fill: false, pointRadius: 0 }, { label: 'WHO 3rd %', data: weight3rd, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Age (Mos)' }, min:0, max:36 } } } });
+        }
+        const ctxH = document.getElementById('heightChartCanvas');
+        if(ctxH) {
+            htChartInstance = new Chart(ctxH.getContext('2d'), { type: 'line', data: { labels: standardXLabels, datasets: [ { label: 'Patient Value', data: [{x: patientAgeMonths, y: currentHeight}], backgroundColor: 'red', borderColor: 'red', pointRadius: 7, showLine: false }, { label: 'WHO 97th %', data: height97th, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 }, { label: 'WHO 50th %', data: height50th, borderColor: 'rgba(16, 185, 129, 0.8)', fill: false, pointRadius: 0 }, { label: 'WHO 3rd %', data: height3rd, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Age (Mos)' }, min:0, max:36 } } } });
+        }
     }
+
+    function calcGrowth() {
+        const wt = parseFloat(document.getElementById('pWeight').value || document.getElementById('calcWeight').value || 10);
+        let htObj = document.getElementById('htCm'); let htOnTheGoObj = document.getElementById('htCmOnTheGo');
+        const ht = parseFloat( (htObj && htObj.value) ? htObj.value : (htOnTheGoObj ? htOnTheGoObj.value : 0) );
+        let totalM = activePatientId ? globalPatientsStore[activePatientId].totalMonths : (parseInt(document.getElementById('calcQuickAge').value) || 0);
+        let pGender = document.getElementById('gender').value || 'male';
+        if(!ht) return; drawGrowthCharts(totalM, wt, ht, pGender);
+    }
+
+    function syncGrowthFieldsAndCalc() { let v = document.getElementById('htCmOnTheGo').value; document.getElementById('htCm').value = v; if(activePatientId) saveAndRegisterPatient(true); else calcGrowth(); }
 
     function calcFluids() {
         let wt = parseFloat(document.getElementById('fluidWeight').value || document.getElementById('pWeight').value); let deg = parseFloat(document.getElementById('fluidDehydration').value);
         let out = document.getElementById('fluidResultArea'); if(!wt) return;
         let m = wt <= 10 ? wt*100 : (wt<=20 ? 1000 + (wt-10)*50 : 1500 + (wt-20)*20);
         let deficit = deg * wt * 10; let total = m + deficit;
-        out.innerHTML = `Fluid Maintenance: <b>${total.toFixed(0)} mL/24h Total Resuscitation Vol</b><br>Continuous Rate Target: <b>${(total/24).toFixed(1)} mL/hr</b>`;
+        out.innerHTML = `Total Load: <b>${total.toFixed(0)} mL / 24h</b><br>Rate: <b>${(total/24).toFixed(1)} mL/hr</b>`;
     }
 
-    function openSettingsModal() { document.getElementById('settingsModal').style.display="flex"; }
-    function closeSettingsModal() { document.getElementById('settingsModal').style.display="none"; }
-    function handleLogoUpload(i) { const f = i.files[0]; if(f) { const reader = new FileReader(); reader.onload=e=>{ appSettings.logo = e.target.result; document.getElementById('logoPreview').innerHTML=`Logo Loaded`; }; reader.readAsDataURL(f); } }
-    function saveSettings() { appSettings.clinicName = document.getElementById('setClinic').value || appSettings.clinicName; appSettings.docName = document.getElementById('setDocName').value || appSettings.docName; appSettings.qual = document.getElementById('setQual').value || appSettings.qual; appSettings.tagline = document.getElementById('setTagline').value || appSettings.tagline; appSettings.address = document.getElementById('setAddress').value || appSettings.address; appSettings.phone = document.getElementById('setPhone').value || appSettings.phone; localStorage.setItem('clinic_settings', JSON.stringify(appSettings)); closeSettingsModal(); }
-    function syncGrowthFieldsAndCalc() { let v = document.getElementById('htCmOnTheGo').value; document.getElementById('htCm').value = v; if(activePatientId) saveAndRegisterPatient(true); else calcGrowth(); }
-    function quickEstimateWeight() { let m = parseInt(document.getElementById('calcQuickAge').value); if(m){ let w = getExpectedWeight(m); document.getElementById('calcWeight').value = w.toFixed(1); calculateDose(); } }
-    function toggleVaccineAdministered(pId, vId, c) { globalPatientsStore[pId].givenDates[vId]=c?new Date().toISOString().split('T')[0]:""; localStorage.setItem('nis_patients',JSON.stringify(globalPatientsStore)); calculateAndRenderTimeline(pId); }
-    function updateAdministrationDate(pId, vId, val) { globalPatientsStore[pId].givenDates[vId]=val; localStorage.setItem('nis_patients',JSON.stringify(globalPatientsStore)); calculateAndRenderTimeline(pId); }
-    function loadLocalClinicalPDF(i) { const f = i.files[0]; if(f) { document.getElementById('pdfViewerFrameWrapper').innerHTML=`<iframe src="${URL.createObjectURL(f)}" width="100%" height="100%"></iframe>`; document.getElementById('pdfViewerFrameWrapper').style.display="block"; } }
+    function calcPRAM() {
+        let score = parseInt(document.getElementById('pramO2').value) + parseInt(document.getElementById('pramSupra').value) + parseInt(document.getElementById('pramScalene').value) + parseInt(document.getElementById('pramAir').value) + parseInt(document.getElementById('pramWheeze').value);
+        const resArea = document.getElementById('pramResultArea');
+        let sev = "Mild"; let cls = "tool-result"; let proto = "Salbutamol MDI/Nebulizer. Discharge with spacing spacer strategy instruction.";
+        if(score >= 8) { sev = "Severe Crisis"; cls = "tool-result danger"; proto = "Continuous Salbutamol + Ipratropium brom. Systemic Corticosteroids (IV Dex/Hydrocort). Arrange PICU stabilization infrastructure."; }
+        else if (score >= 4) { sev = "Moderate Severity"; cls = "tool-result warning"; proto = "Salbutamol Nebulization cycle Q20 mins × 3 rounds. Initiate oral Prednisolone course standard dosing protocol."; }
+        resArea.innerHTML = `PRAM Severity Vector Score: <b>${score}/12</b> (${sev})<div style="margin-top:15px; font-size:0.95rem; text-align:left; font-weight:normal; line-height:1.5;"><b>Clinical Management Directive:</b><br>${proto}</div>`;
+        resArea.className = cls;
+    }
+
+    function calcJaundice() {
+        const hr = parseFloat(document.getElementById('jaunHours').value); const tsb = parseFloat(document.getElementById('jaunTSB').value);
+        const risk = document.getElementById('jaunRisk').value; const resArea = document.getElementById('jaunResultArea');
+        if(!hr || !tsb) { resArea.innerHTML = "Provide parameters."; return; }
+        if(hr < 24) { resArea.innerHTML = "<b>🚨 Critical Hyperbilirubinemia:</b> Visual jaundice < 24 hours of life is strictly pathological. Intercept immediately."; resArea.className = "tool-result danger"; return; }
+        
+        let limit = 15;
+        if (hr <= 24) limit = risk === 'high' ? 8 : (risk === 'med' ? 10 : 12);
+        else if (hr <= 48) limit = risk === 'high' ? 11 : (risk === 'med' ? 13 : 15);
+        else if (hr <= 72) limit = risk === 'high' ? 13 : (risk === 'med' ? 15 : 18);
+        else limit = risk === 'high' ? 14 : (risk === 'med' ? 17 : 20);
+        
+        if(tsb >= limit) { resArea.innerHTML = `<b>🚨 Phototherapy Intervention Threshold Breached</b><br>TSB level of ${tsb} mg/dL is at or above safety threshold limits (${limit} mg/dL).`; resArea.className = "tool-result danger"; }
+        else if (tsb >= limit - 2) { resArea.innerHTML = `<b>⚠️ High-Intermediate Risk Zone Warning</b><br>TSB curve profile (${tsb} mg/dL) is within 2 mg/dL of emergency line. Repeat in 12-24 hours.`; resArea.className = "tool-result warning"; }
+        else { resArea.innerHTML = `<b>✅ Safe Baseline Zone Metrics</b><br>TSB profile stands within safe margin clearances.`; resArea.className = "tool-result"; }
+    }
+
+    function loadLocalClinicalPDF(i) { 
+        const f = i.files[0]; 
+        if(f) { 
+            document.getElementById('pdfViewerFrameWrapper').innerHTML = `<iframe src="${URL.createObjectURL(f)}" width="100%" height="100%" style="border:none;"></iframe>`; 
+            document.getElementById('pdfViewerFrameWrapper').style.display="block"; 
+        } 
+    }
+
+    function renderMilestoneDashboard() {
+        if(!activePatientId) return;
+        const patient = globalPatientsStore[activePatientId]; const achieved = patient.achievedMilestones || {};
+        const availableAges = Object.keys(milestonesDb).map(Number).sort((a,b)=>a-b);
+        let currentBracket = 0; let upcomingBracket = 0;
+        for(let i=0; i<availableAges.length; i++){ if(currentPatientAgeInMonths >= availableAges[i]) currentBracket = availableAges[i]; else break; }
+        upcomingBracket = availableAges.find(age => age > currentPatientAgeInMonths) || null;
+        
+        const evalContainer = document.getElementById('msEvalContainer');
+        if (currentBracket === 0) { evalContainer.innerHTML = "<p>Patient under milestone tracker bracket parameters.</p>"; } else {
+            let evalHTML = "";
+            availableAges.forEach(age => {
+                if (age <= currentBracket) {
+                    let isCurrent = (age === currentBracket);
+                    let borderStyle = isCurrent ? "border: 2px solid var(--primary);" : "border: 1px solid var(--border-soft);";
+                    let bgStyle = isCurrent ? "background: var(--primary-light);" : "background: var(--bg-surface);";
+                    evalHTML += `<div style="${borderStyle} ${bgStyle} padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1rem; box-shadow: var(--shadow-sm);"><h4 style="margin-top:0; color:var(--primary); margin-bottom:1rem; font-size:1.1rem; border-bottom:1px solid var(--border-soft); padding-bottom:10px;">${isCurrent ? `Current Age Milestone Bracket Target (${age} Mos)` : `Historical Check verification Target (${age} Mos)`}</h4>`;
+                    milestonesDb[age].forEach(m => { evalHTML += `<div class="milestone-item"><input type="checkbox" id="${m.id}" ${achieved[m.id] ? 'checked' : ''} onchange="toggleMilestone('${m.id}', this.checked)"><div><span class="milestone-domain">${m.domain}</span><div class="milestone-text"><label for="${m.id}" style="cursor:pointer; font-weight:normal; margin:0;">${m.text}</label></div></div></div>`; });
+                    evalHTML += `</div>`;
+                }
+            });
+            evalContainer.innerHTML = evalHTML;
+        }
+
+        let completedHTML = ""; let missedHTML = "";
+        availableAges.forEach(age => {
+            let aHTML = ""; milestonesDb[age].forEach(m => { if(achieved[m.id]) aHTML += `<div>✅ <b>${m.domain}</b>: ${m.text}</div>`; });
+            if(aHTML) completedHTML += `<h5 style="margin:1rem 0 0.25rem 0; color:var(--success); font-size:0.95rem; border-bottom:1px solid #bbf7d0; padding-bottom:5px;">Achieved via ${age}m vectors:</h5>${aHTML}`;
+            if(age <= currentBracket) { milestonesDb[age].forEach(m => { if(!achieved[m.id]) missedHTML += `<div class="red-flag-card" style="padding:10px; border:1px solid #fecaca; background:rgba(239, 68, 68, 0.05); border-radius:8px; margin-bottom:10px;"><h4 style="margin:0 0 5px 0; color:#991b1b;">🚨 Flagged Target: ${m.text} (Expected by ${age} Mos)</h4><span class="milestone-domain">${m.domain}</span><div class="sig-text" style="font-size:0.85rem; margin-top:5px; color:#7f1d1d;"><b>Significance:</b> ${m.sig}</div></div>`; }); }
+        });
+        document.getElementById('msCompletedContainer').innerHTML = completedHTML || "<p>No milestones recorded.</p>";
+        document.getElementById('msMissedContainer').innerHTML = missedHTML || "<div style='padding:1.5rem; background:rgba(16, 185, 129, 0.1); border:1px solid #16a34a; border-radius:var(--radius-lg); color:#166534; font-weight:bold;'>✅ All verification targets achieved.</div>";
+        document.getElementById('msUpcomingContainer').innerHTML = upcomingBracket ? `<h4 style="margin:1rem 0 0.5rem 0; color:var(--primary); font-size:1.1rem; border-bottom:1px solid var(--border-soft); padding-bottom:5px;">Targeting Milestone Marker: ${upcomingBracket} Months</h4>` + milestonesDb[upcomingBracket].map(m => `<div style="padding:1rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); margin-bottom:0.75rem; background:var(--bg-surface); font-size:0.95rem; box-shadow:var(--shadow-sm);"><span class="milestone-domain">${m.domain}</span><div style="font-weight:600; margin-top:5px; color:var(--text-main);">${m.text}</div></div>`).join("") : "<p>Advanced baseline clearance parameters.</p>";
+    }
+    function toggleMilestone(mId, isChecked) { globalPatientsStore[activePatientId].achievedMilestones[mId] = isChecked; localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderMilestoneDashboard(); }
     
-    function executePrint(mode) {
-        if(!activePatientId) return alert("Select patient configuration profile.");
-        const p = globalPatientsStore[activePatientId];
-        let h = `
+    function buildMilestoneReference() {
+        let tableHTML = `<table class="nis-table"><thead><tr><th>Age Bracket</th><th>Domain</th><th>Milestone Marker</th></tr></thead><tbody>`;
+        Object.keys(milestonesDb).forEach(age => {
+            milestonesDb[age].forEach((m, idx) => {
+                if(idx === 0) { tableHTML += `<tr><td rowspan="${milestonesDb[age].length}"><b>${age} Months</b></td><td><span class="milestone-domain">${m.domain}</span></td><td>${m.text}</td></tr>`; } 
+                else { tableHTML += `<tr><td><span class="milestone-domain">${m.domain}</span></td><td>${m.text}</td></tr>`; }
+            });
+        });
+        const refContainer = document.getElementById('msReferenceContainer');
+        if(refContainer) refContainer.innerHTML = tableHTML + `</tbody></table>`;
+    }
+
+    function getPrintHeaderHTML(title) {
+        const p = globalPatientsStore[activePatientId]; if(!p) return "";
+        let logoHtml = appSettings.logo ? `<img src="${appSettings.logo}" class="print-logo">` : `<div style="font-size:40px;">🏥</div>`;
+        return `
             <div class="print-header-container">
-                <div>
-                    <h2 class="print-clinic-name">${appSettings.clinicName}</h2>
-                    <p class="print-tagline">${appSettings.tagline}</p>
-                    <p class="print-tagline">${appSettings.address}</p>
-                </div>
+                ${logoHtml}
                 <div class="print-clinic-details">
-                    <div class="print-doc-name">${appSettings.docName}</div>
-                    <div class="print-tagline">${appSettings.qual}</div>
-                    <div class="print-tagline">📞 ${appSettings.phone}</div>
+                    <div class="print-clinic-name">${appSettings.clinicName || 'Pediatric Clinical Hub'}</div>
+                    <div class="print-doc-name">${appSettings.docName || 'Dr. Peter Suraj Joseph'}</div>
+                    ${appSettings.qual ? `<div class="print-tagline">${appSettings.qual}</div>` : ''}
+                    ${appSettings.tagline ? `<div class="print-tagline">${appSettings.tagline}</div>` : ''}
+                    ${appSettings.phone ? `<div class="print-tagline">📞 ${appSettings.phone}</div>` : ''}
+                    ${appSettings.address ? `<div class="print-tagline">📍 ${appSettings.address}</div>` : ''}
                 </div>
             </div>
-            <div style="border-bottom:2px solid #000; padding-bottom:8px; margin-bottom:15px; display:flex; justify-content:space-between; font-size:13px;">
-                <span><b>Patient:</b> ${p.name}</span>
-                <span><b>Age:</b> ${p.ageYrs}Y ${p.ageMos}M</span>
-                <span><b>Weight:</b> ${p.weight} kg</span>
+            <div style="margin-bottom: 20px;">
+                <h1 style="margin-bottom: 10px; font-size:22px; text-transform:uppercase; text-align:center; letter-spacing:1px;">${title}</h1>
+                <div style="font-size: 14px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 10px 0; margin-bottom: 20px; display:flex; justify-content:space-between;">
+                    <span><b>Patient:</b> ${p.name}</span>
+                    <span><b>Age:</b> ${p.ageYrs}Y ${p.ageMos}M</span>
+                    <span><b>Weight:</b> ${p.weight || 'N/A'} kg</span>
+                    <span><b>Gender:</b> ${p.gender.toUpperCase()}</span>
+                </div>
             </div>
         `;
-        if(mode === 'tracker' || mode === 'comprehensive') h += `<h3>Mandatory UIP Tracking Timeline</h3>` + document.getElementById('timelineOutput').innerHTML;
-        if(mode === 'prescription' || mode === 'comprehensive') {
-            h += `<h3>Official Rx Prescription Pad</h3><div class="rx-pad"><div class="rx-symbol">Rx</div>`;
-            (p.rxList || []).forEach((r,i) => { h += `<div><b>${i+1}. ${r.name}</b><br><span class="rx-dosage">Take ${r.vol} mL &mdash; ${r.freq}</span><br><small>Context: ${r.details}</small><br><br></div>`; });
-            h += `<div style="margin-top:50px; border-top:1px solid #000; width:200px; text-align:center; float:right;">Signature Stamp</div><div style="clear:both;"></div></div>`;
+    }
+
+    function extractToolResult(elId) {
+        let el = document.getElementById(elId); if(!el) return ""; let txt = el.innerHTML;
+        if(txt.includes("Execute calculation") || txt.includes("Provide") || txt.includes("Enter") || txt.includes("Evaluate inputs") || txt.includes("Populated")) return "";
+        return `<div class="tool-result">${txt}</div>`;
+    }
+
+    function executePrint(mode) {
+        if (!activePatientId && mode !== 'prescription') { alert("Please select a patient first."); return; }
+        const engine = document.getElementById('printEngine'); const p = globalPatientsStore[activePatientId] || {}; let html = "";
+
+        if (mode === 'tracker' || mode === 'comprehensive') { html += getPrintHeaderHTML("IMMUNIZATION SCHEDULE REPORT") + document.getElementById('timelineOutput').innerHTML; if (mode === 'comprehensive') html += `<div class="page-break"></div>`; }
+        if (mode === 'prescription' || mode === 'comprehensive') {
+            html += getPrintHeaderHTML("PRESCRIPTION");
+            if (p.rxList && p.rxList.length > 0) {
+                html += `<div class="rx-pad"><div class="rx-symbol">Rx</div>`;
+                p.rxList.forEach((rx, index) => { html += `<div style="margin-bottom: 1.8rem;"><div class="rx-drug-name">${index + 1}. ${rx.name}</div><div class="rx-dosage">Take ${rx.vol} ${rx.unit || 'mL'} &mdash; ${rx.freq}</div><div style="color:#555; font-size:12px; margin-top:5px;">Clinical Targets Formulation context: ${rx.details}</div></div>`; });
+                html += `<div style="margin-top: 80px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center; float:right;"><b>${appSettings.docName}</b><br>Authorized Signature</div><div style="clear:both;"></div></div>`;
+            } else if (pendingPrescriptionDrug) {
+                html += `<div class="rx-pad"><div class="rx-symbol">Rx</div><div style="margin-bottom: 1.8rem;"><div class="rx-drug-name">1. ${pendingPrescriptionDrug.name}</div><div class="rx-dosage">Take ${pendingPrescriptionDrug.vol} ${pendingPrescriptionDrug.unit || 'mL'} &mdash; ${pendingPrescriptionDrug.freq}</div><div style="color:#555; font-size:12px; margin-top:5px;">Targets context: ${pendingPrescriptionDrug.details}</div></div><div style="margin-top: 80px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center; float:right;"><b>${appSettings.docName}</b><br>Authorized Signature</div><div style="clear:both;"></div></div>`;
+            } else { html += `<p>No active formulations staged onto prescription pad parameters.</p>`; }
+            if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
         }
-        if(mode === 'nutrition' || mode === 'comprehensive') h += `<h3>Dietary Caloric Analysis Report</h3>` + document.getElementById('nutriTargetArea').innerHTML;
-        
-        document.getElementById('printEngine').innerHTML = h; window.print();
+        if (mode === 'nutrition' || mode === 'comprehensive') {
+            html += getPrintHeaderHTML("DIET & NUTRITION PLAN");
+            if (p.dietLogs && p.dietLogs.length > 0) { html += `<h3 style="color:var(--success);">24-Hour Diet Recall Analysis</h3>`; html += document.getElementById('recallListArea').innerHTML; html += document.getElementById('recallSummaryArea').innerHTML; }
+            html += `<h3 style="margin-top: 30px; color:var(--success);">Target Requirements (ICMR)</h3>` + document.getElementById('nutriTargetArea').innerHTML;
+            html += `<h3 style="margin-top: 30px; color:var(--primary);">Recommended Household Portions</h3><ul style="font-size:1.1rem; line-height:1.6;"><li>1 bowl cooked rice: 120 kcal</li><li>1 Idli / 1 Vada: 50 kcal</li><li>1 Dosa / 1 Chapati: 70 kcal</li><li>Cow's Milk (100ml): 65 kcal</li><li>1 Egg (60g): 60 kcal</li></ul>`;
+            if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
+        }
+        if (mode === 'milestones' || mode === 'comprehensive') {
+            html += getPrintHeaderHTML("DEVELOPMENTAL PROGRESS LOG REPORT");
+            html += `<h3 style="margin-top: 20px; color: #16a34a;">🌟 Successfully Verified Achieved Milestones</h3>` + document.getElementById('msCompletedContainer').innerHTML;
+            html += `<h3 style="margin-top: 30px; color: #1e3a8a;">📅 Anticipatory Developmental Guidance Milestones</h3>` + document.getElementById('msUpcomingContainer').innerHTML;
+            if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
+        }
+        if (mode === 'comprehensive') {
+            html += getPrintHeaderHTML("CLINICAL TRIAGE & ANTHROPOMETRY REPORT");
+            let maln = extractToolResult('malnGridOutput'); if(maln) html += `<h3>Malnutrition & Anthropometry Triage</h3>${maln}`;
+            let fluids = extractToolResult('fluidResultArea'); if(fluids) html += `<h3>IV Fluid Resuscitation Protocol</h3>${fluids}`;
+            let asthma = extractToolResult('pramResultArea'); if(asthma) html += `<h3>Asthma PRAM Triage Score</h3>${asthma}`;
+            let jaun = extractToolResult('jaunResultArea'); if(jaun) html += `<h3>Neonatal Jaundice Triage Risk</h3>${jaun}`;
+            if(!maln && !fluids && !asthma && !jaun) html += `<p>No acute clinical triage metrics evaluated during this session.</p>`;
+        }
+
+        html += `<div style="text-align:center; font-size:10px; color:#777; margin-top:40px; border-top:1px solid #eee; padding-top:10px;">Generated by ${appSettings.clinicName} Clinical Hub</div>`;
+        engine.innerHTML = html; window.print();
+    }
+
+    function clearAllData() { 
+        if(confirm("Delete all stored patient logs, custom drugs, and settings?")) { 
+            localStorage.removeItem('nis_patients'); 
+            localStorage.removeItem('custom_drugs'); 
+            localStorage.removeItem('clinic_settings'); 
+            location.reload(); 
+        } 
     }
 </script>
 </body>
