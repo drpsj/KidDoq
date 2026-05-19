@@ -3,132 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pediatric Clinical Hub v10.3</title>
+    <title>Pediatric Clinical Hub - Dr. Peter Suraj Joseph</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* PREMIUM CLINICAL UI COLOR PALETTE */
         :root {
-            --primary: #1e3a8a; --primary-light: #eff6ff; --accent: #0d9488;
-            --gray-100: #f3f4f6; --gray-200: #e2e8f0; --gray-700: #374151;
-            --success: #16a34a; --warning: #ea580c; --danger: #dc2626;
+            --primary: #2563eb;       /* Modern Clinical Blue */
+            --primary-light: #eff6ff; /* Soft Blue Background */
+            --primary-dark: #1d4ed8;
+            --accent: #0ea5e9;        /* Bright Sky Blue */
+            --success: #10b981;       /* Emerald Green */
+            --warning: #f59e0b;       /* Amber */
+            --danger: #ef4444;        /* Rose Red */
+            
+            --bg-body: #f8fafc;       /* Very light cool gray */
+            --bg-surface: #ffffff;
+            
+            --text-main: #334155;
+            --text-muted: #64748b;
+            
+            --border-soft: #e2e8f0;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025);
         }
 
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; background-color: #f1f5f9; color: var(--gray-700); display: flex; flex-direction: column; min-height: 100vh; }
-        header { background-color: var(--primary); color: white; padding: 1.25rem; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; background-color: var(--bg-body); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; -webkit-font-smoothing: antialiased; }
         
-        .app-shell { display: grid; grid-template-columns: 320px 1fr; flex: 1; max-width: 1450px; width: 100%; margin: 0 auto; box-sizing: border-box; }
+        /* Modern Header */
+        header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 1.5rem; text-align: center; box-shadow: var(--shadow-md); z-index: 10; position: relative; }
+        header h1 { margin: 0 0 5px 0; font-size: 1.8rem; letter-spacing: -0.025em; font-weight: 700;}
+        header p { margin: 0; opacity: 0.85; font-size: 0.95rem; font-weight: 400; }
+        
+        .app-shell { display: grid; grid-template-columns: 320px 1fr; flex: 1; max-width: 1500px; width: 100%; margin: 0 auto; box-sizing: border-box; }
         @media (max-width: 768px) { .app-shell { grid-template-columns: 1fr; } }
 
-        /* SIDEBAR */
-        .sidebar { background: white; border-right: 1px solid var(--gray-200); padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; height: 100%; overflow-y: auto;}
-        .app-features-nav { display: flex; flex-direction: column; gap: 0.4rem; border-bottom: 2px solid var(--gray-200); padding-bottom: 1.25rem; }
-        .feature-btn { background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200); padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s ease; }
-        .feature-btn:hover { background: #e2e8f0; }
-        .feature-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 6px -1px rgba(30, 58, 138, 0.2); }
-
-        .panel { background: white; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--gray-200); }
-        label { display: block; font-weight: 600; margin: 0.75rem 0 0.25rem 0; font-size: 0.85rem; }
-        input, select { width: 100%; padding: 0.55rem; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; }
-        .row-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-
-        button.action { width: 100%; background-color: var(--accent); color: white; border: none; padding: 0.75rem; font-size: 0.95rem; font-weight: 600; border-radius: 6px; cursor: pointer; margin-top: 1.25rem; }
-        button.action:hover { background-color: #0f766e; }
-        button.secondary { background-color: #64748b; color: white; border: none; padding: 4px; border-radius: 4px; cursor: pointer;}
-        button.secondary:hover { background-color: #475569; }
-        button.whatsapp-btn { background-color: #25D366; color: white; padding: 0.6rem 1rem; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; width: 100%; justify-content: center; margin-top: 0.5rem;}
-        button.print-master { background-color: #1e293b; color: white; padding: 0.85rem; border-radius: 8px; font-weight: bold; width: 100%; border: none; cursor: pointer; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px;}
-
-        .patient-list { margin-top: 1rem; border-top: 1px solid var(--gray-200); padding-top: 1rem; max-height: 120px; overflow-y: auto; }
-        .patient-badge { background: var(--gray-100); padding: 0.5rem 0.75rem; border-radius: 6px; margin-bottom: 0.5rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; border: 1px solid transparent; }
-        .patient-badge.active-patient { border-color: var(--primary); background: var(--primary-light); font-weight: bold; }
-
-        /* MAIN CONTENT */
-        .main-content { padding: 2rem; overflow-y: auto; }
-        .view-content { display: none; }
-        .view-content.active-view { display: block; }
+        /* FLOATING SIDEBAR */
+        .sidebar { background: var(--bg-surface); border-right: 1px solid var(--border-soft); padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; height: 100%; overflow-y: auto; box-shadow: 2px 0 10px rgba(0,0,0,0.02);}
         
-        .sub-tabs-nav { display: flex; gap: 0.25rem; margin-bottom: 1rem; border-bottom: 2px solid #cbd5e1; overflow-x: auto;}
-        .sub-tab-btn { background: none; border: none; color: var(--gray-700); padding: 0.6rem 1rem; cursor: pointer; font-size: 0.9rem; border-radius: 6px 6px 0 0; white-space: nowrap;}
-        .sub-tab-btn.active { background: white; color: var(--primary); font-weight: bold; border: 2px solid #cbd5e1; border-bottom: 2px solid white; margin-bottom: -2px; }
-        .sub-tab-content { display: none; }
+        .app-features-nav { display: flex; flex-direction: column; gap: 0.35rem; border-bottom: 1px solid var(--border-soft); padding-bottom: 1.5rem; }
+        .feature-btn { background: transparent; color: var(--text-muted); border: none; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s ease; display: flex; align-items: center; gap: 8px;}
+        .feature-btn:hover { background: var(--gray-100); color: var(--text-main); }
+        .feature-btn.active { background: var(--primary-light); color: var(--primary); box-shadow: none; font-weight: 700; }
+        .feature-btn.special { background: #ecfdf5; color: #166534; }
+        .feature-btn.special:hover { background: #dcfce7; }
+
+        .panel { background: var(--bg-surface); padding: 0; border-radius: var(--radius-lg); border: none; }
+        label { display: block; font-weight: 600; margin: 0.85rem 0 0.35rem 0; font-size: 0.85rem; color: var(--text-main); }
+        
+        /* Smooth Inputs */
+        input, select { width: 100%; padding: 0.65rem 0.8rem; border: 1.5px solid var(--border-soft); border-radius: var(--radius-md); box-sizing: border-box; font-size: 0.95rem; transition: all 0.2s; background: #f8fafc; font-family: inherit;}
+        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); background: white;}
+        .row-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+        /* Modern Buttons */
+        button.action { width: 100%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; margin-top: 1.5rem; transition: transform 0.1s, box-shadow 0.2s; box-shadow: var(--shadow-sm); }
+        button.action:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        button.action:active { transform: translateY(1px); }
+        
+        button.secondary { background-color: var(--bg-body); color: var(--text-main); border: 1px solid var(--border-soft); padding: 0.5rem 0.8rem; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; transition: all 0.2s;}
+        button.secondary:hover { background-color: #e2e8f0; }
+        
+        button.whatsapp-btn { background: linear-gradient(135deg, #25D366, #128C7E); color: white; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; justify-content: center; margin-top: 0.5rem; box-shadow: var(--shadow-sm); transition: transform 0.1s;}
+        button.whatsapp-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        
+        button.print-master { background: #1e293b; color: white; padding: 0.85rem; border-radius: var(--radius-md); font-weight: 600; width: 100%; border: none; cursor: pointer; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;}
+        button.print-master:hover { background: #0f172a; }
+
+        /* Clean Patient Badges */
+        .patient-list { margin-top: 1.5rem; border-top: 1px solid var(--border-soft); padding-top: 1.5rem; max-height: 180px; overflow-y: auto; }
+        .patient-badge { background: white; padding: 0.75rem 1rem; border-radius: var(--radius-md); margin-bottom: 0.5rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; border: 1px solid var(--border-soft); transition: all 0.2s; box-shadow: var(--shadow-sm);}
+        .patient-badge:hover { border-color: var(--primary-light); background: var(--primary-light); transform: translateY(-1px);}
+        .patient-badge.active-patient { border-color: var(--primary); background: var(--primary-light); font-weight: 600; box-shadow: 0 0 0 1px var(--primary); }
+
+        /* MAIN CONTENT AREA */
+        .main-content { padding: 2.5rem; overflow-y: auto; background: var(--bg-body); }
+        
+        /* Smooth Fade In Animation */
+        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .view-content { display: none; }
+        .view-content.active-view { display: block; animation: fadeSlideIn 0.3s ease-out forwards; }
+        
+        /* Modern Tabs */
+        .sub-tabs-nav { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-soft); overflow-x: auto; padding-bottom: 0px;}
+        .sub-tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 0.75rem 1.25rem; cursor: pointer; font-size: 0.95rem; font-weight: 600; border-radius: var(--radius-md) var(--radius-md) 0 0; white-space: nowrap; transition: color 0.2s; position: relative; bottom: -2px;}
+        .sub-tab-btn:hover { color: var(--text-main); }
+        .sub-tab-btn.active { color: var(--primary); border-bottom: 2px solid var(--primary); background: transparent; }
+        .sub-tab-content { display: none; animation: fadeSlideIn 0.2s ease-out forwards; }
         .sub-tab-content.active { display: block; }
 
-        .timeline-section { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; border: 1px solid var(--gray-200); }
-        .section-title { color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 0.25rem; margin-top: 0; display: flex; justify-content: space-between; align-items: center;}
+        /* Floating Cards */
+        .timeline-section { background: var(--bg-surface); padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); margin-bottom: 2rem; border: 1px solid rgba(0,0,0,0.02); }
+        .section-title { color: var(--primary); border-bottom: 1px solid var(--border-soft); padding-bottom: 0.75rem; margin-top: 0; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; font-size: 1.25rem; font-weight: 700;}
 
-        .chart-box-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+        .chart-box-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
         @media (max-width: 900px) { .chart-box-container { grid-template-columns: 1fr; } }
-        .chart-card-wrapper { background: white; padding: 1rem; border-radius: 8px; border: 1px solid var(--gray-200); min-height: 320px; }
+        .chart-card-wrapper { background: white; padding: 1rem; border-radius: var(--radius-lg); border: 1px solid var(--border-soft); min-height: 320px; box-shadow: var(--shadow-sm);}
 
-        .vaccine-row { display: grid; grid-template-columns: 1.8fr 1fr 1.5fr; align-items: center; padding: 1rem 0; border-bottom: 1px solid #f1f5f9; gap: 1rem; }
-        .vaccine-info h4 { margin: 0 0 0.25rem 0; font-size: 1rem; }
-        .vaccine-meta { font-size: 0.8rem; color: #64748b; }
-        .action-protocol-card { background: #fff7ed; border: 1px solid #ffedd5; padding: 0.5rem; border-radius: 6px; font-size: 0.78rem; color: #c2410c; }
+        /* Data Rows */
+        .vaccine-row { display: grid; grid-template-columns: 1.8fr 1fr 1.5fr; align-items: center; padding: 1.25rem 0; border-bottom: 1px solid var(--border-soft); gap: 1rem; transition: background 0.2s;}
+        .vaccine-row:hover { background: #fafafa; border-radius: 8px; padding-left: 10px; padding-right: 10px; margin-left: -10px; margin-right: -10px;}
+        .vaccine-row:last-child { border-bottom: none; }
+        .vaccine-info h4 { margin: 0 0 0.35rem 0; font-size: 1.05rem; color: var(--text-main);}
+        .vaccine-meta { font-size: 0.85rem; color: var(--text-muted); }
+        .action-protocol-card { background: #fffbeb; border: 1px solid #fde68a; padding: 0.5rem 0.75rem; border-radius: 6px; font-size: 0.8rem; color: #b45309; display: inline-block; margin-top: 5px;}
         .date-display-box { font-size: 1rem; font-weight: 700; color: var(--primary); }
         .date-display-box.shifted { color: var(--warning); }
-        .date-picker-cell { text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 10px;}
-        .date-picker-cell input[type="date"] { width: 100%; max-width: 130px; font-size: 0.85rem; padding: 0.25rem; }
-        .tick-box { width: 24px; height: 24px; cursor: pointer; accent-color: var(--success); }
+        .date-picker-cell { text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 12px;}
+        .date-picker-cell input[type="date"] { width: 100%; max-width: 140px; }
+        .tick-box { width: 22px; height: 22px; cursor: pointer; accent-color: var(--success); border-radius: 4px;}
 
-        .formula-box { background: #1e293b; color: #f8fafc; padding: 1.25rem; border-radius: 8px; font-family: -apple-system, sans-serif; font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5; }
-        .formula-box b { color: #38bdf8; font-family: monospace; font-size: 1rem; }
-        .calc-control-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; background: var(--primary-light); padding: 1.25rem; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 1.5rem; }
-        .result-card { background: white; border: 2px solid var(--success); padding: 1.5rem; border-radius: 10px; text-align: center; position: relative;}
+        /* Formula and Info Boxes */
+        .formula-box { background: #0f172a; color: #f8fafc; padding: 1.5rem; border-radius: var(--radius-lg); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.6; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid var(--accent);}
+        .formula-box b { color: #38bdf8; font-family: monospace; font-size: 1.05rem; }
         
-        .rx-cart-container { margin-top: 2rem; border-top: 2px dashed #cbd5e1; padding-top: 1.5rem;}
-        .rx-cart-item { background: #f8fafc; border: 1px solid #cbd5e1; padding: 1rem; border-radius: 8px; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center;}
+        .calc-control-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: var(--primary-light); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid #bfdbfe; margin-bottom: 1.5rem; }
+        .result-card { background: white; border: 2px solid var(--success); padding: 1.5rem; border-radius: var(--radius-lg); text-align: center; position: relative; box-shadow: var(--shadow-md);}
         
-        .quick-calc-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; background: white; padding: 1rem; border-radius: 8px; border: 2px solid var(--gray-200); margin-bottom: 1.5rem;}
-        .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .rx-cart-container { margin-top: 2rem; border-top: 2px dashed var(--border-soft); padding-top: 2rem;}
+        .rx-cart-item { background: white; border: 1px solid var(--border-soft); padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm);}
+        
+        .quick-calc-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: white; padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-soft); margin-bottom: 2rem; box-shadow: var(--shadow-sm);}
+        .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
         @media (max-width: 768px) { .tool-grid { grid-template-columns: 1fr; } }
-        .tool-result { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1rem; border-radius: 8px; color: #166534; font-size: 1.1rem; text-align: center; margin-top: 1rem; font-weight: bold;}
-        .tool-result.danger { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
-        .tool-result.warning { background: #fffbeb; border-color: #fed7aa; color: #9a3412; }
-        .tool-result.neutral { background: #f8fafc; border-color: #cbd5e1; color: #334155; }
-
-        .milestone-item { display: flex; gap: 1rem; padding: 0.65rem 0; align-items: flex-start; }
-        .milestone-item input[type="checkbox"] { width: 22px; height: 22px; margin: 0; cursor: pointer; accent-color: var(--primary); }
-        .milestone-text { font-size: 1rem; font-weight: 500; color: var(--gray-700); line-height: 1.3;}
-        .milestone-domain { font-size: 0.75rem; background: var(--gray-200); color: var(--gray-700); padding: 2px 6px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 4px; text-transform: uppercase; }
-
-        .audit-card { padding: 1rem; border-radius: 8px; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; }
-        .audit-card.overdue { background: #fef2f2; border-color: #fecaca; border-left: 5px solid var(--danger); }
-        .audit-card.done { background: #f0fdf4; border-color: #bbf7d0; border-left: 5px solid var(--success); }
-        .audit-card.upcoming { background: #f8fafc; border-color: #cbd5e1; border-left: 5px solid var(--primary); }
         
-        .status-pill { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        .tool-result { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1.5rem; border-radius: var(--radius-lg); color: #166534; font-size: 1.1rem; text-align: center; margin-top: 1.5rem; font-weight: 600; box-shadow: var(--shadow-sm);}
+        .tool-result.danger { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+        .tool-result.warning { background: #fffbeb; border-color: #fde68a; color: #9a3412; }
+        .tool-result.neutral { background: #f1f5f9; border-color: var(--border-soft); color: var(--text-main); }
+
+        .milestone-item { display: flex; gap: 1rem; padding: 0.85rem 0; align-items: flex-start; border-bottom: 1px solid var(--gray-100);}
+        .milestone-text { font-size: 1.05rem; font-weight: 500; color: var(--text-main); line-height: 1.4;}
+        .milestone-domain { font-size: 0.75rem; background: var(--gray-200); color: var(--text-main); padding: 3px 8px; border-radius: 99px; font-weight: 700; display: inline-block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;}
+
+        .audit-card { padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; background: white; box-shadow: var(--shadow-sm);}
+        .audit-card.overdue { border-left: 5px solid var(--danger); border-color: #fecaca; }
+        .audit-card.done { border-left: 5px solid var(--success); border-color: #bbf7d0; }
+        .audit-card.upcoming { border-left: 5px solid var(--primary); border-color: #bfdbfe; }
+        
+        .status-pill { padding: 0.35rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;}
         .status-pill.overdue { background: #fee2e2; color: var(--danger); }
         .status-pill.done { background: #dcfce7; color: var(--success); }
         .status-pill.upcoming { background: #e0e7ff; color: var(--primary); }
 
-        .nis-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 1rem; }
-        .nis-table th, .nis-table td { border: 1px solid #cbd5e1; padding: 0.5rem; text-align: left; }
-        .nis-table th { background-color: var(--primary-light); color: var(--primary); }
+        .nis-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.95rem; margin-top: 1rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-soft);}
+        .nis-table th, .nis-table td { padding: 0.85rem 1rem; text-align: left; border-bottom: 1px solid var(--border-soft);}
+        .nis-table th { background-color: var(--primary-light); color: var(--primary); font-weight: 700;}
+        .nis-table tr:last-child td { border-bottom: none; }
         
-        .search-bar { width: 100%; padding: 10px; border: 2px solid var(--primary); border-radius: 6px; font-size: 1rem; margin-bottom: 1rem; box-sizing: border-box;}
+        .search-bar { width: 100%; padding: 12px 16px; border: 2px solid var(--primary-light); border-radius: var(--radius-md); font-size: 1rem; margin-bottom: 1.5rem; box-sizing: border-box; background: white; transition: all 0.2s;}
+        .search-bar:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);}
 
         /* THE PRINT ENGINE ARCHITECTURE */
         #printEngine { display: none; }
         @media print {
             body > *:not(#printEngine) { display: none !important; }
+            body { background: white !important; }
             #printEngine { display: block !important; width: 100%; color: black; background: white;}
-            #printEngine h1, #printEngine h2, #printEngine h3 { color: black !important; border-bottom: 2px solid #000; padding-bottom: 4px; margin-top: 20px;}
+            #printEngine h1, #printEngine h2, #printEngine h3 { color: black !important; border-bottom: 2px solid #000; padding-bottom: 4px; margin-top: 20px; font-family: serif;}
             #printEngine .page-break { page-break-after: always; }
-            #printEngine .vaccine-row { grid-template-columns: 2fr 1fr; border-bottom: 1px solid #ccc; padding: 8px 0; page-break-inside: avoid;}
+            #printEngine .vaccine-row { grid-template-columns: 2fr 1fr; border-bottom: 1px solid #ccc; padding: 8px 0; page-break-inside: avoid; transition: none;}
             #printEngine .date-picker-cell, #printEngine .action-protocol-card { display: none !important; }
             #printEngine .date-display-box::before { content: "Due: "; font-weight: normal; color: #555; }
             #printEngine .rx-pad { border: 2px solid #000; padding: 2rem; border-radius: 12px; margin-top: 2rem; }
-            #printEngine .rx-symbol { font-size: 3rem; font-family: serif; font-weight: bold; line-height: 1; margin-bottom: 1.5rem; }
-            #printEngine .rx-drug-name { font-size: 1.3rem; font-weight: bold; margin-bottom: 0.25rem;}
-            #printEngine .rx-dosage { font-size: 1.4rem; font-weight: bold; border-bottom: 2px dashed #ccc; display: inline-block; padding-bottom: 5px; margin-bottom: 0.5rem;}
-            #printEngine .tool-result { border: 1px solid #000; background: none !important; color: black !important; page-break-inside: avoid; margin-bottom: 10px; padding: 10px; text-align: left;}
+            #printEngine .rx-symbol { font-size: 3.5rem; font-family: serif; font-weight: bold; line-height: 1; margin-bottom: 1.5rem; }
+            #printEngine .rx-drug-name { font-size: 1.4rem; font-weight: bold; margin-bottom: 0.35rem;}
+            #printEngine .rx-dosage { font-size: 1.5rem; font-weight: bold; border-bottom: 2px dashed #ccc; display: inline-block; padding-bottom: 5px; margin-bottom: 0.5rem;}
+            #printEngine .tool-result { border: 1px solid #000; background: none !important; color: black !important; page-break-inside: avoid; margin-bottom: 10px; padding: 15px; text-align: left; box-shadow: none;}
         }
+        
+        .checkbox-container { display: flex; align-items: center; gap: 8px; margin-top: 5px; background: white; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-soft);}
+        .checkbox-container input { width: 18px; height: 18px; margin: 0; }
+        .checkbox-container label { margin: 0; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Pediatric Clinical Hub v10.3 (Stable Build)</h1>
-    <p>NIS Tracker | Drug Dosages | Milestones | Nutrition & Dietetics | Growth</p>
+    <h1>Pediatric Clinical Hub</h1>
+    <p style="font-weight:700; font-size:1.1rem; margin-bottom:5px; color:#93c5fd;">Developed by Dr. Peter Suraj Joseph</p>
+    <p style="font-size:0.9rem;">NIS Tracker | Drug Dosages | Milestones | Nutrition | Anthropometry | Asthma | Fluids</p>
 </header>
 
 <div class="app-shell">
@@ -137,16 +193,17 @@
             <button class="feature-btn active" onclick="switchMainFeature('trackerFeatureView', this)">📅 Immunization Tracker</button>
             <button class="feature-btn" onclick="switchMainFeature('dosageFeatureView', this)">💊 Drug Dose Calculator</button>
             <button class="feature-btn" onclick="switchMainFeature('milestoneFeatureView', this)">👶 Dev. Milestones</button>
-            <button class="feature-btn" style="color:var(--primary); font-weight:800; background:#dcfce7; border-color:#86efac;" onclick="switchMainFeature('nutritionFeatureView', this)">🍎 Nutrition & Dietetics</button>
+            <button class="feature-btn special" onclick="switchMainFeature('nutritionFeatureView', this)">🍎 Nutrition & Dietetics</button>
             <button class="feature-btn" onclick="switchMainFeature('malnutritionFeatureView', this)">🩺 Anthropometry Triage</button>
             <button class="feature-btn" onclick="switchMainFeature('growthFeatureView', this)">📈 WHO Growth Curves</button>
             <button class="feature-btn" onclick="switchMainFeature('fluidsFeatureView', this)">💧 IV Fluids</button>
             <button class="feature-btn" onclick="switchMainFeature('asthmaFeatureView', this)">🫁 Asthma PRAM</button>
             <button class="feature-btn" onclick="switchMainFeature('jaundiceFeatureView', this)">🍼 Neonatal Jaundice</button>
+            <button class="feature-btn" style="background:#fef3c7; color:#b45309; border: 1px solid #fde68a;" onclick="switchMainFeature('libraryFeatureView', this)">📘 PDF Reference Manual</button>
         </div>
 
-        <div class="panel" style="padding:0; border:none;">
-            <h3 style="margin-top:0;">Patient Registry</h3>
+        <div class="panel" style="padding:0; border:none; background:transparent;">
+            <h3 style="margin-top:0; font-size:1.1rem; border-bottom: 2px solid var(--border-soft); padding-bottom:10px;">Patient Registry</h3>
             <label for="pName">Patient Name</label>
             <input type="text" id="pName" placeholder="e.g., Baby of Sunita">
 
@@ -171,39 +228,48 @@
             <input type="number" step="0.1" id="hcCm" placeholder="e.g., 44" oninput="saveAndRegisterPatient(true)">
 
             <label for="gender">Gender</label>
-            <select id="gender"><option value="female">Female</option><option value="male">Male</option></select>
+            <select id="gender" onchange="saveAndRegisterPatient(true)"><option value="female">Female</option><option value="male">Male</option></select>
             
-            <div class="checkbox-container"><input type="checkbox" id="jeEndemic"><label for="jeEndemic">JE Endemic Area?</label></div>
+            <div class="checkbox-container">
+                <input type="checkbox" id="jeEndemic" onchange="saveAndRegisterPatient(true)">
+                <label for="jeEndemic" style="font-weight:normal;">JE Endemic Area?</label>
+            </div>
 
             <div style="display:flex; gap:10px; margin-top: 1.25rem;">
                 <button class="action" style="margin-top:0;" onclick="saveAndRegisterPatient(false)">Save Profile</button>
-                <button class="secondary" style="margin-top:0; padding:0.75rem; background-color:#64748b; color:white; border-radius:6px; cursor:pointer; border:none; font-weight:bold; white-space:nowrap;" onclick="prepNewPatient()">➕ New Patient</button>
+                <button class="secondary" style="margin-top:0; padding:0.75rem; background-color:white; color:var(--text-main); border-radius:var(--radius-md); cursor:pointer; font-weight:bold; white-space:nowrap; box-shadow: var(--shadow-sm);" onclick="prepNewPatient()">➕ New</button>
             </div>
             
             <button class="print-master" onclick="executePrint('comprehensive')" id="btnMasterPrint" style="display:none;">🖨️ Print Comp. Report</button>
             <button class="whatsapp-btn" onclick="sendWACompReport()" id="btnMasterWA" style="display:none;">💬 WhatsApp Comp. Report</button>
             
             <div class="patient-list">
-                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; color:#64748b;">Saved Profiles</h4>
+                <h4 style="margin: 0 0 0.75rem 0; font-size: 0.9rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Saved Profiles</h4>
                 <div id="patientListContainer"></div>
-                <button class="secondary" onclick="clearAllData()" style="font-size:0.7rem; padding:4px; width:100%; margin-top:0.5rem;">Delete All Saved Data</button>
+                <button class="secondary" onclick="clearAllData()" style="font-size:0.75rem; padding:6px; width:100%; margin-top:0.5rem; background:transparent; border:1px dashed #cbd5e1; color:#ef4444;">Delete All Saved Data</button>
             </div>
         </div>
     </div>
 
     <div class="main-content">
-        <div id="emptyStatePlaceholder" class="panel" style="text-align: center; color: #64748b;">
-            Select an existing patient profile from the Registry or register a new one to access features.
-            <br><br><i>(Note: Dosage, Nutrition, and Clinical tools can be accessed on-the-go without a profile).</i>
+        <div id="emptyStatePlaceholder" class="timeline-section" style="text-align: center; color: var(--text-muted); padding: 4rem 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🏥</div>
+            <h2 style="color:var(--text-main); margin-bottom: 0.5rem;">Welcome to the Clinical Hub</h2>
+            <p>Select an existing patient profile from the Registry or register a new one to unlock tracking features.</p>
+            <p style="font-size:0.85rem; margin-top:2rem; background: var(--bg-body); padding:1rem; border-radius:8px; display:inline-block;"><i>Tip: Dosage, Nutrition, and Clinical Triage tools can be accessed on-the-go via the sidebar without needing to save a profile.</i></p>
         </div>
 
         <div id="activeWorkspace" style="display:none;">
 
             <div id="trackerFeatureView" class="view-content active-view">
-                <div class="timeline-section" style="background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:1rem; display:flex; justify-content:flex-end; gap:10px;">
-                    <button onclick="sendWhatsAppReminder()" class="whatsapp-btn">💬 Send WhatsApp Reminder</button>
-                    <button onclick="executePrint('tracker')" class="secondary" style="padding:0.6rem 1rem; font-weight:bold; background:var(--primary);">🖨️ Print Schedule Tracker</button>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h2 style="margin:0; color:var(--primary);">Vaccination Status</h2>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="sendWhatsAppReminder()" class="whatsapp-btn" style="margin:0; padding:0.5rem 1rem;">💬 WhatsApp Reminder</button>
+                        <button onclick="executePrint('tracker')" class="secondary" style="background:var(--primary); color:white; border:none; box-shadow:var(--shadow-sm);">🖨️ Print Schedule</button>
+                    </div>
                 </div>
+                
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('trackerTimelineSubTab', this)">📅 Tracker Timeline</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('trackerAuditSubTab', this)">📋 Patient Audit (Future Doses)</button>
@@ -234,63 +300,108 @@
             </div>
 
             <div id="dosageFeatureView" class="view-content">
-                <div class="timeline-section" style="background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:1rem; display:flex; justify-content:flex-end;">
-                    <button onclick="executePrint('prescription')" class="secondary" style="padding:0.6rem 1rem; font-weight:bold; background:var(--primary);">🖨️ Print Rx Pad</button>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">
+                    <div>
+                        <h2 style="margin:0; color:var(--primary);">💊 Pediatric Drug Dosage Engine</h2>
+                        <p style="margin:5px 0 0 0; color:var(--text-muted); font-size:0.95rem;">Rapid pharmacological calculator with auto-assembling Rx pad.</p>
+                    </div>
+                    <button onclick="executePrint('prescription')" class="secondary" style="background:var(--primary); color:white; border:none; padding:0.6rem 1rem; box-shadow:var(--shadow-sm);">🖨️ Print Rx Pad</button>
                 </div>
+                
                 <div class="timeline-section">
-                    <h2 style="margin-top:0; color:var(--primary);">💊 Pediatric Drug Dosage Engine</h2>
+                    <div class="formula-box">
+                        <b>Dosing Core Math Rule Matrix Summary:</b><br>
+                        • Individual Dose Volume Formulation Equation: <span style="color:#fff;">mL = [Weight (kg) × Target Dose (mg/kg) × Base Vol (mL)] ÷ Stock Conc (mg)</span><br>
+                        • Daily Divided Protocol: <span style="color:#fff;">Total daily computed structural milligram load is divided by medication daily frequency factor.</span>
+                    </div>
                     <div class="quick-calc-inputs">
                         <div><label style="color:var(--accent);">On-The-Go Weight (kg)</label><input type="number" id="calcWeight" placeholder="e.g., 12.5" oninput="calculateDose()"></div>
-                        <div><label style="color:#64748b;">OR Quick Age (Months) to estimate</label><input type="number" id="calcQuickAge" placeholder="e.g., 18" oninput="quickEstimateWeight()"></div>
+                        <div><label style="color:var(--text-muted);">OR Quick Age (Months) to estimate</label><input type="number" id="calcQuickAge" placeholder="e.g., 18" oninput="quickEstimateWeight()"></div>
                     </div>
                     <div class="calc-control-panel">
                         <div><label>Drug Category</label><select id="drugCategory" onchange="populateDrugs(); calculateDose();"><option value="">-- Category --</option><option value="antibiotics">Antibiotics</option><option value="antipyretics">Antipyretics</option><option value="antihistamines">Antihistamines</option><option value="git">GIT Drugs</option><option value="respiratory">Respiratory</option></select></div>
                         <div><label>Formulation</label><select id="drugFormulation" onchange="calculateDose()"><option value="">-- Select Drug --</option></select></div>
                     </div>
                     <div id="calcOutputArea" style="display:none;"><div class="result-card" id="doseResultCard"></div><div id="rxAddButtonArea"></div></div>
-                    <div id="rxCartArea"><div class="rx-cart-container"><h3 class="section-title">Active Prescription Pad</h3><div id="rxCartList"></div></div></div>
+                    <div id="rxCartArea"><div class="rx-cart-container"><h3 class="section-title" style="border:none; margin-bottom:0.5rem;">Active Prescription Pad</h3><div id="rxCartList"></div></div></div>
                 </div>
             </div>
 
             <div id="milestoneFeatureView" class="view-content">
-                <div class="timeline-section" style="background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:1rem; display:flex; justify-content:flex-end;">
-                    <button onclick="executePrint('milestones')" class="secondary" style="padding:0.6rem 1rem; font-weight:bold; background:var(--primary);">🖨️ Print Progress</button>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h2 style="margin:0; color:var(--primary);">👶 Developmental Progress</h2>
+                    <button onclick="executePrint('milestones')" class="secondary" style="background:var(--primary); color:white; border:none; box-shadow:var(--shadow-sm);">🖨️ Print Progress</button>
                 </div>
+                
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('msEvalTab', this)">📋 Master Checklist</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('msProgressTab', this)">📈 Progress Dashboard</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('msMissedTab', this)">🚨 Red Flags</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('msReferenceTab', this)">📘 IAP & Trivandrum Standards</button>
                 </div>
                 <div id="msEvalTab" class="sub-tab-content active"><div class="timeline-section"><h3 class="section-title">Comprehensive Milestones Evaluation</h3><div id="msEvalContainer"></div></div></div>
                 <div id="msProgressTab" class="sub-tab-content"><div class="timeline-section"><h3 class="section-title">Developmental Dashboard</h3><div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem;"><div id="msCompletedContainer"></div><div id="msUpcomingContainer"></div></div></div></div>
                 <div id="msMissedTab" class="sub-tab-content"><div class="timeline-section"><h3 class="section-title">Missed Milestones & Red Flags</h3><div id="msMissedContainer"></div></div></div>
+                
+                <div id="msReferenceTab" class="sub-tab-content">
+                    <div class="timeline-section">
+                        <h3 class="section-title">Standard Developmental Milestones (IAP & Trivandrum Scales)</h3>
+                        <p style="color:var(--text-muted); font-size:0.95rem;">Official clinical standards adapted from standard guidelines and Trivandrum Developmental Scales.</p>
+                        <div id="msReferenceContainer"></div>
+                    </div>
+                </div>
             </div>
             
             <div id="nutritionFeatureView" class="view-content">
-                <div class="timeline-section" style="background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:1rem; display:flex; justify-content:flex-end;">
-                    <button onclick="executePrint('nutrition')" class="secondary" style="padding:0.6rem 1rem; font-weight:bold; background:var(--success);">🖨️ Print Diet Plan for Parent</button>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h2 style="margin:0; color:var(--success);">🍎 Nutrition & Dietetics</h2>
+                    <button onclick="executePrint('nutrition')" class="secondary" style="background:var(--success); color:white; border:none; box-shadow:var(--shadow-sm);">🖨️ Print Diet Plan for Parent</button>
                 </div>
+                
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('nutriCalcTab', this)">🧮 ICMR Target Calculator</button>
-                    <button class="sub-tab-btn" onclick="switchSubTab('nutriDBTab', this)">📊 Indian Foods Database</button>
-                    <button class="sub-tab-btn" onclick="switchSubTab('nutriCounselingTab', this)">🗣️ Parent Counseling Guide</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('nutriRecallTab', this)">🍽️ 24-Hour Diet Recall</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('nutriDBTab', this)">📊 Indian Foods DB</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('nutriCounselingTab', this)">🗣️ Parent Counseling</button>
                 </div>
                 
                 <div id="nutriCalcTab" class="sub-tab-content active">
                     <div class="timeline-section">
-                        <h2 style="margin-top:0; color:var(--success);">🍎 Nutritional Requirements (ICMR RDA)</h2>
-                        <p style="color:#64748b; font-size:0.9rem;">Auto-calculated targets based on active patient Age and Weight.</p>
+                        <h3 class="section-title" style="color:var(--success);">Nutritional Requirements (ICMR RDA)</h3>
+                        <p style="color:var(--text-muted); font-size:0.95rem;">Auto-calculated targets based on active patient Age and Weight.</p>
                         <div class="tool-grid" id="nutriTargetArea"></div>
+                    </div>
+                </div>
+                
+                <div id="nutriRecallTab" class="sub-tab-content">
+                    <div class="timeline-section">
+                        <h3 class="section-title" style="color:var(--success);">24-Hour Diet Recall Analyzer</h3>
+                        <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.5rem;">Log what the child ate in the past 24 hours to automatically detect caloric or protein deficiencies against their ICMR RDA targets.</p>
+                        <div class="tool-grid">
+                            <div style="background:#f8fafc; padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft);">
+                                <label>Meal Time</label>
+                                <select id="recallMeal" style="margin-bottom:1rem;"><option>Breakfast</option><option>AM Snack</option><option>Lunch</option><option>PM Snack</option><option>Dinner</option></select>
+                                <label>Food Item</label>
+                                <select id="recallFood" style="margin-bottom:1rem;"></select>
+                                <label>Quantity (grams or ml)</label>
+                                <input type="number" id="recallQty" placeholder="e.g., 100" style="margin-bottom:1rem;">
+                                <button class="action" style="background:var(--success); margin-top:0;" onclick="addDietRecall()">➕ Log Intake</button>
+                            </div>
+                            <div>
+                                <div id="recallSummaryArea" class="tool-result neutral" style="margin-top:0; height:100%; display:flex; flex-direction:column; justify-content:center;">Log a food item to initialize deficiency analyzer.</div>
+                            </div>
+                        </div>
+                        <div id="recallListArea" style="margin-top:2rem;"></div>
                     </div>
                 </div>
 
                 <div id="nutriDBTab" class="sub-tab-content">
                     <div class="timeline-section">
-                        <h2 style="margin-top:0; color:var(--success);">📊 Nutritional Values Database (per 100g)</h2>
+                        <h3 class="section-title" style="color:var(--success);">Nutritional Values Database (per 100g)</h3>
                         <input type="text" id="foodSearch" class="search-bar" placeholder="Search for Rice, Apple, Milk, Egg..." onkeyup="filterFoodDB()">
-                        <div style="max-height: 400px; overflow-y: auto;">
-                            <table class="nis-table" id="foodTable">
-                                <thead><tr><th>Food Item</th><th>Category</th><th>Protein (g)</th><th>CHO (g)</th><th>Fat (g)</th><th>kcal</th></tr></thead>
+                        <div style="max-height: 400px; overflow-y: auto; border-radius:8px; border:1px solid var(--border-soft);">
+                            <table class="nis-table" id="foodTable" style="margin-top:0; border:none;">
+                                <thead style="position:sticky; top:0;"><tr><th>Food Item</th><th>Category</th><th>Protein (g)</th><th>CHO (g)</th><th>Fat (g)</th><th>kcal</th></tr></thead>
                                 <tbody id="foodTableBody"></tbody>
                             </table>
                         </div>
@@ -299,11 +410,11 @@
 
                 <div id="nutriCounselingTab" class="sub-tab-content">
                     <div class="timeline-section">
-                        <h2 style="margin-top:0; color:var(--success);">🗣️ Quick Counseling & Household Measures</h2>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
-                            <div>
-                                <h4 style="color:var(--primary); border-bottom:1px solid #cbd5e1; padding-bottom:5px;">Household Portions</h4>
-                                <ul style="line-height:1.6; font-size:0.95rem;">
+                        <h3 class="section-title" style="color:var(--success);">Quick Counseling & Household Measures</h3>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+                            <div style="background:white; padding:1.5rem; border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); border:1px solid var(--border-soft);">
+                                <h4 style="color:var(--primary); border-bottom:1px solid var(--border-soft); padding-bottom:10px; margin-top:0;">Household Portions</h4>
+                                <ul style="line-height:1.8; font-size:0.95rem; color:var(--text-main); margin-bottom:0;">
                                     <li><b>1 bowl cooked rice (100g):</b> 120 kcal, 2g Protein</li>
                                     <li><b>1 Idli / 1 Vada:</b> 50 kcal</li>
                                     <li><b>1 Dosa / 1 Chapati:</b> 70 kcal, 2g Protein</li>
@@ -313,9 +424,9 @@
                                     <li><b>Mashed Potato (1 no):</b> 40 kcal</li>
                                 </ul>
                             </div>
-                            <div>
-                                <h4 style="color:var(--primary); border-bottom:1px solid #cbd5e1; padding-bottom:5px;">Micronutrient Sources</h4>
-                                <ul style="line-height:1.6; font-size:0.95rem;">
+                            <div style="background:white; padding:1.5rem; border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); border:1px solid var(--border-soft);">
+                                <h4 style="color:var(--primary); border-bottom:1px solid var(--border-soft); padding-bottom:10px; margin-top:0;">Micronutrient Sources</h4>
+                                <ul style="line-height:1.8; font-size:0.95rem; color:var(--text-main); margin-bottom:0;">
                                     <li><b>Vitamin A:</b> Mango, Papaya, Carrot, Spinach, Sweet potato, Egg yolk</li>
                                     <li><b>Vitamin C:</b> Amla, Citrus fruits, Guava, Capsicum</li>
                                     <li><b>Calcium:</b> Milk, Ragi, Greens, Soya bean, Dry coconut</li>
@@ -328,42 +439,60 @@
             </div>
 
             <div id="malnutritionFeatureView" class="view-content">
+                <h2 style="margin:0 0 1.5rem 0; color:var(--primary);">🩺 Anthropometry Triage</h2>
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('malnCalcTab', this)">🧮 Active Calculators</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('malnSensoryTab', this)">👀 Sensory Screening</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('malnTheoryTab', this)">📚 Theory & Formulas</button>
                 </div>
                 
                 <div id="malnCalcTab" class="sub-tab-content active">
                     <div class="timeline-section">
-                        <h2 style="margin-top:0; color:var(--primary);">🩺 Malnutrition & Anthropometry Triage</h2>
-                        <div style="margin-bottom:1.5rem; background:white; padding:10px; border:1px solid #cbd5e1; border-radius:6px; display:inline-block;">
-                            <input type="checkbox" id="malnOedemaToggle" onchange="calcMalnutrition()"> <label for="malnOedemaToggle" style="display:inline; cursor:pointer;">Bilateral Pitting Oedema Present?</label>
+                        <h3 class="section-title">Malnutrition & Anthropometry Indices</h3>
+                        <div style="margin-bottom:1.5rem; background:white; padding:12px 16px; border:1px solid var(--border-soft); border-radius:8px; display:inline-flex; align-items:center; gap:10px; box-shadow:var(--shadow-sm);">
+                            <input type="checkbox" id="malnOedemaToggle" style="width:20px; height:20px; margin:0;" onchange="calcMalnutrition()"> <label for="malnOedemaToggle" style="display:inline; cursor:pointer; margin:0; font-size:1rem;">Bilateral Pitting Oedema Present?</label>
                         </div>
                         <div class="tool-grid" id="malnGridOutput"></div>
+                    </div>
+                </div>
+                
+                <div id="malnSensoryTab" class="sub-tab-content">
+                    <div class="timeline-section">
+                        <h3 class="section-title">Vision & Hearing Screening Protocols</h3>
+                        <div id="sensoryOutputArea"></div>
                     </div>
                 </div>
 
                 <div id="malnTheoryTab" class="sub-tab-content">
                     <div class="timeline-section">
-                        <h2 style="margin-top:0; color:var(--primary);">📚 Standard Classifications</h2>
-                        <h4 style="color:var(--accent); margin-bottom:5px;">IAP Classification (Weight for Age)</h4>
+                        <h3 class="section-title">Standard Classifications</h3>
+                        <h4 style="color:var(--accent); margin-bottom:8px;">IAP Classification (Weight for Age)</h4>
                         <table class="nis-table"><tbody><tr><td>>80%</td><td>Normal</td></tr><tr><td>71-80%</td><td>Grade 1</td></tr><tr><td>61-70%</td><td>Grade 2</td></tr><tr><td>51-60%</td><td>Grade 3</td></tr><tr><td><50%</td><td>Grade 4</td></tr></tbody></table>
-                        <h4 style="color:var(--accent); margin-bottom:5px; margin-top:1.5rem;">Wellcome Trust Classification</h4>
+                        <h4 style="color:var(--accent); margin-bottom:8px; margin-top:2rem;">Wellcome Trust Classification</h4>
                         <table class="nis-table"><tbody><tr><td>60-80%</td><td>Underweight</td><td>Kwashiorkor</td></tr><tr><td><60%</td><td>Marasmus</td><td>Marasmic-kwashiorkar</td></tr></tbody></table>
+                        
+                        <div class="formula-box" style="margin-top:2rem; text-align:left;">
+                            <b style="color:white;">Important Anthropometric Formulas (Weech's):</b><br><br>
+                            • Expected Weight (3-12 Months): <b>(Age in months + 9) ÷ 2 kg</b><br>
+                            • Expected Weight (1-6 Years): <b>(Age in years × 2) + 8 kg</b><br>
+                            • Expected Weight (7-12 Years): <b>[(Age in years × 7) - 5] ÷ 2 kg</b><br>
+                            • Expected Height (2-12 Years): <b>(Age in years × 6) + 77 cm</b><br>
+                            • <b>Ponderal Index (PI):</b> [Weight in g × 100] ÷ (Height in cm)<sup>3</sup>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div id="growthFeatureView" class="view-content">
                 <div class="timeline-section">
-                    <h2 style="margin-top:0; color:var(--primary);">📈 Anthropometry & WHO Growth Chart curves</h2>
+                    <h3 class="section-title">📈 Anthropometry & WHO Growth Chart Curves</h3>
                     <div class="tool-grid" style="grid-template-columns: 1fr 2fr;">
                         <div>
                             <div class="quick-calc-inputs" style="grid-template-columns: 1fr; margin-bottom: 0;">
                                 <div><label>Height / Length (cm)</label><input type="number" id="htCmOnTheGo" placeholder="e.g., 85" oninput="syncGrowthFieldsAndCalc()"></div>
                             </div>
                             <div id="growthResultArea" class="tool-result">Profile populated from registry.</div>
-                            <div id="expectedGrowthArea" style="margin-top:1rem; font-size:0.9rem; color:#475569;"></div>
+                            <div id="expectedGrowthArea" style="margin-top:1.5rem; font-size:0.95rem; color:var(--text-muted); background:white; padding:1rem; border-radius:8px; border:1px solid var(--border-soft);"></div>
                         </div>
                         <div>
                             <div class="chart-box-container" style="grid-template-columns: 1fr; margin-top: 0;">
@@ -377,45 +506,61 @@
 
             <div id="fluidsFeatureView" class="view-content">
                 <div class="timeline-section">
-                    <h2 style="margin-top:0; color:var(--primary);">💧 IV Fluid & Dehydration Calculator</h2>
+                    <h3 class="section-title">💧 IV Fluid & Dehydration Calculator</h3>
                     <div class="tool-grid">
-                        <div>
-                            <label>Degree of Dehydration</label><select id="fluidDehydration" onchange="calcFluids()"><option value="0">None (Maintenance Only)</option><option value="5">Mild (5%)</option><option value="10">Moderate (10%)</option><option value="15">Severe (15%)</option></select>
-                            <label style="margin-top:1rem;">Patient Resuscitation Weight (kg)</label><input type="number" id="fluidWeight" placeholder="Weight" oninput="calcFluids()">
+                        <div style="background:white; padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft); box-shadow:var(--shadow-sm);">
+                            <label>Degree of Dehydration</label><select id="fluidDehydration" onchange="calcFluids()" style="margin-bottom:1.5rem;"><option value="0">None (Maintenance Only)</option><option value="5">Mild (5%)</option><option value="10">Moderate (10%)</option><option value="15">Severe (15%)</option></select>
+                            <label>Patient Resuscitation Weight (kg)</label><input type="number" id="fluidWeight" placeholder="Weight" oninput="calcFluids()">
                         </div>
-                        <div id="fluidResultArea" class="tool-result neutral">Execute calculation.</div>
+                        <div id="fluidResultArea" class="tool-result neutral" style="margin-top:0; display:flex; flex-direction:column; justify-content:center;">Execute calculation.</div>
                     </div>
                 </div>
             </div>
 
             <div id="asthmaFeatureView" class="view-content">
                 <div class="timeline-section">
-                    <h2 style="margin-top:0; color:var(--primary);">🫁 Pediatric Respiratory Assessment Measure (PRAM)</h2>
+                    <h3 class="section-title">🫁 Pediatric Respiratory Assessment Measure (PRAM)</h3>
                     <div class="tool-grid" style="grid-template-columns: 1.5fr 1fr;">
-                        <div style="background:#f8fafc; padding:1rem; border-radius:8px; border:1px solid #e2e8f0;">
-                            <label>O2 Saturation (Room Air)</label><select id="pramO2" onchange="calcPRAM()"><option value="0">≥ 95% (0 pts)</option><option value="1">92-94% (1 pt)</option><option value="2">< 92% (2 pts)</option></select>
-                            <label>Suprasternal Retractions</label><select id="pramSupra" onchange="calcPRAM()"><option value="0">Absent (0 pts)</option><option value="2">Present (2 pts)</option></select>
-                            <label>Scalene Muscle Use</label><select id="pramScalene" onchange="calcPRAM()"><option value="0">Absent (0 pts)</option><option value="2">Present (2 pts)</option></select>
-                            <label>Air Entry</label><select id="pramAir" onchange="calcPRAM()"><option value="0">Normal (0 pts)</option><option value="1">Decreased at bases (1 pt)</option><option value="2">Widespread decreased (2 pts)</option><option value="3">Absent / Minimal (3 pts)</option></select>
+                        <div style="background:#f8fafc; padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft); box-shadow:inset 0 2px 4px rgba(0,0,0,0.02);">
+                            <label>O2 Saturation (Room Air)</label><select id="pramO2" onchange="calcPRAM()" style="margin-bottom:1rem;"><option value="0">≥ 95% (0 pts)</option><option value="1">92-94% (1 pt)</option><option value="2">< 92% (2 pts)</option></select>
+                            <label>Suprasternal Retractions</label><select id="pramSupra" onchange="calcPRAM()" style="margin-bottom:1rem;"><option value="0">Absent (0 pts)</option><option value="2">Present (2 pts)</option></select>
+                            <label>Scalene Muscle Use</label><select id="pramScalene" onchange="calcPRAM()" style="margin-bottom:1rem;"><option value="0">Absent (0 pts)</option><option value="2">Present (2 pts)</option></select>
+                            <label>Air Entry</label><select id="pramAir" onchange="calcPRAM()" style="margin-bottom:1rem;"><option value="0">Normal (0 pts)</option><option value="1">Decreased at bases (1 pt)</option><option value="2">Widespread decreased (2 pts)</option><option value="3">Absent / Minimal (3 pts)</option></select>
                             <label>Wheezing</label><select id="pramWheeze" onchange="calcPRAM()"><option value="0">Absent (0 pts)</option><option value="1">Expiratory only (1 pt)</option><option value="2">Inspiratory & Expiratory (2 pts)</option><option value="3">Silent chest / Audible (3 pts)</option></select>
                         </div>
-                        <div><div id="pramResultArea" class="tool-result neutral" style="margin-top:0;">Fill out parameters to generate score.</div></div>
+                        <div><div id="pramResultArea" class="tool-result neutral" style="margin-top:0; height:100%; display:flex; flex-direction:column; justify-content:center;">Fill out parameters to generate score.</div></div>
                     </div>
                 </div>
             </div>
 
             <div id="jaundiceFeatureView" class="view-content">
                 <div class="timeline-section">
-                    <h2 style="margin-top:0; color:var(--primary);">🍼 Neonatal Jaundice Risk (Bhutani Nomogram)</h2>
+                    <h3 class="section-title">🍼 Neonatal Jaundice Risk (Bhutani Nomogram)</h3>
                     <div class="tool-grid">
-                        <div>
-                            <label>Age of Neonate (Hours)</label><input type="number" id="jaunHours" placeholder="e.g., 48" oninput="calcJaundice()">
-                            <label style="margin-top:1rem;">Total Serum Bilirubin (TSB) in mg/dL</label><input type="number" step="0.1" id="jaunTSB" placeholder="e.g., 14.5" oninput="calcJaundice()">
-                            <label style="margin-top:1rem;">Gestational Age Classification</label>
+                        <div style="background:white; padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft); box-shadow:var(--shadow-sm);">
+                            <label>Age of Neonate (Hours)</label><input type="number" id="jaunHours" placeholder="e.g., 48" oninput="calcJaundice()" style="margin-bottom:1rem;">
+                            <label>Total Serum Bilirubin (TSB) in mg/dL</label><input type="number" step="0.1" id="jaunTSB" placeholder="e.g., 14.5" oninput="calcJaundice()" style="margin-bottom:1rem;">
+                            <label>Gestational Age Classification</label>
                             <select id="jaunRisk" onchange="calcJaundice()"><option value="low">Low Risk (≥38 wks & Well)</option><option value="med">Medium Risk (38 wks+risk factors OR 35-37 wks & well)</option><option value="high">High Risk (35-37 wks + risk factors)</option></select>
                         </div>
-                        <div id="jaunResultArea" class="tool-result neutral">Evaluate inputs to view phototherapy threshold.</div>
+                        <div id="jaunResultArea" class="tool-result neutral" style="margin-top:0; display:flex; flex-direction:column; justify-content:center;">Evaluate inputs to view phototherapy threshold.</div>
                     </div>
+                </div>
+            </div>
+            
+            <div id="libraryFeatureView" class="view-content">
+                <div class="timeline-section">
+                    <h3 class="section-title">📘 Source Guide Reference Library</h3>
+                    <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.5rem;">Upload your local reference guidelines, textbook protocols, or IAP PDF manuals to read them securely in-app alongside your workflow tools.</p>
+                    
+                    <div style="background:#fef3c7; border:2px dashed #f59e0b; padding:3rem 2rem; text-align:center; border-radius:var(--radius-lg); transition: background 0.3s;">
+                        <input type="file" id="localPdfFileUploader" accept="application/pdf" style="display:none;" onchange="loadLocalClinicalPDF(this)">
+                        <button class="secondary" style="background:#d97706; color:white; font-weight:bold; width:auto; padding:1rem 2.5rem; border-radius:99px; font-size:1.05rem; box-shadow:0 4px 6px rgba(217, 119, 6, 0.2); border:none; transition:transform 0.2s;" onclick="document.getElementById('localPdfFileUploader').value=''; document.getElementById('localPdfFileUploader').click()" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">📁 Select Source Guide PDF Manual</button>
+                        <p style="font-size:0.85rem; color:#b45309; margin-top:1rem; margin-bottom:0; font-weight:500;">Processed entirely locally. Your document data never leaves your computer.</p>
+                    </div>
+
+                    <div id="pdfViewerFrameWrapper" style="margin-top:2rem; display:none; height:750px; border:1px solid var(--border-soft); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-md);">
+                        </div>
                 </div>
             </div>
 
@@ -431,10 +576,10 @@
         2: [ { id: "m2_1", domain: "Social", text: "Social smile.", sig: "Visual/cognitive deficit." }, { id: "m2_2", domain: "Lang", text: "Coos.", sig: "Hearing deficit." }, { id: "m2_3", domain: "Motor", text: "Head steady.", sig: "Hypotonia." } ],
         4: [ { id: "m4_1", domain: "Social", text: "Laughs out loud.", sig: "Social delay." }, { id: "m4_2", domain: "Motor", text: "Reaches for toys.", sig: "Motor delay." }, { id: "m4_3", domain: "Motor", text: "Rolls tummy to back.", sig: "Hyper/hypotonia." } ],
         6: [ { id: "m6_1", domain: "Motor", text: "Sits without support.", sig: "CP red flag." }, { id: "m6_2", domain: "Lang", text: "Babbles with consonants.", sig: "Hearing loss risk." }, { id: "m6_3", domain: "Motor", text: "Transfers objects.", sig: "Hemiplegia risk if hand preference." } ],
-        9: [ { id: "m9_1", domain: "Motor", text: "Pincer grasp.", sig: "Fine motor delay." }, { id: "m9_2", domain: "Motor", text: "Pulls to stand.", sig: "Lower limb hypotonia." }, { id: "m9_3", domain: "Lang", text: "Responds to name.", sig: "Hearing/ASD risk." } ],
-        12: [ { id: "m12_1", domain: "Lang", text: "1 or 2 clear words.", sig: "Speech delay." }, { id: "m12_2", domain: "Motor", text: "Cruises / first steps.", sig: "Motor pathology." }, { id: "m12_3", domain: "Social", text: "Points to objects.", sig: "ASD early indicator." } ],
-        18: [ { id: "m18_1", domain: "Motor", text: "Walks independently.", sig: "Needs neuro workup." }, { id: "m18_2", domain: "Lang", text: "10-15 words.", sig: "Speech delay." }, { id: "m18_3", domain: "Motor", text: "Uses spoon.", sig: "Coordination delay." } ],
-        24: [ { id: "m24_1", domain: "Lang", text: "2-word sentences.", sig: "Needs speech eval." }, { id: "m24_2", domain: "Motor", text: "Runs, kicks ball.", sig: "Gross motor delay." }, { id: "m24_3", domain: "Social", text: "Parallel play.", sig: "Social withdrawal." } ],
+        9: [ { id: "m9_1", domain: "Motor", text: "Pincer grasp (Fine prehension pellet).", sig: "Fine motor delay." }, { id: "m9_2", domain: "Motor", text: "Pulls to stand (standing by furniture).", sig: "Lower limb hypotonia." }, { id: "m9_3", domain: "Lang", text: "Turns head to sound of bell rattle / Responds to name.", sig: "Hearing/ASD risk." }, { id: "m9_4", domain: "Motor", text: "Pats a cake (Trivandrum).", sig: "Coordination delay." }, { id: "m9_5", domain: "Motor", text: "Raises self to sitting position.", sig: "Gross motor delay." } ],
+        12: [ { id: "m12_1", domain: "Lang", text: "1 or 2 clear words.", sig: "Speech delay." }, { id: "m12_2", domain: "Motor", text: "Cruises / Walks with help.", sig: "Motor pathology." }, { id: "m12_3", domain: "Social", text: "Points to objects.", sig: "ASD early indicator." } ],
+        18: [ { id: "m18_1", domain: "Motor", text: "Walks alone & walks backwards.", sig: "Needs neuro workup if not walking." }, { id: "m18_2", domain: "Lang", text: "10-15 words.", sig: "Speech delay." }, { id: "m18_3", domain: "Motor", text: "Walks upstairs with help, uses spoon.", sig: "Coordination delay." }, { id: "m18_4", domain: "Motor", text: "Throws ball.", sig: "Coordination delay." } ],
+        24: [ { id: "m24_1", domain: "Lang", text: "2-word sentences.", sig: "Needs speech eval." }, { id: "m24_2", domain: "Cognitive", text: "Points to 3 parts of doll/body.", sig: "Cognitive/Language delay." }, { id: "m24_3", domain: "Social", text: "Parallel play.", sig: "Social withdrawal; monitor for ASD." } ],
         36: [ { id: "m36_1", domain: "Lang", text: "3-4 word sentences.", sig: "Articulation delay." }, { id: "m36_2", domain: "Motor", text: "Pedals tricycle.", sig: "Coordination delay." }, { id: "m36_3", domain: "Motor", text: "Copies a circle.", sig: "Visual-motor delay." } ]
     };
 
@@ -462,10 +607,22 @@
     let activePatientId = null; let currentPatientAgeInMonths = 0; let pendingPrescriptionDrug = null;
     let wtChartInstance = null; let htChartInstance = null;
 
+    // --- HELPER: WEECH'S FORMULAS ---
+    function getExpectedWeight(totalM) {
+        if (!totalM) return 0;
+        let y = Math.floor(totalM / 12);
+        if (totalM < 12) return (totalM + 9) / 2;
+        if (y >= 1 && y <= 6) return (y * 2) + 8;
+        if (y >= 7 && y <= 12) return ((y * 7) - 5) / 2;
+        return (y * 2) + 8; 
+    }
+
     // --- INITIALIZATION ---
     window.onload = function() { 
         renderPatientBadges(); 
         renderFoodDB(foodsDb);
+        populateFoodSelect();
+        buildMilestoneReference();
         if(Object.keys(globalPatientsStore).length === 0) { document.getElementById('calcWeight').value = "10"; calculateDose(); }
     };
 
@@ -476,7 +633,7 @@
         document.getElementById(viewId).classList.add('active-view'); el.classList.add('active');
         
         const workspace = document.getElementById('activeWorkspace'); const emptyState = document.getElementById('emptyStatePlaceholder');
-        const unlocked = ['dosageFeatureView', 'growthFeatureView', 'fluidsFeatureView', 'asthmaFeatureView', 'jaundiceFeatureView', 'nutritionFeatureView'];
+        const unlocked = ['dosageFeatureView', 'growthFeatureView', 'fluidsFeatureView', 'asthmaFeatureView', 'jaundiceFeatureView', 'nutritionFeatureView', 'libraryFeatureView'];
         
         if(unlocked.includes(viewId)) {
             workspace.style.display = 'block'; emptyState.style.display = 'none';
@@ -485,24 +642,25 @@
             if(viewId === 'dosageFeatureView') calculateDose();
             if(viewId === 'fluidsFeatureView') calcFluids();
             if(viewId === 'growthFeatureView') calcGrowth();
-            if(viewId === 'nutritionFeatureView') calcNutrition();
+            if(viewId === 'nutritionFeatureView') { calcNutrition(); renderDietRecall(); }
         } else {
             if(!activePatientId) { workspace.style.display = 'none'; emptyState.style.display = 'block'; } 
             else { 
                 workspace.style.display = 'block'; emptyState.style.display = 'none'; 
                 if(viewId === 'milestoneFeatureView') renderMilestoneDashboard(); 
-                if(viewId === 'malnutritionFeatureView') calcMalnutrition(); 
+                if(viewId === 'malnutritionFeatureView') { calcMalnutrition(); renderSensory(); }
             }
         }
     }
     function switchSubTab(subTabId, el) { document.querySelectorAll('.sub-tab-content').forEach(stc => stc.classList.remove('active')); document.querySelectorAll('.sub-tab-btn').forEach(stb => stb.classList.remove('active')); document.getElementById(subTabId).classList.add('active'); el.classList.add('active'); }
 
-    // --- NEW PATIENT WORKFLOW FIX ---
+    // --- NEW PATIENT WORKFLOW ---
     function prepNewPatient() {
         activePatientId = null;
         document.getElementById('pName').value = ""; document.getElementById('pPhone').value = "";
         document.getElementById('dob').value = ""; document.getElementById('ageYrs').value = ""; document.getElementById('ageMos').value = "";
         document.getElementById('pWeight').value = ""; document.getElementById('htCm').value = ""; document.getElementById('hcCm').value = "";
+        document.getElementById('jeEndemic').checked = false;
         document.getElementById('calcWeight').value = ""; document.getElementById('fluidWeight').value = "";
         
         document.getElementById('emptyStatePlaceholder').style.display = "block";
@@ -523,9 +681,12 @@
     function estimateWeightFromAge() {
         let y = parseInt(document.getElementById('ageYrs').value) || 0; let m = parseInt(document.getElementById('ageMos').value) || 0;
         currentPatientAgeInMonths = (y * 12) + m; if(currentPatientAgeInMonths === 0) return;
-        let estKg = currentPatientAgeInMonths < 12 ? (currentPatientAgeInMonths / 2) + 4 : (y * 2) + 8;
-        if(!document.getElementById('pWeight').value) { document.getElementById('pWeight').value = estKg.toFixed(1); document.getElementById('calcWeight').value = estKg.toFixed(1); document.getElementById('calcQuickAge').value = currentPatientAgeInMonths; }
-        calculateDose(); calcNutrition();
+        
+        let estKg = getExpectedWeight(currentPatientAgeInMonths);
+        
+        if(!document.getElementById('pWeight').value) { document.getElementById('pWeight').value = estKg.toFixed(1); document.getElementById('calcWeight').value = estKg.toFixed(1); }
+        document.getElementById('calcQuickAge').value = currentPatientAgeInMonths;
+        calculateDose(); calcNutrition(); renderDietRecall();
     }
     function saveAndRegisterPatient(isBackgroundUpdate = false) {
         const id = activePatientId || 'p_' + Date.now();
@@ -534,12 +695,14 @@
             id: id, name: document.getElementById('pName').value.trim() || "Anonymous", dob: document.getElementById('dob').value, 
             phone: document.getElementById('pPhone').value.trim() || "", gender: document.getElementById('gender').value, weight: document.getElementById('pWeight').value, 
             htCm: document.getElementById('htCm').value, hcCm: document.getElementById('hcCm').value,
+            je: document.getElementById('jeEndemic').checked,
             ageYrs: parseInt(document.getElementById('ageYrs').value) || 0, ageMos: parseInt(document.getElementById('ageMos').value) || 0, 
             totalMonths: currentPatientAgeInMonths, givenDates: globalPatientsStore[id]?.givenDates || {}, 
-            achievedMilestones: globalPatientsStore[id]?.achievedMilestones || {}, rxList: globalPatientsStore[id]?.rxList || []
+            achievedMilestones: globalPatientsStore[id]?.achievedMilestones || {}, rxList: globalPatientsStore[id]?.rxList || [],
+            dietLogs: globalPatientsStore[id]?.dietLogs || []
         };
         localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); activePatientId = id;
-        if(!isBackgroundUpdate) { renderPatientBadges(); triggerActiveWorkspaceBuild(id); } else { calculateDose(); renderMilestoneDashboard(); calcGrowth(); calcMalnutrition(); calcNutrition(); }
+        if(!isBackgroundUpdate) { renderPatientBadges(); triggerActiveWorkspaceBuild(id); } else { calculateDose(); renderMilestoneDashboard(); calcGrowth(); calcMalnutrition(); calcNutrition(); renderDietRecall(); }
     }
     function renderPatientBadges() {
         const container = document.getElementById('patientListContainer'); container.innerHTML = "";
@@ -551,6 +714,7 @@
                 document.getElementById('pPhone').value = p.phone || ""; document.getElementById('ageYrs').value = p.ageYrs || 0; document.getElementById('ageMos').value = p.ageMos || 0;
                 document.getElementById('gender').value = p.gender; document.getElementById('pWeight').value = p.weight || "";
                 document.getElementById('htCm').value = p.htCm || ""; document.getElementById('hcCm').value = p.hcCm || "";
+                document.getElementById('jeEndemic').checked = p.je || false;
                 currentPatientAgeInMonths = p.totalMonths || 0; document.getElementById('calcWeight').value = p.weight || ""; document.getElementById('calcQuickAge').value = p.totalMonths || "";
                 renderPatientBadges(); triggerActiveWorkspaceBuild(p.id);
             };
@@ -559,7 +723,7 @@
     }
     function triggerActiveWorkspaceBuild(pId) {
         document.getElementById('emptyStatePlaceholder').style.display = "none"; document.getElementById('activeWorkspace').style.display = "block"; document.getElementById('btnMasterPrint').style.display = "flex"; document.getElementById('btnMasterWA').style.display = "flex";
-        calculateAndRenderTimeline(pId); calculateDose(); renderMilestoneDashboard(); renderRxCartList(); calcGrowth(); calcMalnutrition(); calcNutrition();
+        calculateAndRenderTimeline(pId); calculateDose(); renderMilestoneDashboard(); renderRxCartList(); calcGrowth(); calcMalnutrition(); calcNutrition(); renderSensory(); renderDietRecall();
     }
 
     // --- TRACKER & WHATSAPP ---
@@ -567,8 +731,10 @@
         const patient = globalPatientsStore[pId]; const baseDate = new Date(patient.dob || new Date()); const today = new Date();
         document.getElementById('timelineOutput').innerHTML = ""; document.getElementById('auditOutput').innerHTML = "";
         let computedTimeline = {};
+        
         baseVaccineSchema.forEach(v => {
-            if(v.condition === "je" && !patient.je) return; if(v.condition === "female" && patient.gender !== "female") return;
+            if(v.condition === "je" && !patient.je) return; 
+            if(v.condition === "female" && patient.gender !== "female") return;
             let targetDate = new Date(baseDate); targetDate.setDate(targetDate.getDate() + (v.baseOffsetWeeks * 7));
             let finalDue = new Date(targetDate); let alignmentAltered = false;
             if(v.dependsOn && computedTimeline[v.dependsOn]) {
@@ -592,26 +758,43 @@
             document.getElementById('timelineOutput').appendChild(card);
         }
 
-        globalPatientsStore[pId].upcomingVaccinesForWhatsapp = [];
+        patient.upcomingVaccinesForWhatsapp = [];
         const overdueBox = document.createElement('div'); overdueBox.innerHTML = "<h4>⚠️ Overdue Milestones</h4>";
         const doneBox = document.createElement('div'); doneBox.innerHTML = "<h4>✅ Completed Doses</h4>";
         const upcomingBox = document.createElement('div'); upcomingBox.innerHTML = "<h4>📅 Future Doses</h4>";
+        
         Object.values(computedTimeline).forEach(v => {
-            const prettyProj = new Date(v.projected).toLocaleDateString();
+            const prettyProj = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
             const card = document.createElement('div'); card.className = `audit-card ${v.status}`;
-            if(v.status === 'overdue') { card.innerHTML = `<div><b>${v.name}</b><br><small>Target was: ${prettyProj}</small></div> <span class="status-pill overdue">Missed</span>`; overdueBox.appendChild(card); p.upcomingVaccinesForWhatsapp.push(v.name); }
-            else if(v.status === 'done') { card.innerHTML = `<div><b>${v.name}</b><br><small>Given on: ${new Date(v.actual).toLocaleDateString()}</small></div> <span class="status-pill done">Given</span>`; doneBox.appendChild(card); }
-            else { card.innerHTML = `<div><b>${v.name}</b><br><small>Due: ${prettyProj}</small></div> <span class="status-pill upcoming">Upcoming</span>`; upcomingBox.appendChild(card); if(p.upcomingVaccinesForWhatsapp.length < 3) p.upcomingVaccinesForWhatsapp.push(v.name); }
+            if(v.status === 'overdue') { 
+                card.innerHTML = `<div><b>${v.name}</b><br><small>Target was: ${prettyProj}</small></div> <span class="status-pill overdue">Missed</span>`; 
+                overdueBox.appendChild(card); 
+                patient.upcomingVaccinesForWhatsapp.push(v.name); 
+            }
+            else if(v.status === 'done') { 
+                card.innerHTML = `<div><b>${v.name}</b><br><small>Given on: ${new Date(v.actual).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'})}</small></div> <span class="status-pill done">Given</span>`; 
+                doneBox.appendChild(card); 
+            }
+            else { 
+                card.innerHTML = `<div><b>${v.name}</b><br><small>Due: ${prettyProj}</small></div> <span class="status-pill upcoming">Upcoming</span>`; 
+                upcomingBox.appendChild(card); 
+                if(patient.upcomingVaccinesForWhatsapp.length < 3) patient.upcomingVaccinesForWhatsapp.push(v.name); 
+            }
         });
-        document.getElementById('auditOutput').appendChild(overdueBox); document.getElementById('auditOutput').appendChild(doneBox); document.getElementById('auditOutput').appendChild(upcomingBox);
+        document.getElementById('auditOutput').appendChild(overdueBox); 
+        document.getElementById('auditOutput').appendChild(doneBox); 
+        document.getElementById('auditOutput').appendChild(upcomingBox);
+        
+        globalPatientsStore[pId].upcomingVaccinesForWhatsapp = patient.upcomingVaccinesForWhatsapp;
     }
+    
     function toggleVaccineAdministered(pId, vId, isChecked) { updateAdministrationDate(pId, vId, isChecked ? new Date().toISOString().split('T')[0] : ""); }
     function updateAdministrationDate(pId, vId, dateStr) { globalPatientsStore[pId].givenDates[vId] = dateStr; localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); calculateAndRenderTimeline(pId); }
 
     function sendWhatsAppReminder() {
         if(!activePatientId) return alert("Select a patient first.");
         const p = globalPatientsStore[activePatientId];
-        const vaxList = p.upcomingVaccinesForWhatsapp.join(", ");
+        const vaxList = p.upcomingVaccinesForWhatsapp ? p.upcomingVaccinesForWhatsapp.join(", ") : "scheduled vaccines";
         const msg = `Dear Parent, this is a reminder from the Pediatric Clinic that Baby ${p.name}'s upcoming vaccinations (${vaxList}) are due soon. Please visit the clinic to keep their schedule on track.`;
         const targetPhone = p.phone ? p.phone.replace(/[^0-9]/g, "") : "";
         window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(msg)}`, '_blank');
@@ -637,11 +820,11 @@
         window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`, '_blank');
     }
 
-    // --- NUTRITION ENGINE (ICMR RDA) ---
+    // --- NUTRITION ENGINE (ICMR RDA & 24H RECALL) ---
     function calcNutrition() {
-        const y = parseInt(document.getElementById('ageYrs').value) || 0; 
-        const m = parseInt(document.getElementById('ageMos').value) || 0; 
-        const totalM = (y*12)+m;
+        let totalM = currentPatientAgeInMonths;
+        if(totalM === 0) totalM = parseInt(document.getElementById('calcQuickAge').value) || 0;
+        let y = Math.floor(totalM / 12);
         const wt = parseFloat(document.getElementById('pWeight').value || document.getElementById('calcWeight').value);
         const gender = document.getElementById('gender').value || 'male';
         const out = document.getElementById('nutriTargetArea');
@@ -673,6 +856,107 @@
         `;
     }
 
+    function populateFoodSelect() {
+        let sel = document.getElementById('recallFood');
+        sel.innerHTML = '<option value="">-- Select Food Item --</option>';
+        foodsDb.forEach((f, i) => {
+            sel.innerHTML += `<option value="${i}">${f.name} (${f.k} kcal/100g)</option>`;
+        });
+    }
+
+    function addDietRecall() {
+        if(!activePatientId) return alert("Select patient first to use the Diet Recall tool.");
+        let m = document.getElementById('recallMeal').value;
+        let fIdx = document.getElementById('recallFood').value;
+        let q = parseFloat(document.getElementById('recallQty').value);
+        if(!m || fIdx === "" || !q) return;
+        
+        let food = foodsDb[fIdx];
+        let intake = {
+            meal: m, name: food.name, qty: q,
+            kcal: (food.k * q) / 100, prot: (food.p * q) / 100
+        };
+        
+        if(!globalPatientsStore[activePatientId].dietLogs) globalPatientsStore[activePatientId].dietLogs = [];
+        globalPatientsStore[activePatientId].dietLogs.push(intake);
+        localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore));
+        
+        document.getElementById('recallFood').value = "";
+        document.getElementById('recallQty').value = "";
+        renderDietRecall();
+    }
+
+    function removeDietRecall(idx) {
+        globalPatientsStore[activePatientId].dietLogs.splice(idx, 1);
+        localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore));
+        renderDietRecall();
+    }
+
+    function renderDietRecall() {
+        let listArea = document.getElementById('recallListArea');
+        let sumArea = document.getElementById('recallSummaryArea');
+        if(!activePatientId) {
+            listArea.innerHTML = "";
+            sumArea.innerHTML = "Select a patient to track diet recall.";
+            sumArea.className = "tool-result neutral";
+            return;
+        }
+
+        let logs = globalPatientsStore[activePatientId].dietLogs || [];
+        if(logs.length === 0) {
+            listArea.innerHTML = "";
+            sumArea.innerHTML = "Log a food item to initialize deficiency analyzer.";
+            sumArea.className = "tool-result neutral";
+            return;
+        }
+        
+        let totKcal = 0; let totProt = 0;
+        let html = `<table class="nis-table"><thead><tr><th>Meal</th><th>Food</th><th>Qty (g/ml)</th><th>Protein</th><th>Calories</th><th></th></tr></thead><tbody>`;
+        logs.forEach((l, i) => {
+            totKcal += l.kcal; totProt += l.prot;
+            html += `<tr><td>${l.meal}</td><td>${l.name}</td><td>${l.qty}</td><td>${l.prot.toFixed(1)}g</td><td>${l.kcal.toFixed(0)} kcal</td><td><button onclick="removeDietRecall(${i})" class="secondary" style="background:var(--danger); padding:2px 8px; color:white; border:none;">X</button></td></tr>`;
+        });
+        html += `</tbody></table>`;
+        listArea.innerHTML = html;
+        
+        let p = globalPatientsStore[activePatientId];
+        let totalM = p.totalMonths;
+        let y = Math.floor(totalM/12);
+        let wt = parseFloat(p.weight);
+        
+        if(!wt) { sumArea.innerHTML = "Patient weight required to calculate targets for comparison."; return; }
+        
+        let tKcal = 0; let tProt = 0;
+        if (totalM < 3) { tKcal = wt * 116; tProt = wt * 2.3; }
+        else if (totalM < 6) { tKcal = wt * 99; tProt = wt * 1.85; }
+        else if (totalM < 9) { tKcal = wt * 95; tProt = wt * 1.65; }
+        else if (totalM < 12) { tKcal = wt * 101; tProt = wt * 1.5; }
+        else if (y < 3) { tKcal = 1220; tProt = 22; }
+        else if (y < 6) { tKcal = 1720; tProt = 29; }
+        else if (y < 10) { tKcal = 2050; tProt = 36; }
+        else { tKcal = p.gender === 'male' ? 2420 : 2200; tProt = 43; }
+        
+        let kDiff = totKcal - tKcal;
+        let pDiff = totProt - tProt;
+        
+        let kStat = kDiff < 0 ? `<span style="color:var(--danger)">Deficit of ${Math.abs(kDiff).toFixed(0)} kcal</span>` : `<span style="color:var(--success)">Surplus of ${kDiff.toFixed(0)} kcal</span>`;
+        let pStat = pDiff < 0 ? `<span style="color:var(--danger)">Deficit of ${Math.abs(pDiff).toFixed(1)} g</span>` : `<span style="color:var(--success)">Surplus of ${pDiff.toFixed(1)} g</span>`;
+        
+        sumArea.innerHTML = `
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:left;">
+                <div style="background:white; padding:10px; border-radius:6px; border:1px solid var(--border-soft);">
+                    <h4 style="margin:0 0 5px 0;">Calories (kcal)</h4>
+                    Target: ${tKcal.toFixed(0)}<br>Intake: ${totKcal.toFixed(0)}<br><b>${kStat}</b>
+                </div>
+                <div style="background:white; padding:10px; border-radius:6px; border:1px solid var(--border-soft);">
+                    <h4 style="margin:0 0 5px 0;">Protein (g)</h4>
+                    Target: ${tProt.toFixed(1)}<br>Intake: ${totProt.toFixed(1)}<br><b>${pStat}</b>
+                </div>
+            </div>
+        `;
+        sumArea.className = "tool-result";
+    }
+
     function renderFoodDB(dataArray) {
         const tbody = document.getElementById('foodTableBody'); tbody.innerHTML = "";
         dataArray.forEach(f => {
@@ -690,16 +974,18 @@
     function calcMalnutrition() {
         if(!activePatientId) return;
         const p = globalPatientsStore[activePatientId];
-        const wt = parseFloat(p.weight); const ht = parseFloat(p.htCm); const hc = parseFloat(p.hcCm);
-        const y = parseInt(p.ageYrs) || 0; const m = parseInt(p.ageMos) || 0; const totalM = (y*12)+m;
+        const wt = parseFloat(p.weight); 
+        const ht = parseFloat(document.getElementById('htCm').value || p.htCm); 
+        const hc = parseFloat(document.getElementById('hcCm').value || p.hcCm);
+        const totalM = p.totalMonths; const y = Math.floor(totalM / 12);
         const oedema = document.getElementById('malnOedemaToggle').checked;
         const outGrid = document.getElementById('malnGridOutput');
         
         let html = "";
 
         // 1. Expected Weight (Weech) & IAP/Wellcome
-        if(wt) {
-            let expWt = y >= 1 ? (y * 2) + 8 : (totalM / 2) + 4;
+        if(wt && totalM > 0) {
+            let expWt = getExpectedWeight(totalM);
             let wtPercent = (wt / expWt) * 100;
             
             let iapGrade = "Normal"; let iapColor = "var(--success)";
@@ -712,7 +998,7 @@
             if(wtPercent <= 80 && wtPercent > 60) wellcome = oedema ? "Kwashiorkor" : "Underweight";
             if(wtPercent <= 60) wellcome = oedema ? "Marasmic-Kwashiorkar" : "Marasmus";
 
-            html += `<div class="tool-result" style="border-color:${iapColor}; color:${iapColor};"><h4 style="margin:0 0 5px 0;">Weight-for-Age Assessment</h4><b>${wtPercent.toFixed(1)}%</b> of Expected (${expWt} kg)<br><small><b>IAP:</b> ${iapGrade} | <b>Wellcome:</b> ${wellcome}</small></div>`;
+            html += `<div class="tool-result" style="border-color:${iapColor}; color:${iapColor};"><h4 style="margin:0 0 5px 0;">Weight-for-Age Assessment</h4><b>${wtPercent.toFixed(1)}%</b> of Expected (${expWt.toFixed(1)} kg)<br><small><b>IAP:</b> ${iapGrade} | <b>Wellcome:</b> ${wellcome}</small></div>`;
         }
 
         // 2. MAC (If 1-5 years)
@@ -722,8 +1008,8 @@
 
         // 3. Ponderal Index (Neonates)
         if(totalM < 1 && wt && ht) {
-            let pi = (wt * 1000) / Math.pow(ht, 3);
-            let piStat = pi >= 2 ? "Symmetric IUGR" : (pi < 1.9 ? "Asymmetric IUGR" : "Normal / Overweight");
+            let pi = ((wt * 1000) * 100) / Math.pow(ht, 3);
+            let piStat = pi >= 2 ? "Symmetric IUGR" : (pi < 1.9 ? "Asymmetric IUGR" : "Normal / Appropriate");
             html += `<div class="tool-result neutral"><h4 style="margin:0 0 5px 0;">Ponderal Index (Neonate)</h4><b>PI = ${pi.toFixed(2)}</b><br><small>${piStat}</small></div>`;
         }
 
@@ -738,7 +1024,7 @@
         if(wt) {
             let bsa = ht ? Math.sqrt((ht * wt) / 3600) : (wt <= 5 ? (0.05*wt)+0.05 : (wt <= 10 ? (0.04*wt)+0.1 : (wt <= 20 ? (0.03*wt)+0.2 : (0.02*wt)+0.4)));
             let maint = wt <= 10 ? wt * 100 : (wt <= 20 ? 1000 + ((wt-10)*50) : 1500 + ((wt-20)*20));
-            html += `<div class="tool-result neutral"><h4 style="margin:0 0 5px 0;">Clinical Base Targets</h4><b>BSA:</b> ${bsa.toFixed(2)} m&sup2;<br><b>Daily Calorics:</b> ${maint} kcal/day</div>`;
+            html += `<div class="tool-result neutral"><h4 style="margin:0 0 5px 0;">Clinical Base Targets</h4><b>BSA:</b> ${bsa.toFixed(2)} m&sup2;<br><b>Daily Maint. Fluids:</b> ${maint} mL/day</div>`;
         }
 
         outGrid.innerHTML = html || "<div class='tool-result neutral'>Enter Age, Weight, and Height in the Registry to auto-calculate triage metrics.</div>";
@@ -753,12 +1039,32 @@
         else out.innerHTML = "<span style='color:var(--success);'>✅ Normal MAC</span>";
     }
 
+    function renderSensory() {
+        if(!activePatientId) return;
+        const p = globalPatientsStore[activePatientId];
+        const out = document.getElementById('sensoryOutputArea');
+        let html = "";
+
+        if(p.totalMonths < 2) {
+            html += `<b>Vision:</b> Look for cataracts, wandering eye, nystagmus. Follows objects 45&deg;.<br><br><b>Hearing:</b> Assess Startle response and Rattle test.`;
+        } else if (p.totalMonths < 6) {
+            html += `<b>Vision (12 wks):</b> Fixes and follows objects till 90&deg;.<br><br><b>Hearing:</b> Startle response/Rattle test.`;
+        } else if (p.totalMonths < 12) {
+            html += `<b>Vision (6-8 mos):</b> Follows 180&deg;. Fixates on small objects near face.<br><br><b>Hearing (8-10 mos):</b> Distraction hearing test (Child must turn head to sound out of visual range).`;
+        } else if (p.totalMonths < 36) {
+            html += `<b>Vision (2.5 yrs):</b> Test distant vision (3 meters) and fix/follow. Look for strabismus.<br><br><b>Hearing:</b> Refer for Pure-tone audiometry & speech discrimination if language delayed.`;
+        } else {
+            html += `<b>Vision:</b> Test distant vision (picture/letter test) and near vision (Snellen's). Should match colors.<br><br><b>Hearing:</b> Routine audiometry screening.`;
+        }
+        
+        out.innerHTML = `<div class="tool-result neutral" style="text-align:left; font-weight:normal; line-height:1.6;">${html}</div>`;
+    }
+
     // --- DOSAGE CALC CONTROLS ---
     function syncGrowthFieldsAndCalc() {
         const val = document.getElementById('htCmOnTheGo').value;
         if(activePatientId) { document.getElementById('htCm').value = val; saveAndRegisterPatient(true); } else { calcGrowth(); }
     }
-    function quickEstimateWeight() { let m = parseInt(document.getElementById('calcQuickAge').value) || 0; if(m > 0) { let est = m < 12 ? (m/2)+4 : Math.floor(m/12)*2 + 8; document.getElementById('calcWeight').value = est.toFixed(1); calculateDose(); } }
     function populateDrugs() { const cat = document.getElementById('drugCategory').value; const formSelect = document.getElementById('drugFormulation'); formSelect.innerHTML = '<option value="">-- Formulation --</option>'; if(cat && drugDb[cat]) { drugDb[cat].forEach((drug, idx) => { formSelect.innerHTML += `<option value="${idx}">${drug.name}</option>`; }); } }
     function calculateDose() {
         const weight = parseFloat(document.getElementById('calcWeight').value); const cat = document.getElementById('drugCategory').value; const drugIndex = document.getElementById('drugFormulation').value;
@@ -792,10 +1098,12 @@
     }
     function calcGrowth() {
         const wt = parseFloat(document.getElementById('pWeight').value || document.getElementById('calcWeight').value || 10);
-        let htObj = document.getElementById('htCm'); if(!htObj && !document.getElementById('htCmOnTheGo')) return;
-        const ht = parseFloat(htObj ? htObj.value : document.getElementById('htCmOnTheGo').value);
-        let y = parseInt(document.getElementById('ageYrs').value) || 0; let m = parseInt(document.getElementById('ageMos').value) || 0;
-        let totalM = (y * 12) + m; let pGender = document.getElementById('gender').value || 'male';
+        let htObj = document.getElementById('htCm'); 
+        let htOnTheGoObj = document.getElementById('htCmOnTheGo');
+        const ht = parseFloat( (htObj && htObj.value) ? htObj.value : (htOnTheGoObj ? htOnTheGoObj.value : 0) );
+        
+        let totalM = activePatientId ? globalPatientsStore[activePatientId].totalMonths : (parseInt(document.getElementById('calcQuickAge').value) || 0);
+        let pGender = document.getElementById('gender').value || 'male';
         if(!ht) return; drawGrowthCharts(totalM, wt, ht, pGender);
     }
 
@@ -826,10 +1134,26 @@
         if(!hr || !tsb) { resArea.innerHTML = "Provide parameters."; return; }
         if(hr < 24) { resArea.innerHTML = "<b>🚨 Critical Hyperbilirubinemia:</b> Visual jaundice < 24 hours of life is strictly pathological. Intercept immediately."; resArea.className = "tool-result danger"; return; }
         
-        let limit = hr <= 48 ? (risk === 'high' ? 11 : 13) : (risk === 'high' ? 13 : 15);
+        let limit = 15;
+        if (hr <= 24) limit = risk === 'high' ? 8 : (risk === 'med' ? 10 : 12);
+        else if (hr <= 48) limit = risk === 'high' ? 11 : (risk === 'med' ? 13 : 15);
+        else if (hr <= 72) limit = risk === 'high' ? 13 : (risk === 'med' ? 15 : 18);
+        else limit = risk === 'high' ? 14 : (risk === 'med' ? 17 : 20);
+        
         if(tsb >= limit) { resArea.innerHTML = `<b>🚨 Phototherapy Intervention Threshold Breached</b><br>TSB level of ${tsb} mg/dL is at or above safety threshold limits (${limit} mg/dL).`; resArea.className = "tool-result danger"; }
         else if (tsb >= limit - 2) { resArea.innerHTML = `<b>⚠️ High-Intermediate Risk Zone Warning</b><br>TSB curve profile (${tsb} mg/dL) is within 2 mg/dL of emergency line. Repeat in 12-24 hours.`; resArea.className = "tool-result warning"; }
         else { resArea.innerHTML = `<b>✅ Safe Baseline Zone Metrics</b><br>TSB profile stands within safe margin clearances.`; resArea.className = "tool-result"; }
+    }
+    
+    // --- PDF REFERENCE LIBRARY LOADER ---
+    function loadLocalClinicalPDF(inputElement) {
+        const sourcePdfFileObj = inputElement.files[0];
+        if (sourcePdfFileObj) {
+            const runtimeObjectBlobUrl = URL.createObjectURL(sourcePdfFileObj);
+            const iframeTargetFrameContainer = document.getElementById('pdfViewerFrameWrapper');
+            iframeTargetFrameContainer.innerHTML = `<iframe src="${runtimeObjectBlobUrl}" width="100%" height="100%" style="border:none;"></iframe>`;
+            iframeTargetFrameContainer.style.display = 'block';
+        }
     }
 
     // --- MILESTONES DASHBOARD ---
@@ -847,10 +1171,10 @@
             availableAges.forEach(age => {
                 if (age <= currentBracket) {
                     let isCurrent = (age === currentBracket);
-                    let borderStyle = isCurrent ? "border: 2px solid var(--primary);" : "border: 1px solid var(--gray-200);";
+                    let borderStyle = isCurrent ? "border: 2px solid var(--primary);" : "border: 1px solid var(--border-soft);";
                     let bgStyle = isCurrent ? "background: var(--primary-light);" : "background: white;";
-                    evalHTML += `<div style="${borderStyle} ${bgStyle} padding: 1rem; border-radius: 8px; margin-bottom: 1rem;"><h4 style="margin-top:0; color:var(--primary); margin-bottom:0.5rem;">${isCurrent ? `Current Age Milestone Bracket Target (${age} Mos)` : `Historical Check verification Target (${age} Mos)`}</h4>`;
-                    milestonesDb[age].forEach(m => { evalHTML += `<div class="milestone-item" style="border-bottom:none; padding:0.25rem 0;"><input type="checkbox" id="${m.id}" ${achieved[m.id] ? 'checked' : ''} onchange="toggleMilestone('${m.id}', this.checked)"><div><span class="milestone-domain">${m.domain}</span><span class="milestone-text"><label for="${m.id}" style="cursor:pointer; font-weight:normal;">${m.text}</label></span></div></div>`; });
+                    evalHTML += `<div style="${borderStyle} ${bgStyle} padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1rem; box-shadow: var(--shadow-sm);"><h4 style="margin-top:0; color:var(--primary); margin-bottom:1rem; font-size:1.1rem; border-bottom:1px solid var(--border-soft); padding-bottom:10px;">${isCurrent ? `Current Age Milestone Bracket Target (${age} Mos)` : `Historical Check verification Target (${age} Mos)`}</h4>`;
+                    milestonesDb[age].forEach(m => { evalHTML += `<div class="milestone-item"><input type="checkbox" id="${m.id}" ${achieved[m.id] ? 'checked' : ''} onchange="toggleMilestone('${m.id}', this.checked)"><div><span class="milestone-domain">${m.domain}</span><div class="milestone-text"><label for="${m.id}" style="cursor:pointer; font-weight:normal; margin:0;">${m.text}</label></div></div></div>`; });
                     evalHTML += `</div>`;
                 }
             });
@@ -860,19 +1184,44 @@
         let completedHTML = ""; let missedHTML = "";
         availableAges.forEach(age => {
             let aHTML = ""; milestonesDb[age].forEach(m => { if(achieved[m.id]) aHTML += `<div>✅ <b>${m.domain}</b>: ${m.text}</div>`; });
-            if(aHTML) completedHTML += `<h5 style="margin:0.5rem 0 0.25rem 0; color:var(--success); font-size:0.95rem;">Achieved via ${age}m vectors:</h5>${aHTML}`;
+            if(aHTML) completedHTML += `<h5 style="margin:1rem 0 0.25rem 0; color:var(--success); font-size:0.95rem; border-bottom:1px solid #bbf7d0; padding-bottom:5px;">Achieved via ${age}m vectors:</h5>${aHTML}`;
             if(age <= currentBracket) { milestonesDb[age].forEach(m => { if(!achieved[m.id]) missedHTML += `<div class="red-flag-card"><h4>🚨 Flagged Target: ${m.text} (Expected by ${age} Mos)</h4><span class="milestone-domain">${m.domain}</span><div class="sig-text"><b>Significance:</b> ${m.sig}</div></div>`; }); }
         });
         document.getElementById('msCompletedContainer').innerHTML = completedHTML || "<p>No milestones recorded.</p>";
         document.getElementById('msMissedContainer').innerHTML = missedHTML || "<div style='padding:1rem; background:#f0fdf4; border:1px solid #16a34a; border-radius:8px; color:#166534; font-weight:bold;'>✅ All verification targets achieved.</div>";
-        document.getElementById('msUpcomingContainer').innerHTML = upcomingBracket ? `<h4 style="margin:1rem 0 0.25rem 0; color:var(--primary);">Targeting Milestone Marker: ${upcomingBracket} Months</h4>` + milestonesDb[upcomingBracket].map(m => `<div style="padding:0.6rem; border:1px solid #e2e8f0; border-radius:6px; margin-bottom:0.4rem; background:white; font-size:0.9rem;"><span class="milestone-domain">${m.domain}</span><div>${m.text}</div></div>`).join("") : "<p>Advanced baseline clearance parameters.</p>";
+        document.getElementById('msUpcomingContainer').innerHTML = upcomingBracket ? `<h4 style="margin:1rem 0 0.5rem 0; color:var(--primary); font-size:1.1rem; border-bottom:1px solid var(--border-soft); padding-bottom:5px;">Targeting Milestone Marker: ${upcomingBracket} Months</h4>` + milestonesDb[upcomingBracket].map(m => `<div style="padding:1rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); margin-bottom:0.75rem; background:white; font-size:0.95rem; box-shadow:var(--shadow-sm);"><span class="milestone-domain">${m.domain}</span><div style="font-weight:600; margin-top:5px; color:var(--text-main);">${m.text}</div></div>`).join("") : "<p>Advanced baseline clearance parameters.</p>";
     }
     function toggleMilestone(mId, isChecked) { globalPatientsStore[activePatientId].achievedMilestones[mId] = isChecked; localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderMilestoneDashboard(); }
+    
+    function buildMilestoneReference() {
+        let tableHTML = `<table class="nis-table"><thead><tr><th>Age Bracket</th><th>Domain</th><th>Milestone Marker</th></tr></thead><tbody>`;
+        Object.keys(milestonesDb).forEach(age => {
+            milestonesDb[age].forEach((m, idx) => {
+                if(idx === 0) { tableHTML += `<tr><td rowspan="${milestonesDb[age].length}"><b>${age} Months</b></td><td><span class="milestone-domain">${m.domain}</span></td><td>${m.text}</td></tr>`; } 
+                else { tableHTML += `<tr><td><span class="milestone-domain">${m.domain}</span></td><td>${m.text}</td></tr>`; }
+            });
+        });
+        const refContainer = document.getElementById('msReferenceContainer');
+        if(refContainer) refContainer.innerHTML = tableHTML + `</tbody></table>`;
+    }
     
     // --- PRINT ENGINE ---
     function getPrintHeaderHTML(title) {
         const p = globalPatientsStore[activePatientId]; if(!p) return "";
-        return `<div style="margin-bottom: 20px;"><h1 style="margin-bottom: 5px; font-size:24px;">${title}</h1><div style="font-size: 14px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 10px 0; margin-bottom: 20px;"><b>Patient ID/Name:</b> ${p.name} &nbsp;&nbsp;|&nbsp;&nbsp;<b>Age Metrics:</b> ${p.ageYrs}Y ${p.ageMos}M &nbsp;&nbsp;|&nbsp;&nbsp;<b>Weight:</b> ${p.weight || 'N/A'} kg &nbsp;&nbsp;|&nbsp;&nbsp;<b>Gender Parameters:</b> ${p.gender.toUpperCase()}</div></div>`;
+        return `
+            <div style="margin-bottom: 20px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                    <h1 style="margin-bottom: 5px; font-size:24px;">${title}</h1>
+                    <div style="font-size:12px; color:#555; padding-bottom:5px;">Dr. Peter Suraj Joseph</div>
+                </div>
+                <div style="font-size: 14px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 10px 0; margin-bottom: 20px;">
+                    <b>Patient ID/Name:</b> ${p.name} &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <b>Age Metrics:</b> ${p.ageYrs}Y ${p.ageMos}M &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <b>Weight:</b> ${p.weight || 'N/A'} kg &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <b>Gender:</b> ${p.gender.toUpperCase()}
+                </div>
+            </div>
+        `;
     }
     
     function extractToolResult(elId) {
@@ -898,8 +1247,17 @@
             if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
         }
         if (mode === 'nutrition' || mode === 'comprehensive') {
+            
+            // Print the Diet Recall if available
             html += getPrintHeaderHTML("PEDIATRIC DIET & NUTRITION PLAN");
-            html += `<h3 style="color:var(--success);">Target Requirements (ICMR)</h3>` + document.getElementById('nutriTargetArea').innerHTML;
+            
+            if (p.dietLogs && p.dietLogs.length > 0) {
+                html += `<h3 style="color:var(--success);">24-Hour Diet Recall Analysis</h3>`;
+                html += document.getElementById('recallListArea').innerHTML;
+                html += document.getElementById('recallSummaryArea').innerHTML;
+            }
+            
+            html += `<h3 style="margin-top: 30px; color:var(--success);">Target Requirements (ICMR)</h3>` + document.getElementById('nutriTargetArea').innerHTML;
             html += `<h3 style="margin-top: 30px; color:var(--primary);">Recommended Household Portions</h3><ul style="font-size:1.1rem; line-height:1.6;"><li>1 bowl cooked rice: 120 kcal</li><li>1 Idli / 1 Vada: 50 kcal</li><li>1 Dosa / 1 Chapati: 70 kcal</li><li>Cow's Milk (100ml): 65 kcal</li><li>1 Egg (60g): 60 kcal</li></ul>`;
             if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
         }
@@ -918,6 +1276,7 @@
             if(!maln && !fluids && !asthma && !jaun) html += `<p>No acute clinical triage metrics evaluated during this session.</p>`;
         }
 
+        html += `<div style="text-align:center; font-size:10px; color:#777; margin-top:40px; border-top:1px solid #eee; padding-top:10px;">Generated by Pediatric Clinical Hub - Dr. Peter Suraj Joseph</div>`;
         engine.innerHTML = html; window.print();
     }
     function clearAllData() { if(confirm("Delete all stored patient logs?")) { localStorage.removeItem('nis_patients'); location.reload(); } }
