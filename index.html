@@ -369,6 +369,14 @@
                     <div id="recallListArea" style="margin-top:1.5rem;"></div>
                 </div>
                 <div id="nutriDBTab" class="sub-tab-content">
+                    <div class="timeline-section" style="margin-bottom:1rem; padding:1rem; font-size:0.85rem; line-height:1.5;">
+                        <h4 style="margin:0 0 10px 0; color:var(--primary);">Key Micronutrient Dietary Sources</h4>
+                        <b>Vit A:</b> Green/yellow/orange veg, papaya, liver, egg yolk. <br>
+                        <b>Vit C:</b> Amla, citrus fruits, drumstick, sprouting cereals, capsicum.<br>
+                        <b>Vit D/E/K:</b> Egg yolk, fish, cow's milk (D); Cereals/veg oils (E); GLV, pork, liver (K).<br>
+                        <b>Calcium:</b> Milk products, millets, greens, fish, Bengal gram, soya bean.<br>
+                        <b>Iron:</b> Fish, meat, crab, Jaggery, dates, GLV, soya bean, raisins.
+                    </div>
                     <div class="timeline-section">
                         <input type="text" id="foodSearch" class="search-bar" placeholder="Filter search matching database indices..." onkeyup="filterFoodDB()">
                         <div style="overflow-x:auto;">
@@ -413,6 +421,30 @@
                                     <tr><td>SAM</td><td>&lt; -3 SD ( &lt;70% )</td></tr>
                                 </tbody>
                             </table>
+                            <h4 style="margin-top:20px; color:var(--primary);">Wellcome Trust Classification</h4>
+                            <table class="theory-table">
+                                <thead><tr><th>Wt for Age %</th><th>Oedema Absent</th><th>Oedema Present</th></tr></thead>
+                                <tbody>
+                                    <tr><td>60-80%</td><td>Underweight</td><td>Kwashiorkor</td></tr>
+                                    <tr><td>&lt;60%</td><td>Marasmus</td><td>Marasmic-kwashiorkor</td></tr>
+                                </tbody>
+                            </table>
+                            <div class="formula-box" style="margin-top:20px;">
+                                <b>US/LS Ratio:</b> 1.7:1 (Birth) &rarr; 1:1 (7-10 yrs). Alters in disproportionate short stature.<br>
+                                <b>Arm Span:</b> Less than height up to 7 yrs, equal 8-12 yrs, greater than height after 14 yrs.
+                            </div>
+                            <h4 style="margin-top:20px; color:var(--primary);">Wellcome Trust Classification</h4>
+                            <table class="theory-table">
+                                <thead><tr><th>Wt for Age %</th><th>Oedema Absent</th><th>Oedema Present</th></tr></thead>
+                                <tbody>
+                                    <tr><td>60-80%</td><td>Underweight</td><td>Kwashiorkor</td></tr>
+                                    <tr><td>&lt;60%</td><td>Marasmus</td><td>Marasmic-kwashiorkor</td></tr>
+                                </tbody>
+                            </table>
+                            <div class="formula-box" style="margin-top:20px;">
+                                <b>US/LS Ratio:</b> 1.7:1 (Birth) &rarr; 1:1 (7-10 yrs). Alters in disproportionate short stature.<br>
+                                <b>Arm Span:</b> Less than height up to 7 yrs, equal 8-12 yrs, greater than height after 14 yrs.
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -659,7 +691,20 @@
         {name:"Mutton", cat:"Meat", p:20, c:0, f:13, k:194},
         {name:"Potato", cat:"Vegetables", p:1, c:22, f:0.1, k:97},
         {name:"Carrot", cat:"Vegetables", p:1, c:11, f:0.2, k:48},
-        {name:"Sweet potato", cat:"Vegetables", p:1, c:28, f:0.3, k:120}
+        {name:"Sweet potato", cat:"Vegetables", p:1, c:28, f:0.3, k:120},
+        {name:"Beet root", cat:"Vegetables", p:1.7, c:9, f:0.1, k:43},
+        {name:"Onion", cat:"Vegetables", p:1, c:11, f:0.1, k:50},
+        {name:"Tapioca (chips)", cat:"Roots", p:1, c:82, f:0.3, k:338},
+        {name:"Beef meat", cat:"Meat", p:19, c:0.2, f:10, k:410},
+        {name:"Pork", cat:"Meat", p:18, c:0, f:4, k:114},
+        {name:"Crab", cat:"Sea Food", p:9, c:3.3, f:1, k:59},
+        {name:"Mackerel", cat:"Sea Food", p:19, c:0.5, f:1.7, k:93},
+        {name:"Shrimp", cat:"Sea Food", p:68, c:0, f:8.5, k:349},
+        {name:"Cauliflower", cat:"Vegetables", p:2.6, c:4, f:0.4, k:30},
+        {name:"Capsicum", cat:"Vegetables", p:1.3, c:4.3, f:0.3, k:24},
+        {name:"Coriander", cat:"Condiments", p:14, c:22, f:16, k:288},
+        {name:"Garlic", cat:"Condiments", p:6, c:30, f:0.1, k:145},
+        {name:"Ginger", cat:"Condiments", p:2, c:12, f:1, k:67}
     ];
 
     const baseVaccineSchema = [
@@ -1198,11 +1243,35 @@
     function calcMalnutrition() {
         if(!activePatientId) return; const p = globalPatientsStore[activePatientId];
         const wt = parseFloat(p.weight); const ht = parseFloat(document.getElementById('triageHt').value || p.htCm);
+        const hc = parseFloat(p.hcCm); const mac = parseFloat(document.getElementById('triageMac').value);
         let out = document.getElementById('malnGridOutput'); if(!wt || isNaN(wt)) return;
+        
         let expWt = getExpectedWeight(p.totalMonths); let percent = (wt / expWt) * 100;
         let oedema = document.getElementById('malnOedemaToggle').checked;
         let grade = percent <= 50 ? "Grade IV" : (percent <= 60 ? "Grade III" : (percent <= 70 ? "Grade II" : (percent <= 80 ? "Grade I" : "Normal")));
-        out.innerHTML = `<div class='tool-result neutral' style='text-align:left;'><b>IAP Grade (Wt for Age):</b> ${grade} (${percent.toFixed(1)}% of Weech standard)<br><br><b>Clinical State:</b> ${oedema ? (percent <= 60 ? 'Marasmic-Kwashiorkor' : 'Kwashiorkor') : (percent <= 60 ? 'Marasmus' : 'Undernourished')}</div>`;
+        
+        let htmlStr = `<div class='tool-result neutral' style='text-align:left;'><b>IAP Grade (Wt for Age):</b> ${grade} (${percent.toFixed(1)}% of Weech standard)<br><br><b>Clinical State:</b> ${oedema ? (percent <= 60 ? 'Marasmic-Kwashiorkor' : 'Kwashiorkor') : (percent <= 60 ? 'Marasmus' : 'Undernourished')}`;
+        
+        if (ht && !isNaN(ht)) {
+            let bsa = Math.sqrt((ht * wt) / 3600);
+            let pi = (wt * 1000) / Math.pow(ht, 3);
+            htmlStr += `<hr style="border:0; border-top:1px dashed var(--border-soft); margin:10px 0;">`;
+            htmlStr += `<b>BSA (Mosteller):</b> ${bsa.toFixed(2)} m&sup2;<br>`;
+            htmlStr += `<b>Ponderal Index:</b> ${pi.toFixed(2)} <span style="font-size:0.85em; color:var(--text-muted);">(≥2: Symmetric IUGR, <1.9: Asym)</span><br>`;
+            
+            let y = Math.floor(p.totalMonths / 12);
+            if (y >= 2 && y <= 12) htmlStr += `<b>Expected Height:</b> ${(y * 6) + 77} cm<br>`;
+            if (p.totalMonths <= 12) htmlStr += `<b>Dynes Expected HC:</b> ${((ht / 2) + 9.5).toFixed(1)} &plusmn; 2.5 cm<br>`;
+        }
+        
+        if (mac && !isNaN(mac) && hc && !isNaN(hc)) {
+            let kanawati = mac / hc;
+            let kStat = kanawati < 0.249 ? "Severe" : (kanawati < 0.279 ? "Moderate" : (kanawati < 0.314 ? "Early Malnutrition" : "Normal"));
+            htmlStr += `<b>Kanawati Index (MAC/HC):</b> ${kanawati.toFixed(3)} (${kStat})<br>`;
+        }
+        
+        htmlStr += `</div>`;
+        out.innerHTML = htmlStr;
     }
 
     window.evalMAC = function(val) {
