@@ -922,11 +922,25 @@
     }
 
     function triggerActiveWorkspaceBuild(pId) {
-        document.getElementById('emptyStatePlaceholder').style.display = "none"; document.getElementById('activeWorkspace').style.display = "block"; 
-        if(document.getElementById('btnMasterPrint')) document.getElementById('btnMasterPrint').style.display = "flex";
-        if(document.getElementById('btnMasterWA')) document.getElementById('btnMasterWA').style.display = "flex";
-        calculateAndRenderTimeline(pId); calculateDose(); renderMilestoneDashboard(); renderRxCartList(); calcGrowth(); calcMalnutrition(); calcNutrition(); renderSensory(); renderDietRecall(); calcCrash();
-    }
+    document.getElementById('emptyStatePlaceholder').style.display = "none"; 
+    document.getElementById('activeWorkspace').style.display = "block"; 
+    
+    // Force sidebar clinical master utilities to reveal
+    if(document.getElementById('btnMasterPrint')) document.getElementById('btnMasterPrint').style.display = "flex";
+    if(document.getElementById('btnMasterWA')) document.getElementById('btnMasterWA').style.display = "flex";
+    
+    // Fire downstream render loops
+    calculateAndRenderTimeline(pId); 
+    calculateDose(); 
+    renderMilestoneDashboard(); 
+    renderRxCartList(); 
+    calcGrowth(); 
+    calcMalnutrition(); 
+    calcNutrition(); 
+    renderSensory(); 
+    renderDietRecall(); 
+    calcCrash();
+}
 
     function clearAllData() { 
         if(confirm("Delete all stored patient logs, custom drugs, and settings?")) { 
@@ -1007,35 +1021,64 @@
 
     // --- 5. IMMUNIZATION TRACKER ---
     function calculateAndRenderTimeline(pId) {
-        const patient = globalPatientsStore[pId]; const baseDate = new Date(patient.dob || new Date()); const today = new Date();
-        document.getElementById('timelineOutput').innerHTML = ""; document.getElementById('auditOutput').innerHTML = "";
-        let computedTimeline = {};
+    const patient = globalPatientsStore[pId]; 
+    if (!patient) return console.error("Patient not found!");
+    
+    const baseDate = new Date(patient.dob || new Date()); 
+    const today = new Date();
+    
+    const container = document.getElementById('timelineOutput');
+    if (!container) return console.error("Timeline container missing!");
+    
+    container.innerHTML = ""; 
+    document.getElementById('auditOutput').innerHTML = "";
+    
+    let computedTimeline = {};
+    
+    baseVaccineSchema.forEach(v => {
+        if(v.condition === "je" && !patient.je) return;
+        if(v.condition === "female" && patient.gender !== "female") return;
         
-        baseVaccineSchema.forEach(v => {
-            if(v.condition === "je" && !patient.je) return;
-            if(v.condition === "female" && patient.gender !== "female") return;
-            let targetDate = new Date(baseDate); targetDate.setDate(targetDate.getDate() + (v.baseOffsetWeeks * 7));
-            let finalDue = new Date(targetDate); let altered = false;
-            if(v.dependsOn && computedTimeline[v.dependsOn]) {
-                const parentDate = new Date(patient.givenDates[v.dependsOn] || computedTimeline[v.dependsOn].projected);
-                const minInterval = new Date(parentDate); minInterval.setDate(minInterval.getDate() + (v.minIntervalWeeks * 7));
-                if(finalDue < minInterval) { finalDue = minInterval; altered = true; }
-            }
-            let status = patient.givenDates[v.id] ? "done" : (finalDue < today ? "overdue" : "upcoming");
-            computedTimeline[v.id] = { ...v, projected: finalDue.toISOString().split('T')[0], actual: patient.givenDates[v.id] || "", isDelayed: altered, status: status };
-        });
-
-        let groups = {}; Object.values(computedTimeline).forEach(item => { if(!groups[item.group]) groups[item.group] = []; groups[item.group].push(item); });
-        for (const [gName, vaxList] of Object.entries(groups)) {
-            const card = document.createElement('div'); card.className = "timeline-section"; card.innerHTML = `<h3 class="section-title">${gName}</h3>`;
-            vaxList.forEach(v => {
-                const prettyDue = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
-                const isDone = v.actual !== "";
-                card.innerHTML += `<div class="vaccine-row"><div class="vaccine-info"><h4>${v.name}</h4><div class="vaccine-meta" style="margin-bottom:0.4rem;">Window: ${v.window}</div><div class="action-protocol-card"><b>Strategy:</b> ${v.strategy}</div></div><div class="date-display-box ${v.isDelayed ? 'shifted':''}">${isDone ? '✅ Completed' : prettyDue}</div><div class="date-picker-cell"><input type="checkbox" title="Check for today" class="tick-box" ${isDone ? 'checked' : ''} onchange="toggleVaccineAdministered('${pId}', '${v.id}', this.checked)"><div style="text-align:left;"><label style="margin:0; font-size:10px; color:var(--text-muted);">Given On:</label><input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}', '${v.id}', this.value)"></div></div></div>`;
-            });
-            document.getElementById('timelineOutput').appendChild(card);
+        let targetDate = new Date(baseDate); 
+        targetDate.setDate(targetDate.getDate() + (v.baseOffsetWeeks * 7));
+        
+        let finalDue = new Date(targetDate); 
+        let altered = false;
+        
+        if(v.dependsOn && computedTimeline[v.dependsOn]) {
+            const parentDate = new Date(patient.givenDates[v.dependsOn] || computedTimeline[v.dependsOn].projected);
+            const minInterval = new Date(parentDate); 
+            minInterval.setDate(minInterval.getDate() + (v.minIntervalWeeks * 7));
+            if(finalDue < minInterval) { finalDue = minInterval; altered = true; }
         }
+        
+        let status = patient.givenDates[v.id] ? "done" : (finalDue < today ? "overdue" : "upcoming");
+        computedTimeline[v.id] = { ...v, projected: finalDue.toISOString().split('T')[0], actual: patient.givenDates[v.id] || "", isDelayed: altered, status: status };
+    });
 
+    // Render Grid
+    let groups = {}; 
+    Object.values(computedTimeline).forEach(item => { if(!groups[item.group]) groups[item.group] = []; groups[item.group].push(item); });
+    
+    for (const [gName, vaxList] of Object.entries(groups)) {
+        const card = document.createElement('div'); card.className = "timeline-section"; 
+        card.innerHTML = `<h3 class="section-title">${gName}</h3>`;
+        vaxList.forEach(v => {
+            const isDone = v.actual !== "";
+            card.innerHTML += `
+                <div class="vaccine-row">
+                    <div class="vaccine-info"><h4>${v.name}</h4><div class="vaccine-meta">Window: ${v.window}</div></div>
+                    <div class="date-display-box">${isDone ? '✅ Done' : v.projected}</div>
+                    <div class="date-picker-cell">
+                        <input type="checkbox" class="tick-box" ${isDone ? 'checked' : ''} onchange="toggleVaccineAdministered('${pId}', '${v.id}', this.checked)">
+                        <input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}', '${v.id}', this.value)">
+                    </div>
+                </div>`;
+        });
+        container.appendChild(card);
+    }
+    console.log("Timeline Rendered for", pId);
+}
         const odBox = document.createElement('div'); odBox.innerHTML = "<h4 style='color:var(--danger); margin-bottom:1rem;'>⚠️ Overdue</h4>";
         const dnBox = document.createElement('div'); dnBox.innerHTML = "<h4 style='color:var(--success); margin-bottom:1rem;'>✅ Completed</h4>";
         const upBox = document.createElement('div'); upBox.innerHTML = "<h4 style='color:var(--primary); margin-bottom:1rem;'>📅 Future</h4>";
@@ -1410,47 +1453,76 @@
         return `<div class="tool-result">${txt}</div>`;
     }
 
-    function executePrint(mode) {
-        if (!activePatientId && mode !== 'prescription') { alert("Please select a patient first."); return; }
-        const engine = document.getElementById('printEngine'); const p = globalPatientsStore[activePatientId] || {}; let html = "";
+   // --- SURGICAL PRINT AND ENHANCED WHATSAPP ENGINE ---
+function getPrintHeaderHTML(title) {
+    const p = globalPatientsStore[activePatientId]; if(!p) return "";
+    let logoHtml = appSettings.logo ? `<img src="${appSettings.logo}" class="print-logo">` : `<div style="font-size:40px;">🏥</div>`;
+    return `
+        <div class="print-header-container">
+            ${logoHtml}
+            <div class="print-clinic-details">
+                <div class="print-clinic-name" style="font-size: 22px; font-weight: bold; color: #2563eb;">${appSettings.clinicName || 'Pediatric Clinical Hub'}</div>
+                <div class="print-doc-name" style="font-size: 16px; font-weight: bold;">${appSettings.docName || 'Dr. Peter Suraj Joseph'}</div>
+                <div class="print-tagline" style="font-size: 12px; color: #555;">${appSettings.qual || 'MBBS, MD (Pediatrics)'}</div>
+                ${appSettings.phone ? `<div class="print-tagline">📞 ${appSettings.phone}</div>` : ''}
+                ${appSettings.address ? `<div class="print-tagline">📍 ${appSettings.address}</div>` : ''}
+            </div>
+        </div>
+        <hr style="border: 1px solid #000; margin: 15px 0;">
+        <div style="margin-bottom: 20px;">
+            <h3 style="margin-top: 0; text-transform: uppercase; text-align: center; letter-spacing: 1px;">${title}</h3>
+            <div style="font-size: 14px; background: #f8fafc; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; display: flex; justify-content: space-between;">
+                <span><b>Patient Name:</b> ${p.name}</span>
+                <span><b>Age Vector:</b> ${p.ageYrs}Y ${p.ageMos}M</span>
+                <span><b>Mass:</b> ${p.weight || 'N/A'} kg</span>
+                <span><b>Gender:</b> ${p.gender.toUpperCase()}</span>
+            </div>
+        </div>
+    `;
+}
 
-        if (mode === 'tracker' || mode === 'comprehensive') { html += getPrintHeaderHTML("IMMUNIZATION SCHEDULE REPORT") + document.getElementById('timelineOutput').innerHTML; if (mode === 'comprehensive') html += `<div class="page-break"></div>`; }
-        if (mode === 'prescription' || mode === 'comprehensive') {
-            html += getPrintHeaderHTML("PRESCRIPTION");
-            if (p.rxList && p.rxList.length > 0) {
-                html += `<div class="rx-pad"><div class="rx-symbol">Rx</div>`;
-                p.rxList.forEach((rx, index) => { html += `<div style="margin-bottom: 1.8rem;"><div class="rx-drug-name">${index + 1}. ${rx.name}</div><div class="rx-dosage">Take ${rx.vol} ${rx.unit || 'mL'} &mdash; ${rx.freq}</div><div style="color:#555; font-size:12px; margin-top:5px;">Clinical Targets Formulation context: ${rx.details}</div></div>`; });
-                html += `<div style="margin-top: 80px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center; float:right;"><b>${appSettings.docName}</b><br>Authorized Signature</div><div style="clear:both;"></div></div>`;
-            } else if (pendingPrescriptionDrug) {
-                html += `<div class="rx-pad"><div class="rx-symbol">Rx</div><div style="margin-bottom: 1.8rem;"><div class="rx-drug-name">1. ${pendingPrescriptionDrug.name}</div><div class="rx-dosage">Take ${pendingPrescriptionDrug.vol} ${pendingPrescriptionDrug.unit || 'mL'} &mdash; ${pendingPrescriptionDrug.freq}</div><div style="color:#555; font-size:12px; margin-top:5px;">Targets context: ${pendingPrescriptionDrug.details}</div></div><div style="margin-top: 80px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center; float:right;"><b>${appSettings.docName}</b><br>Authorized Signature</div><div style="clear:both;"></div></div>`;
-            } else { html += `<p>No active formulations staged onto prescription pad parameters.</p>`; }
-            if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
-        }
-        if (mode === 'nutrition' || mode === 'comprehensive') {
-            html += getPrintHeaderHTML("DIET & NUTRITION PLAN");
-            if (p.dietLogs && p.dietLogs.length > 0) { html += `<h3>24-Hour Diet Recall Analysis</h3>`; html += document.getElementById('recallListArea').innerHTML; html += document.getElementById('recallSummaryArea').innerHTML; }
-            html += `<h3 style="margin-top: 30px; color:var(--success);">Target Requirements (ICMR)</h3>` + document.getElementById('nutriTargetArea').innerHTML;
-            html += `<h3 style="margin-top: 30px; color:var(--primary);">Recommended Household Portions</h3><ul style="font-size:1.1rem; line-height:1.6;"><li>1 bowl cooked rice: 120 kcal</li><li>1 Idli / 1 Vada: 50 kcal</li><li>1 Dosa / 1 Chapati: 70 kcal</li><li>Cow's Milk (100ml): 65 kcal</li><li>1 Egg (60g): 60 kcal</li></ul>`;
-            if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
-        }
-        if (mode === 'milestones' || mode === 'comprehensive') {
-            html += getPrintHeaderHTML("DEVELOPMENTAL PROGRESS LOG REPORT");
-            html += `<h3 style="margin-top: 20px;">🌟 Successfully Verified Achieved Milestones</h3>` + document.getElementById('msCompletedContainer').innerHTML;
-            html += `<h3 style="margin-top: 30px;">📅 Anticipatory Developmental Guidance Milestones</h3>` + document.getElementById('msUpcomingContainer').innerHTML;
-            if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
-        }
-        if (mode === 'comprehensive') {
-            html += getPrintHeaderHTML("CLINICAL TRIAGE & ANTHROPOMETRY REPORT");
-            let maln = extractToolResult('malnGridOutput'); if(maln) html += `<h3>Malnutrition & Anthropometry Triage</h3>${maln}`;
-            let fluids = extractToolResult('fluidResultArea'); if(fluids) html += `<h3>IV Fluid Resuscitation Protocol</h3>${fluids}`;
-            let asthma = extractToolResult('pramResultArea'); if(asthma) html += `<h3>Asthma PRAM Triage Score</h3>${asthma}`;
-            let jaun = extractToolResult('jaunResultArea'); if(jaun) html += `<h3>Neonatal Jaundice Triage Risk</h3>${jaun}`;
-            if(!maln && !fluids && !asthma && !jaun) html += `<p>No acute clinical triage metrics evaluated during this session.</p>`;
-        }
+function executePrint(mode) {
+    if (!activePatientId) { alert("Please select or save a patient profile first."); return; }
+    const engine = document.getElementById('printEngine'); 
+    const p = globalPatientsStore[activePatientId]; 
+    let html = "";
 
-        html += `<div style="text-align:center; font-size:10px; color:#777; margin-top:40px; border-top:1px solid #eee; padding-top:10px;">Generated by ${appSettings.clinicName} Clinical Hub</div>`;
-        engine.innerHTML = html; window.print();
+    if (mode === 'tracker' || mode === 'comprehensive') { 
+        html += getPrintHeaderHTML("UNIVERSAL IMMUNIZATION SCHEDULE DELAY MATRIX") + document.getElementById('timelineOutput').innerHTML; 
+        if (mode === 'comprehensive') html += `<div class="page-break" style="page-break-after: always;"></div>`; 
     }
+    if (mode === 'comprehensive') {
+        html += getPrintHeaderHTML("ACUTE TRIAGE & BEDSIDE ANTHROPOMETRY SUMMARY");
+        let maln = document.getElementById('malnGridOutput') ? document.getElementById('malnGridOutput').innerHTML : "";
+        let fluids = document.getElementById('fluidResultArea') ? document.getElementById('fluidResultArea').innerHTML : "";
+        let asthma = document.getElementById('pramResultArea') ? document.getElementById('pramResultArea').innerHTML : "";
+        let jaundice = document.getElementById('jaunResultArea') ? document.getElementById('jaunResultArea').innerHTML : "";
+        
+        html += `<h3>Nutritional Status & Wasting Grade</h3><div style="padding:15px; border:1px solid #ccc; border-radius:6px; margin-bottom:15px;">${maln}</div>`;
+        html += `<h3>Fluid Deficit (Holliday-Segar Framework)</h3><div style="padding:15px; border:1px solid #ccc; border-radius:6px; margin-bottom:15px;">${fluids}</div>`;
+        html += `<h3>Respiratory Distress Index (PRAM Score)</h3><div style="padding:15px; border:1px solid #ccc; border-radius:6px; margin-bottom:15px;">${asthma}</div>`;
+        html += `<h3>Hyperbilirubinemia Risk Verification</h3><div style="padding:15px; border:1px solid #ccc; border-radius:6px;">${jaundice}</div>`;
+    }
+
+    engine.innerHTML = html; 
+    window.print();
+}
+
+function sendWACompReport() {
+    if(!activePatientId) return alert("Please establish a parent profile selection.");
+    const p = globalPatientsStore[activePatientId];
+    let txt = `*Pediatric Clinical Patient Report*\n--------------------------------\n*Patient:* ${p.name}\n*Age:* ${p.ageYrs}Y ${p.ageMos}M\n*Weight:* ${p.weight} kg\n\n`;
+    
+    if(p.upcomingVaccinesForWhatsapp && p.upcomingVaccinesForWhatsapp.length > 0) {
+        txt += `*Action Required - Due Vaccinations:*\n`;
+        p.upcomingVaccinesForWhatsapp.forEach(v => txt += `• ${v}\n`);
+        txt += `\n`;
+    }
+    
+    txt += `Please retain this status update for your institutional follow-up at the clinic.`;
+    const targetPhone = p.phone ? p.phone.replace(/[^0-9]/g, "") : "";
+    window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`, '_blank');
+}
 
     function sendWACompReport() {
         if(!activePatientId) return alert("Select patient");
