@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Pediatric Clinical Hub</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const manifestJSON = {
+            "name": "Pediatric Clinical Hub",
+            "short_name": "Peds Hub",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#f8fafc",
+            "theme_color": "#1e3a8a",
+            "icons": [{ "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏥</text></svg>", "sizes": "192x192", "type": "image/svg+xml" }]
+        };
+        const blob = new Blob([JSON.stringify(manifestJSON)], {type: 'application/json'});
+        const link = document.createElement('link'); link.rel = 'manifest'; link.href = URL.createObjectURL(blob);
+        document.addEventListener('DOMContentLoaded', () => document.head.appendChild(link));
+    </script>
+
+    <style>
+        /* CORE VARIABLES */
+        :root {
+            --primary: #2563eb; --primary-light: #eff6ff; --primary-dark: #1d4ed8;
+            --accent: #0ea5e9; --success: #10b981; --warning: #f59e0b; --danger: #ef4444;        
+            --bg-body: #f8fafc; --bg-surface: #ffffff;
+            --text-main: #334155; --text-muted: #64748b; --border-soft: #e2e8f0;
+            --radius-lg: 12px; --radius-md: 8px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        body.dark-mode {
+            --bg-body: #0f172a; --bg-surface: #1e293b; --text-main: #f8fafc;
+            --text-muted: #94a3b8; --border-soft: #334155; --primary-light: #1e3a8a; --primary: #3b82f6;
+        }
+        
+        /* GLOBAL STYLES */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; background-color: var(--bg-body); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; transition: background-color 0.3s, color 0.3s;}
+        header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 1.25rem 2rem; text-align: left; box-shadow: var(--shadow-md); z-index: 20; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;}
+        header h1 { margin: 0; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px;}
+        header p { margin: 0; opacity: 0.9; font-size: 0.9rem; }
+
+        /* DESKTOP UI ARCHITECTURE */
+        .app-shell { display: flex; flex: 1; overflow: hidden; width: 100%; max-width: 1800px; margin: 0 auto; }
+        .sidebar { width: 320px; background: var(--bg-surface); border-right: 1px solid var(--border-soft); display: flex; flex-direction: column; height: 100%; overflow-y: auto; z-index: 10; flex-shrink: 0; transition: background-color 0.3s;}
+        
+        .main-content { flex: 1; padding: 2rem; overflow-y: auto; background: var(--bg-body); transition: background-color 0.3s; position: relative; display: flex; flex-direction: column; align-items: center;}
+        .view-content { display: none; width: 100%; max-width: 1100px; animation: fadeSlideIn 0.3s ease-out forwards; } /* Max width prevents stretched UI */
+        .view-content.active-view { display: block; }
+        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* NAVIGATION & BUTTONS */
+        .app-features-nav { display: flex; flex-direction: column; gap: 0.25rem; padding: 1.5rem; border-bottom: 1px solid var(--border-soft); flex-shrink: 0;}
+        .feature-btn { background: transparent; color: var(--text-muted); border: none; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s ease;}
+        .feature-btn:hover { background: var(--border-soft); color: var(--text-main); }
+        .feature-btn.active { background: var(--primary-light); color: var(--primary); font-weight: 700; border-left: 4px solid var(--primary); border-radius: 0 var(--radius-md) var(--radius-md) 0;}
+        
+        button.action { width: 100%; background: var(--primary); color: white; border: none; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; margin-top: 1rem; box-shadow: var(--shadow-sm); transition: transform 0.1s;}
+        button.action:active { transform: translateY(1px); }
+        button.secondary { background-color: var(--bg-body); color: var(--text-main); border: 1px solid var(--border-soft); padding: 0.6rem; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; width: 100%; transition: background-color 0.2s;}
+        button.secondary:hover { background-color: var(--border-soft); }
+
+        /* FORMS & INPUTS */
+        .panel { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;}
+        label { display: block; font-weight: 600; margin: 0.5rem 0 0.25rem 0; font-size: 0.85rem; color: var(--text-main); }
+        input, select { width: 100%; padding: 0.65rem 0.8rem; border: 1px solid var(--border-soft); border-radius: var(--radius-md); box-sizing: border-box; font-size: 0.95rem; background: var(--bg-surface); color: var(--text-main); transition: border-color 0.2s;}
+        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .row-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+        /* PATIENT BADGES */
+        .patient-list { margin-top: 1rem; border-top: 1px solid var(--border-soft); padding-top: 1rem; }
+        .patient-badge { background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-md); margin-bottom: 0.5rem; cursor: pointer; border: 1px solid var(--border-soft); font-size: 0.85rem; display: flex; justify-content: space-between; transition: all 0.2s;}
+        .patient-badge.active-patient { border-color: var(--primary); background: var(--primary-light); font-weight: 600; box-shadow: inset 0 0 0 1px var(--primary);}
+
+        /* CONTENT BLOCKS & THEORY CONTAINERS */
+        .timeline-section { background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-bottom: 1.5rem; border: 1px solid var(--border-soft); }
+        .section-title { color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 0.5rem; margin-top: 0; margin-bottom: 1.5rem; font-size: 1.2rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center;}
+        .tool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; align-items: start;}
+        
+        /* FORMULAE & THEORY BOXES */
+        .formula-box { background: var(--primary-light); padding: 1.25rem; border-radius: var(--radius-md); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; border-left: 4px solid var(--primary); color: var(--primary-dark); }
+        .formula-box code { font-family: monospace; font-size: 1rem; font-weight: bold; display: block; margin-top: 5px; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; }
+        .theory-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; background: var(--bg-surface); }
+        .theory-table th, .theory-table td { padding: 8px 12px; border: 1px solid var(--border-soft); text-align: left; }
+        .theory-table th { background: var(--bg-body); color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
+
+        /* OUTPUT STYLES */
+        .tool-result { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1.25rem; border-radius: var(--radius-md); color: var(--success); text-align: center; margin-top: 1rem; font-size: 1.1rem; line-height: 1.5;}
+        .tool-result.danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: var(--danger); }
+        .tool-result.warning { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); color: var(--warning); }
+        .tool-result.neutral { background: var(--bg-body); border-color: var(--border-soft); color: var(--text-main); }
+        
+        /* SUB-TABS */
+        .sub-tabs-nav { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-soft); flex-wrap: wrap; }
+        .sub-tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 0.75rem 1rem; cursor: pointer; font-size: 0.95rem; font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.2s;}
+        .sub-tab-btn.active { color: var(--primary); border-color: var(--primary); }
+        .sub-tab-content { display: none; } .sub-tab-content.active { display: block; animation: fadeSlideIn 0.2s ease-out forwards; }
+
+        /* MOBILE RESPONSIVE ENGINE */
+        .mobile-toggle-btn { display: none; }
+        @media (max-width: 900px) {
+            .app-shell { flex-direction: column; overflow: hidden; }
+            header { padding: 1rem; flex-shrink: 0; flex-direction: column; text-align: center; gap: 5px;}
+            
+            .sidebar { width: 100%; height: auto; border-right: none; position: relative; z-index: 50; flex-shrink: 0; padding: 0;}
+            
+            /* Horizontal Scroll Menu for Mobile */
+            .app-features-nav { display: flex; flex-direction: row; overflow-x: auto; padding: 0.75rem; gap: 0.5rem; background: var(--bg-surface); border-bottom: none; -webkit-overflow-scrolling: touch;}
+            .app-features-nav::-webkit-scrollbar { display: none; }
+            .feature-btn { white-space: nowrap; padding: 0.6rem 1.2rem; font-size: 0.85rem; border-radius: 99px; background: var(--bg-body); border: 1px solid var(--border-soft); border-left: 1px solid var(--border-soft); flex: 0 0 auto; justify-content: center;}
+            .feature-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+            
+            .mobile-toggle-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1rem; background: var(--primary-light); color: var(--primary-dark); font-weight: 700; border: none; border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); font-size: 0.95rem; cursor: pointer;}
+            
+            .panel { display: none; max-height: 60vh; overflow-y: auto; padding: 1.5rem;}
+            .panel.mobile-open { display: flex; }
+            
+            .main-content { padding: 1rem; flex: 1; overflow-y: auto; }
+            .view-content { max-width: 100%; }
+            .timeline-section { padding: 1.25rem; }
+            .tool-grid { grid-template-columns: 1fr; gap: 1rem;}
+        }
+
+        /* PRINT SETTINGS */
+        @media print {
+            body > *:not(#printEngine) { display: none !important; }
+            body { background: white !important; color: black !important; height: auto; overflow: visible;}
+            #printEngine { display: block !important; width: 100%; }
+            .page-break { page-break-after: always; }
+        }
+    </style>
+</head>
+<body>
+  <header>
+    <h1>Pediatric Clinical Hub</h1>
+    <p>Point-of-Care Intelligent Workspace Framework</p>
+</header>
+
+<div class="app-shell">
+    <div class="sidebar">
+        <div class="app-features-nav">
+            <button class="feature-btn alert" onclick="switchMainFeature('erFeatureView', this)">🚨 ER & NICU</button>
+            <button class="feature-btn active" onclick="switchMainFeature('trackerFeatureView', this)">📅 Tracker</button>
+            <button class="feature-btn" onclick="switchMainFeature('dosageFeatureView', this)">💊 Dosage</button>
+            <button class="feature-btn special" onclick="switchMainFeature('nutritionFeatureView', this)">🍎 Nutrition</button>
+            <button class="feature-btn" onclick="switchMainFeature('malnutritionFeatureView', this)">🩺 Triage</button>
+            <button class="feature-btn" onclick="switchMainFeature('milestoneFeatureView', this)">👶 Milestones</button>
+            <button class="feature-btn" onclick="switchMainFeature('growthFeatureView', this)">📈 Growth</button>
+            <button class="feature-btn" onclick="switchMainFeature('fluidsFeatureView', this)">💧 IV Fluids</button>
+            <button class="feature-btn" onclick="switchMainFeature('asthmaFeatureView', this)">🫁 PRAM</button>
+            <button class="feature-btn" onclick="switchMainFeature('jaundiceFeatureView', this)">🍼 Jaundice</button>
+            <button class="feature-btn" onclick="switchMainFeature('aboutFeatureView', this)">ℹ️ Settings</button>
+        </div>
+        <button class="mobile-toggle-btn" onclick="document.getElementById('registryPanel').classList.toggle('mobile-open')">
+            <span id="mobileBannerText">👤 Select / Register Patient</span><span>▼</span>
+        </button>
+        <div class="panel" id="registryPanel">
+            <h3 style="margin-top:0;">Patient Registry</h3>
+            <label>Patient Name</label><input type="text" id="pName" placeholder="e.g., Baby of Sunita">
+            <label>DOB</label><input type="date" id="dob" onchange="calculateAgeFromDob()">
+            <label>Current Age</label>
+            <div class="row-inputs"><input type="number" id="ageYrs" placeholder="Yrs" oninput="estimateWeightFromAge()"><input type="number" id="ageMos" placeholder="Mos" oninput="estimateWeightFromAge()"></div>
+            <div class="row-inputs" style="margin-top:10px;"><div><label>Wt (kg)</label><input type="number" step="0.1" id="pWeight" oninput="saveAndRegisterPatient()"></div><div><label>Ht (cm)</label><input type="number" step="0.1" id="htCm" oninput="saveAndRegisterPatient()"></div></div>
+            <label>Gender</label><select id="gender" onchange="saveAndRegisterPatient()"><option value="male">Male</option><option value="female">Female</option></select>
+            <button class="action" onclick="saveAndRegisterPatient()">Save Profile</button>
+            <button class="secondary" style="margin-top:10px;" onclick="prepNewPatient()">➕ Clear / New</button>
+            <div class="patient-list" id="patientListContainer"></div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div id="emptyStatePlaceholder" class="timeline-section" style="text-align: center;">
+            <h2 style="font-size: 3rem; margin-bottom: 0;">🏥</h2>
+            <h2 class="section-title" style="border:none; justify-content: center;">Welcome to the Hub</h2>
+            <p>Select a module from the menu or register a patient to begin.</p>
+        </div>
+
+        <div id="activeWorkspace" style="display:none;">
+          <div id="erFeatureView" class="view-content">
+                <h2 class="section-title" style="color:var(--danger)">🚨 ER & NICU Resuscitation</h2>
+                <div class="sub-tabs-nav">
+                    <button class="sub-tab-btn active" onclick="switchSubTab('erCrashTab', this)">⚡ Crash Cart</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('erNicuTab', this)">🍼 NICU (GIR/APGAR)</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('erVitalsTab', this)">📊 Vitals Matrix</button>
+                </div>
+                
+                <div id="erCrashTab" class="sub-tab-content active">
+                    <div class="timeline-section tool-grid" style="border: 2px solid var(--danger); background: rgba(239, 68, 68, 0.02);">
+                        <div>
+                            <h3 style="color:var(--danger); margin-top:0;">Code Blue Calculator</h3>
+                            <label>Weight (kg)</label><input type="number" id="crashWeight" oninput="calcCrash()">
+                            <label>Age (Yrs)</label><input type="number" id="crashAge" oninput="calcCrash()">
+                            <div class="formula-box" style="margin-top:10px;">
+                                <b>Defibrillation:</b> 2 J/kg &rarr; 4 J/kg<br>
+                                <b>Fluid Bolus:</b> 20 mL/kg (Normal Saline)<br>
+                                <b>Adrenaline (1:10,000):</b> 0.1 mL/kg
+                            </div>
+                        </div>
+                        <div id="crashOutputArea" class="tool-result danger">Input physical vectors to map lines.</div>
+                    </div>
+                </div>
+
+                <div id="erNicuTab" class="sub-tab-content">
+                    <div class="timeline-section tool-grid">
+                        <div>
+                            <h3 style="color:var(--primary); margin-top:0;">GIR Calculator</h3>
+                            <div class="formula-box"><code>GIR = (Rate × Dextrose%) / (Weight × 6)</code></div>
+                            <div class="row-inputs"><div><label>Wt (kg)</label><input type="number" id="girWt" oninput="calcGIR()"></div><div><label>Rate (ml/hr)</label><input type="number" id="girRate" oninput="calcGIR()"></div></div>
+                            <label>Dextrose %</label><input type="number" id="girDex" oninput="calcGIR()">
+                            <div id="girOutput" class="tool-result neutral"></div>
+                        </div>
+                        <div>
+                            <h3 style="color:var(--primary); margin-top:0;">APGAR Score</h3>
+                            <div class="row-inputs" style="gap:5px;"><label>Heart Rate</label><select id="apgarHR" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
+                            <div class="row-inputs" style="gap:5px;"><label>Resp. Effort</label><select id="apgarResp" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
+                            <div class="row-inputs" style="gap:5px;"><label>Muscle Tone</label><select id="apgarTone" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
+                            <div class="row-inputs" style="gap:5px;"><label>Reflex Excitability</label><select id="apgarReflex" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
+                            <div class="row-inputs" style="gap:5px;"><label>Color</label><select id="apgarColor" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
+                            <div id="apgarOutput" class="tool-result success">Score: 10/10</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="erVitalsTab" class="sub-tab-content">
+                    <div class="timeline-section">
+                        <table class="theory-table">
+                            <thead><tr><th>Age Bracket</th><th>Heart Rate (bpm)</th><th>Resp Rate (bpm)</th><th>Systolic BP (mmHg)</th></tr></thead>
+                            <tbody>
+                                <tr><td>Neonate (&lt;28 Days)</td><td>100 - 205</td><td>40 - 60</td><td>60 - 90</td></tr>
+                                <tr><td>Infant (1 - 12 Mos)</td><td>100 - 180</td><td>30 - 53</td><td>87 - 105</td></tr>
+                                <tr><td>Toddler (1 - 3 Yrs)</td><td>98 - 140</td><td>22 - 37</td><td>95 - 105</td></tr>
+                                <tr><td>School Age (6 - 11 Yrs)</td><td>75 - 118</td><td>18 - 25</td><td>97 - 112</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="trackerFeatureView" class="view-content active-view">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h2 class="section-title" style="border:none; margin:0;">📅 Universal Immunization Tracker</h2>
+                    <button onclick="executePrint('tracker')" class="secondary" style="width:auto;">🖨️ Print Schedule</button>
+                </div>
+                <div class="sub-tabs-nav">
+                    <button class="sub-tab-btn active" onclick="switchSubTab('trackerTimelineSubTab', this)">📅 Tracker Grid</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('trackerAuditSubTab', this)">📋 Patient Audit</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('trackerNISTab', this)">📘 NIS Reference</button>
+                </div>
+                <div id="trackerTimelineSubTab" class="sub-tab-content active"><div id="timelineOutput"></div></div>
+                <div id="trackerAuditSubTab" class="sub-tab-content"><div class="timeline-section"><div id="auditOutput"></div></div></div>
+                <div id="trackerNISTab" class="sub-tab-content">
+                    <div class="timeline-section" style="overflow-x:auto;">
+                        <table class="theory-table" id="nisTableRef">
+                            <thead><tr><th>Age</th><th>Vaccines</th><th>Route/Site</th></tr></thead>
+                            <tbody>
+                                <tr><td>Birth</td><td>BCG, OPV-0, HepB-0</td><td>ID L.Arm / Oral / IM L.Thigh</td></tr>
+                                <tr><td>6 Wks</td><td>Penta-1, OPV-1, RVV-1, fIPV-1, PCV-1</td><td>IM R.Thigh / Oral / Oral / ID R.Arm / IM L.Thigh</td></tr>
+                                <tr><td>10 Wks</td><td>Penta-2, OPV-2, RVV-2</td><td>IM R.Thigh / Oral / Oral</td></tr>
+                                <tr><td>14 Wks</td><td>Penta-3, OPV-3, RVV-3, fIPV-2, PCV-2</td><td>IM R.Thigh / Oral / Oral / ID R.Arm / IM L.Thigh</td></tr>
+                                <tr><td>9 Mos</td><td>MR-1, PCV-B, JE-1, Vit A</td><td>SC R.Arm / IM R.Thigh / SC L.Arm / Oral</td></tr>
+                                <tr><td>16-24 Mos</td><td>MR-2, DPT-B1, OPV-B, JE-2</td><td>SC R.Arm / IM L.Thigh / Oral / SC L.Arm</td></tr>
+                                <tr><td>5-6 Yrs</td><td>DPT-B2</td><td>IM Upper Arm</td></tr>
+                                <tr><td>10 & 16 Yrs</td><td>Td</td><td>IM Upper Arm</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dosageFeatureView" class="view-content">
+                <h2 class="section-title">💊 Pediatric Dosing Engine</h2>
+                <div class="sub-tabs-nav">
+                    <button class="sub-tab-btn active" onclick="switchSubTab('doseCalcTab', this)">🧮 Active Calculator</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('doseManageTab', this)">⚙️ Add Custom Drug</button>
+                </div>
+                
+                <div id="doseCalcTab" class="sub-tab-content active">
+                    <div class="timeline-section">
+                        <div class="formula-box">
+                            <b>Standard Calculation:</b> <code>Volume = (Weight × Dose mg/kg) ÷ (Stock Conc / Base Vol)</code><br>
+                            <small>*Fixed-dose formulations bypass weight scaling and output the absolute Base Volume directly.</small>
+                        </div>
+                        <div class="tool-grid">
+                            <div>
+                                <label>Bedside Weight (kg)</label><input type="number" id="calcWeight" oninput="calculateDose()">
+                                <label>Category</label>
+                                <select id="drugCategory" onchange="populateDrugs(); calculateDose();">
+                                    <option value="">-- Select --</option>
+                                    <option value="antibiotics">Antibiotics</option>
+                                    <option value="antipyretics">Antipyretics & Analgesics</option>
+                                    <option value="antihistamines">Antihistamines / Cold</option>
+                                    <option value="respiratory">Respiratory Suite</option>
+                                    <option value="git">Gastrointestinal</option>
+                                </select>
+                                <label>Formulation</label><select id="drugFormulation" onchange="calculateDose()"><option value="">-- formulation --</option></select>
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:10px;">
+                                <div id="calcOutputArea"></div>
+                                <div id="rxAddButtonArea"></div>
+                            </div>
+                        </div>
+                        <div id="rxCartArea"><div class="rx-cart-container"><h3 class="section-title">Active Prescription Pad</h3><div id="rxCartList"></div></div></div>
+                    </div>
+                </div>
+
+                <div id="doseManageTab" class="sub-tab-content">
+                    <div class="timeline-section tool-grid">
+                        <div>
+                            <label>Category</label><select id="newDrugCat"><option value="antibiotics">Antibiotics</option><option value="antipyretics">Antipyretics</option><option value="antihistamines">Antihistamines</option><option value="respiratory">Respiratory</option><option value="git">GIT</option></select>
+                            <label>Name & Strength</label><input type="text" id="newDrugName" placeholder="e.g. Cefixime 50mg/ml">
+                            <label>Target Dose (mg/kg)</label><input type="number" step="0.1" id="newDrugDose" placeholder="e.g. 8">
+                            <label>Strategy</label><select id="newDrugType"><option value="perDay">Per Day (Divided)</option><option value="perDose">Per Dose</option><option value="fixed">Fixed Volume (Ignore Wt)</option></select>
+                        </div>
+                        <div>
+                            <label>Divisions/Day</label><input type="number" id="newDrugDiv" placeholder="e.g. 2">
+                            <label>Rx Frequency</label><input type="text" id="newDrugFreq" placeholder="e.g. BID">
+                            <div class="row-inputs"><div><label>Conc (mg)</label><input type="number" id="newDrugConc"></div><div><label>Vol (mL/Tab)</label><input type="number" id="newDrugVol"></div></div>
+                            <button class="action" onclick="saveCustomDrug()">💾 Save to Database</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="nutritionFeatureView" class="view-content">
+                <h2 class="section-title">🍎 Nutrition Tracker & 24h Recall</h2>
+                <div class="sub-tabs-nav">
+                    <button class="sub-tab-btn active" onclick="switchSubTab('nutriCalcTab', this)">🧮 ICMR Target Metrics</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('nutriRecallTab', this)">🍽️ 24h Diet Recall Board</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('nutriDBTab', this)">📊 Reference Matrix</button>
+                </div>
+                <div id="nutriCalcTab" class="sub-tab-content active"><div class="timeline-section"><div id="nutriTargetArea"></div></div></div>
+                <div id="nutriRecallTab" class="sub-tab-content">
+                    <div class="timeline-section tool-grid">
+                        <div style="background:var(--bg-body); padding:1rem; border-radius:8px; border:1px solid var(--border-soft);">
+                            <label>Meal Window</label><select id="recallMeal"><option>Breakfast</option><option>Morning Snack</option><option>Lunch</option><option>Evening Snack</option><option>Dinner</option></select>
+                            <label>Target Food Matrix Item</label><select id="recallFood"></select>
+                            <label>Mass/Vol Loaded (g/ml)</label><input type="number" id="recallQty">
+                            <button class="action" style="background:var(--success);" onclick="addDietRecall()">➕ Append Entry</button>
+                        </div>
+                        <div id="recallSummaryArea" class="tool-result neutral">Staging balances lookup panel.</div>
+                    </div>
+                    <div id="recallListArea" style="margin-top:1.5rem;"></div>
+                </div>
+                <div id="nutriDBTab" class="sub-tab-content">
+                    <div class="timeline-section">
+                        <input type="text" id="foodSearch" class="search-bar" placeholder="Filter search matching database indices..." onkeyup="filterFoodDB()">
+                        <div style="overflow-x:auto;">
+                            <table class="theory-table">
+                                <thead><tr><th>Matrix Food Item</th><th>Classification</th><th>Protein (g)</th><th>CHO (g)</th><th>Fat (g)</th><th>Energy (kcal)</th></tr></thead>
+                                <tbody id="foodTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="malnutritionFeatureView" class="view-content">
+                <h2 class="section-title">🩺 Malnutrition & Anthropometry</h2>
+                <div class="sub-tabs-nav">
+                    <button class="sub-tab-btn active" onclick="switchSubTab('malnCalcTab', this)">🧮 Diagnostics</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('malnSensoryTab', this)">👀 Sensory Screening</button>
+                </div>
+                <div id="malnCalcTab" class="sub-tab-content active">
+                    <div class="timeline-section tool-grid">
+                        <div>
+                            <div class="formula-box">
+                                <b>Weech's Expected Weight Formula:</b><br>
+                                &lt;1 yr: <code>(Age in mos + 9) / 2</code><br>
+                                1 - 6 yrs: <code>(Age in yrs × 2) + 8</code><br>
+                                7 - 12 yrs: <code>(Age in yrs × 7 - 5) / 2</code>
+                            </div>
+                            <label>Bedside Height/Length (cm)</label><input type="number" id="triageHt" oninput="document.getElementById('htCm').value=this.value; calcMalnutrition();">
+                            <label>Mid-Arm Circumference (cm)</label><input type="number" id="triageMac" step="0.1" oninput="evalMAC(this.value)">
+                            <div style="margin-top:15px; background:var(--bg-body); padding:10px; border-radius:8px; border:1px solid var(--border-soft);"><input type="checkbox" id="malnOedemaToggle" onchange="calcMalnutrition()"> <label style="display:inline;">Bilateral Pitting Oedema Present?</label></div>
+                        </div>
+                        <div>
+                            <div id="malnGridOutput" class="tool-result neutral">Awaiting data entry...</div>
+                            <div id="macOutput" style="margin-top:10px; font-weight:bold; text-align:center;"></div>
+                            
+                            <h4 style="margin-top:20px; color:var(--primary);">Reference: Weight for Height (SAM/MAM)</h4>
+                            <table class="theory-table">
+                                <thead><tr><th>Classification</th><th>WFH / WFL</th></tr></thead>
+                                <tbody>
+                                    <tr><td>Normal</td><td>> -2 SD ( >80% )</td></tr>
+                                    <tr><td>MAM</td><td>-2 SD to -3 SD (70-80%)</td></tr>
+                                    <tr><td>SAM</td><td>&lt; -3 SD ( &lt;70% )</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="malnSensoryTab" class="sub-tab-content"><div class="timeline-section"><div id="sensoryOutputArea"></div></div></div>
+            </div>
+
+            <div id="milestoneFeatureView" class="view-content">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h2 class="section-title" style="margin:0; border:none;">👶 Developmental Progress</h2>
+                    <button onclick="executePrint('milestones')" class="secondary" style="width:auto;">🖨️ Print Progress</button>
+                </div>
+                <div class="sub-tabs-nav">
+                    <button class="sub-tab-btn active" onclick="switchSubTab('msEvalTab', this)">📋 Checklist</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('msProgressTab', this)">📈 Dashboard</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('msMissedTab', this)">🚨 Red Flags</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('msReferenceTab', this)">📘 Standards</button>
+                </div>
+                <div id="msEvalTab" class="sub-tab-content active"><div class="timeline-section"><h3 style="color:var(--primary); margin-top:0;">Comprehensive Evaluation</h3><div id="msEvalContainer"></div></div></div>
+                <div id="msProgressTab" class="sub-tab-content"><div class="timeline-section"><h3 style="color:var(--primary); margin-top:0;">Developmental Dashboard</h3><div class="tool-grid"><div id="msCompletedContainer"></div><div id="msUpcomingContainer"></div></div></div></div>
+                <div id="msMissedTab" class="sub-tab-content"><div class="timeline-section"><h3 style="color:var(--primary); margin-top:0;">Red Flags</h3><div id="msMissedContainer"></div></div></div>
+                <div id="msReferenceTab" class="sub-tab-content"><div class="timeline-section" style="overflow-x:auto;"><h3 style="color:var(--primary); margin-top:0;">Standard Milestones</h3><div id="msReferenceContainer"></div></div></div>
+            </div>
+
+            <div id="growthFeatureView" class="view-content">
+                <h2 class="section-title">📈 Interactive Growth Curves</h2>
+                <div class="timeline-section tool-grid" style="grid-template-columns: 1fr 2fr;">
+                    <div>
+                        <label>Length / Stature (cm)</label><input type="number" id="htCmOnTheGo" oninput="syncGrowthFieldsAndCalc()">
+                        <div id="growthResultArea" class="tool-result neutral" style="margin-top:1rem; font-size:0.9rem;">Registry vectors verified. Auto-plotting active on change.</div>
+                    </div>
+                    <div>
+                        <div class="chart-card-wrapper"><canvas id="weightChartCanvas"></canvas></div>
+                        <div class="chart-card-wrapper" style="margin-top:1rem;"><canvas id="heightChartCanvas"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="fluidsFeatureView" class="view-content">
+                <h2 class="section-title">💧 Holliday-Segar Fluid Calculator</h2>
+                <div class="timeline-section tool-grid">
+                    <div>
+                        <div class="formula-box">
+                            <b>Maintenance Limits:</b><br>
+                            1st 10kg: <code>100 ml/kg/day</code><br>
+                            2nd 10kg: <code>50 ml/kg/day</code><br>
+                            > 20kg: <code>20 ml/kg/day</code>
+                        </div>
+                        <label>Clinical Dehydration Grading</label><select id="fluidDehydration" onchange="calcFluids()"><option value="0">Euvolia (Maintenance Only 0%)</option><option value="5">Mild Fluid Loss (5%)</option><option value="10">Moderate Fluid Loss (10%)</option><option value="15">Severe Fluid Deficit (15%)</option></select>
+                        <label style="margin-top:1rem;">Fluid Mass Target (kg)</label><input type="number" id="fluidWeight" oninput="calcFluids()">
+                    </div>
+                    <div id="fluidResultArea" class="tool-result neutral">Compile inputs parameter block.</div>
+                </div>
+            </div>
+
+            <div id="asthmaFeatureView" class="view-content">
+                <h2 class="section-title">🫁 PRAM Score (Pediatric Respiratory Assessment Measure)</h2>
+                <div class="timeline-section tool-grid">
+                    <div>
+                        <label>Airway O2 Saturations</label><select id="pramO2" onchange="calcPRAM()"><option value="0">&ge;95%</option><option value="1">92% - 94%</option><option value="2">&lt;92%</option></select>
+                        <label>Suprasternal Retractions</label><select id="pramSupra" onchange="calcPRAM()"><option value="0">Absent</option><option value="2">Present</option></select>
+                        <label>Scalene Muscle Access</label><select id="pramScalene" onchange="calcPRAM()"><option value="0">Absent</option><option value="2">Present</option></select>
+                        <label>Air Entry Index</label><select id="pramAir" onchange="calcPRAM()"><option value="0">Symmetric Normal</option><option value="1">Decreased Bases</option><option value="2">Widespread Loss</option><option value="3">Silent Chest</option></select>
+                        <label>Wheeze Auscultation</label><select id="pramWheeze" onchange="calcPRAM()"><option value="0">Absent</option><option value="1">Expiratory Only</option><option value="2">Pan-Inspiratory Cycle</option><option value="3">Silent / Audible Without Scope</option></select>
+                    </div>
+                    <div id="pramResultArea" class="tool-result neutral">Staging clinical entry score.</div>
+                </div>
+            </div>
+
+            <div id="jaundiceFeatureView" class="view-content">
+                <h2 class="section-title">🍼 Bhutani Nomogram Standards</h2>
+                <div class="timeline-section tool-grid">
+                    <div>
+                        <label>Postnatal Lifespan (Hours)</label><input type="number" id="jaunHours" oninput="calcJaundice()">
+                        <label>TSB Matrix Concentration (mg/dL)</label><input type="number" step="0.1" id="jaunTSB" oninput="calcJaundice()">
+                        <label>Risk Assignment Level</label><select id="jaunRisk" onchange="calcJaundice()"><option value="low">Low Risk Profile (&ge;38w & Well)</option><option value="med">Medium Risk Profile (35w-37w Well OR 38w+ Risk Factors)</option><option value="high">High Risk Profile (35w-37w with Associated Hemolysis Factors)</option></select>
+                    </div>
+                    <div id="jaunResultArea" class="tool-result neutral">Awaiting data entry to map standard Bhutani bands.</div>
+                </div>
+            </div>
+
+            <div id="aboutFeatureView" class="view-content">
+                <h2 class="section-title">ℹ️ System Info & Settings</h2>
+                <div class="timeline-section tool-grid">
+                    <div>
+                        <h4 style="margin-top:0;">Display Settings</h4>
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom: 2rem;">
+                            <label style="margin:0;">Dark Mode (Night Duty)</label>
+                            <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode(this.checked)" style="width:20px; height:20px; margin:0;">
+                        </div>
+                        <h4 style="margin-top:0;">Letterhead / Rx Builder</h4>
+                        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">These details appear at the top of printed prescriptions.</p>
+                        <div class="row-inputs"><div><label>Doctor's Name</label><input type="text" id="setDocName" placeholder="Dr. Peter Suraj Joseph"></div><div><label>Qualifications</label><input type="text" id="setQual" placeholder="MBBS, MD"></div></div>
+                        <label>Clinic Name</label><input type="text" id="setClinic" placeholder="Sunrise Clinic">
+                        <label>Tagline</label><input type="text" id="setTagline" placeholder="Child Development Center">
+                        <div class="row-inputs"><div><label>Phone</label><input type="text" id="setPhone" placeholder="Phone"></div><div><label>Address</label><input type="text" id="setAddress" placeholder="Location"></div></div>
+                        <button class="action" onclick="saveSettings()">💾 Save Settings</button>
+                    </div>
+                    <div>
+                        <h4 style="margin-top:0; color:var(--primary);">About Pediatric Clinical Hub</h4>
+                        <p style="font-size:0.95rem; line-height:1.6;">The Pediatric Clinical Hub is an advanced, client-side, zero-latency bedside assistance platform compiled to deliver decision tracking in high-throughput OPDs and NICUs.</p>
+                        <p style="font-size:0.85rem; color:var(--success); border-left:3px solid var(--success); padding-left:10px;">All computations execute entirely client-side preserving strict data privacy parameters. No patient data leaves your device.</p>
+                        <div style="margin-top:2rem; border-top:1px solid var(--border-soft); padding-top:1rem; text-align:center;">
+                            <span style="font-size:0.85rem; color:var(--text-muted);">Principal Architect:</span>
+                            <h3 style="margin:5px 0 0 0; color:var(--primary);">Dr. Peter Suraj Joseph</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> </div> </div> <div id="printEngine"></div>
+        <script>
+    // --- 1. CLINICAL DATABASES ---
+    const drugDb = {
+        "antibiotics": [
+            { name: "Amoxicillin 125mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Amoxicillin 250mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Amox+Clav 62.5mg/ml drops", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 62.5, vol: 1 },
+            { name: "Amox+Clav 156mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 156, vol: 5 },
+            { name: "Amox+Clav (200/28)mg/5ml", doseMg: 40, doseType: "perDay", div: 2, freq: "BID", conc: 200, vol: 5 },
+            { name: "Amox+Clav 312mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 312, vol: 5 },
+            { name: "Amox+Clav (400/57)mg/5ml", doseMg: 40, doseType: "perDay", div: 2, freq: "BID", conc: 400, vol: 5 },
+            { name: "Amox+Clav (600/42.9)mg/5ml", doseMg: 90, doseType: "perDay", div: 2, freq: "BID", conc: 600, vol: 5 },
+            { name: "Cefixime 100mg/5ml", doseMg: 8, doseType: "perDay", div: 2, freq: "BID", conc: 100, vol: 5 },
+            { name: "Cefaclor 125mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Cefaclor 250mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Cefaclor 375mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 375, vol: 5 },
+            { name: "Cefuroxime 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cefuroxime 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Cefdinir 125mg/5ml", doseMg: 14, doseType: "perDay", div: 1, freq: "QD or BID", conc: 125, vol: 5 },
+            { name: "Cefdinir 250mg/5ml", doseMg: 14, doseType: "perDay", div: 1, freq: "QD or BID", conc: 250, vol: 5 },
+            { name: "Cephalexin 125mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Cephalexin 250mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Cefadroxil 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cefadroxil 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Cefadroxil 500mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 500, vol: 5 },
+            { name: "Cephradine 125mg/5ml", doseMg: 25, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cephradine 250mg/5ml", doseMg: 25, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Cefpodoxime 40mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 40, vol: 5 },
+            { name: "Cefpodoxime 50mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 50, vol: 5 },
+            { name: "Cefpodoxime 100mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 100, vol: 5 },
+            { name: "Cefprozil 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cefprozil 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Azithromycin 100mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "QD (3-5 days)", conc: 100, vol: 5 },
+            { name: "Azithromycin 200mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "QD (3-5 days)", conc: 200, vol: 5 },
+            { name: "Erythromycin 200mg/5ml", doseMg: 40, doseType: "perDay", div: 4, freq: "QID", conc: 200, vol: 5 },
+            { name: "Erythromycin 400mg/5ml", doseMg: 40, doseType: "perDay", div: 4, freq: "QID", conc: 400, vol: 5 },
+            { name: "Clarithromycin 125mg/5ml", doseMg: 15, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Clarithromycin 250mg/5ml", doseMg: 15, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Mebendazole 100mg/5ml", doseMg: 100, doseType: "fixed", div: 1, freq: "Stat (Repeat 2wks)", conc: 100, vol: 5 },
+            { name: "Metronidazole 125mg/5ml", doseMg: 30, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Metronidazole 200mg/5ml", doseMg: 30, doseType: "perDay", div: 3, freq: "TID", conc: 200, vol: 5 },
+            { name: "Co-trimoxazole (40/200)mg/5ml", doseMg: 8, doseType: "perDay", div: 2, freq: "BID", conc: 40, vol: 5 }
+        ],
+        "antipyretics": [
+            { name: "Paracetamol 100mg/ml drops", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 100, vol: 1 },
+            { name: "Paracetamol 120mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 120, vol: 5 },
+            { name: "Paracetamol 125mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 125, vol: 5 },
+            { name: "Paracetamol 250mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 250, vol: 5 },
+            { name: "Paracetamol 500 mg Tablet", doseMg: 15, doseType: "fixed", div: 1, freq: "QID (PRN)", conc: 500, vol: 1 },
+            { name: "Paracetamol 650 mg Tablet", doseMg: 15, doseType: "fixed", div: 1, freq: "QID (PRN)", conc: 650, vol: 1 },
+            { name: "Paracetamol Suppository 80mg", doseMg: 15, doseType: "fixed", div: 1, freq: "Q6H PRN", conc: 80, vol: 1 },
+            { name: "Paracetamol Suppository 120mg", doseMg: 15, doseType: "fixed", div: 1, freq: "Q6H PRN", conc: 120, vol: 1 },
+            { name: "Paracetamol Suppository 250mg", doseMg: 15, doseType: "fixed", div: 1, freq: "Q6H PRN", conc: 250, vol: 1 },
+            { name: "Ibuprofen 40mg/ml drops", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H", conc: 40, vol: 1 },
+            { name: "Ibuprofen 100mg/5ml susp", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H", conc: 100, vol: 5 },
+            { name: "Diclofenac Suppository 12.5mg", doseMg: 1, doseType: "fixed", div: 1, freq: "BID or TID", conc: 12.5, vol: 1 },
+            { name: "Diclofenac Suppository 25mg", doseMg: 1, doseType: "fixed", div: 1, freq: "BID or TID", conc: 25, vol: 1 }
+        ],
+        "antihistamines": [
+            { name: "Dimetindene maleate 1mg/ml drops", doseMg: 0.1, doseType: "perDay", div: 3, freq: "TID", conc: 1, vol: 1 },
+            { name: "Dimetindene maleate 0.1mg/ml syrup", doseMg: 0.1, doseType: "perDay", div: 3, freq: "TID", conc: 0.1, vol: 1 },
+            { name: "Chlorpheniramine 2mg/5ml syrup", doseMg: 0.35, doseType: "perDay", div: 4, freq: "Q6H", conc: 2, vol: 5 },
+            { name: "Cetirizine 10mg/ml drops", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 10, vol: 1 },
+            { name: "Cetirizine 1mg/ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 1, vol: 1 },
+            { name: "Cetirizine 5mg/5ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 5, vol: 5 },
+            { name: "Levocetirizine 2.5mg/5ml syrup", doseMg: 0.125, doseType: "perDose", div: 1, freq: "QD", conc: 2.5, vol: 5 },
+            { name: "Loratadine 1mg/ml syrup", doseMg: 0.2, doseType: "perDose", div: 1, freq: "QD", conc: 1, vol: 1 },
+            { name: "Desloratadine 0.5mg/ml syrup", doseMg: 0.1, doseType: "perDose", div: 1, freq: "QD", conc: 0.5, vol: 1 },
+            { name: "Fexofenadine 30mg/5ml susp", doseMg: 2, doseType: "perDay", div: 2, freq: "BID", conc: 30, vol: 5 },
+            { name: "Promethazine 6.25mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 6.25, vol: 5 },
+            { name: "Dexamethasone 0.5mg/5ml syrup", doseMg: 0.3, doseType: "perDose", div: 1, freq: "Stat or QD", conc: 0.5, vol: 5 },
+            { name: "Prednisolone 15mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 2, freq: "BID", conc: 15, vol: 5 }
+        ],
+        "git": [
+            { name: "Domperidone 1mg/ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "TID (Before meals)", conc: 1, vol: 1 },
+            { name: "Metoclopramide 5mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID", conc: 5, vol: 5 },
+            { name: "Ondansetron 4mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID or Stat", conc: 4, vol: 5 },
+            { name: "Simethicone 40mg/ml drops", doseMg: 1, doseType: "perDose", div: 1, freq: "QID (After meals)", conc: 40, vol: 1 },
+            { name: "Hyoscine butylbromide 5mg/5ml", doseMg: 0.5, doseType: "perDose", div: 1, freq: "TID", conc: 5, vol: 5 },
+            { name: "Prifinium bromide 7.5mg/5ml", doseMg: 1, doseType: "perDose", div: 1, freq: "TID", conc: 7.5, vol: 5 },
+            { name: "Loperamide 1mg/5ml syrup", doseMg: 0.1, doseType: "perDose", div: 1, freq: "BID (Avoid <2 yrs)", conc: 1, vol: 5 },
+            { name: "Lactulose 66.7g/100ml syrup", doseMg: 667, doseType: "perDay", div: 2, freq: "BID", conc: 667, vol: 1 },
+            { name: "Glycerin Suppository", doseMg: 1, doseType: "fixed", div: 1, freq: "PRN", conc: 1, vol: 1 }
+        ],
+        "respiratory": [
+            { name: "Ascoril LS Junior Syrup", doseMg: 0, doseType: "fixed", div: 3, freq: "TID", conc: 0, vol: 5 },
+            { name: "Kuff-X Syrup", doseMg: 0, doseType: "fixed", div: 3, freq: "TID", conc: 0, vol: 5 },
+            { name: "Kuff-D Syrup", doseMg: 0, doseType: "fixed", div: 2, freq: "BID", conc: 0, vol: 5 },
+            { name: "Ambroxol 7.5mg/ml drops", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 7.5, vol: 1 },
+            { name: "Ambroxol 15mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 15, vol: 5 },
+            { name: "Ambroxol 30mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 30, vol: 5 },
+            { name: "Bromhexine HCl 4mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 4, vol: 5 },
+            { name: "Butamirate citrate 5mg/ml drops", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 5, vol: 1 },
+            { name: "Butamirate citrate 7.5mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 7.5, vol: 5 },
+            { name: "Carbocisteine 2% (100mg/5ml)", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 100, vol: 5 },
+            { name: "Carbocisteine 5% (250mg/5ml)", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Dextromethorphan 15mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 15, vol: 5 },
+            { name: "Guaifenesin 100mg/5ml syrup", doseMg: 10, doseType: "perDay", div: 4, freq: "QID", conc: 100, vol: 5 },
+            { name: "Terbutaline 1.5mg/5ml syrup", doseMg: 0.05, doseType: "perDose", div: 1, freq: "TID", conc: 1.5, vol: 5 },
+            { name: "Salbutamol 2mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID", conc: 2, vol: 5 },
+            { name: "Montelukast 4mg/5mg/10mg", doseMg: 0.2, doseType: "perDose", div: 1, freq: "QD (Evening)", conc: 4, vol: 1 },
+            { name: "Chlorpheniramine+Dextro (2/15)", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 15, vol: 5 },
+            { name: "Chlorphen+Pseudo (2/30)", doseMg: 4, doseType: "perDay", div: 3, freq: "TID", conc: 30, vol: 5 },
+            { name: "PCM+Chlorphen+Pseudo syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "TID", conc: 125, vol: 5 },
+            { name: "Triprolidine+Pseudo (1.25/30)", doseMg: 4, doseType: "perDay", div: 3, freq: "TID", conc: 30, vol: 5 },
+            { name: "Guai+Tripro+Pseudo syrup", doseMg: 10, doseType: "perDay", div: 3, freq: "TID", conc: 100, vol: 5 }
+        ]
+    };
+
+    const foodsDb = [
+        {name:"Boiled rice", cat:"Cereals", p:8.5, c:77, f:0, k:349},
+        {name:"Raw rice", cat:"Cereals", p:7.5, c:76, f:0, k:346},
+        {name:"Wheat", cat:"Cereals", p:12, c:71, f:0, k:346},
+        {name:"Ragi", cat:"Cereals", p:7, c:72, f:0, k:328},
+        {name:"Jowar", cat:"Cereals", p:10, c:72, f:0, k:349},
+        {name:"Banana", cat:"Fruits", p:1.2, c:27, f:0, k:116},
+        {name:"Apple", cat:"Fruits", p:0.2, c:13, f:0, k:59},
+        {name:"Mango", cat:"Fruits", p:0.6, c:17, f:0, k:74},
+        {name:"Dates(Dried)", cat:"Fruits", p:2.5, c:76, f:0, k:317},
+        {name:"Sweet Lime", cat:"Fruits", p:1.5, c:11, f:0, k:60},
+        {name:"Bengal gram", cat:"Pulses", p:17, c:61, f:0, k:360},
+        {name:"Green gram", cat:"Pulses", p:24, c:60, f:0, k:348},
+        {name:"Soya bean", cat:"Pulses", p:43, c:21, f:0, k:432},
+        {name:"Rajmah", cat:"Pulses", p:23, c:60, f:0, k:346},
+        {name:"Almond", cat:"Nuts", p:21, c:10, f:60, k:658},
+        {name:"Groundnut", cat:"Nuts", p:25, c:26, f:40, k:567},
+        {name:"Walnut", cat:"Nuts", p:34, c:11, f:64, k:687},
+        {name:"Cow's milk", cat:"Dairy", p:3.3, c:4.4, f:4.1, k:67},
+        {name:"Buffalo milk", cat:"Dairy", p:4.3, c:5.0, f:6.5, k:117},
+        {name:"Breast milk", cat:"Dairy", p:1.1, c:7.4, f:3.4, k:65},
+        {name:"Curds", cat:"Dairy", p:3.1, c:3.0, f:4.0, k:60},
+        {name:"Chicken", cat:"Meat", p:25, c:0, f:0.6, k:109},
+        {name:"Egg hen", cat:"Meat", p:13, c:0, f:13, k:173},
+        {name:"Mutton", cat:"Meat", p:20, c:0, f:13, k:194},
+        {name:"Potato", cat:"Vegetables", p:1, c:22, f:0.1, k:97},
+        {name:"Carrot", cat:"Vegetables", p:1, c:11, f:0.2, k:48},
+        {name:"Sweet potato", cat:"Vegetables", p:1, c:28, f:0.3, k:120}
+    ];
+
+    const baseVaccineSchema = [
+        { id: "bcg", name: "BCG", window: "At Birth", group: "Infant", baseOffsetWeeks: 0, strategy: "Give ASAP." },
+        { id: "opv0", name: "OPV-0", window: "At Birth", group: "Infant", baseOffsetWeeks: 0, strategy: "Max 15 days." },
+        { id: "hepB0", name: "Hepatitis B-0", window: "At Birth", group: "Infant", baseOffsetWeeks: 0, strategy: "Give within 24h." },
+        { id: "penta1", name: "Pentavalent-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Max 1 yr." },
+        { id: "opv1", name: "OPV-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Up to 5 yrs." },
+        { id: "fipv1", name: "fIPV-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Fractional dose (ID)." },
+        { id: "pcv1", name: "PCV-1", window: "6 Wks", group: "Infant", baseOffsetWeeks: 6, strategy: "Max 1 yr." },
+        { id: "penta2", name: "Pentavalent-2", window: "10 Wks", group: "Infant", baseOffsetWeeks: 10, dependsOn: "penta1", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "opv2", name: "OPV-2", window: "10 Wks", group: "Infant", baseOffsetWeeks: 10, dependsOn: "opv1", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "penta3", name: "Pentavalent-3", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "penta2", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "opv3", name: "OPV-3", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "opv2", minIntervalWeeks: 4, strategy: "4wk gap." },
+        { id: "fipv2", name: "fIPV-2", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "fipv1", minIntervalWeeks: 8, strategy: "8wk gap." },
+        { id: "pcv2", name: "PCV-2", window: "14 Wks", group: "Infant", baseOffsetWeeks: 14, dependsOn: "pcv1", minIntervalWeeks: 8, strategy: "8wk gap." },
+        { id: "mr1", name: "MR-1", window: "9 Mos", group: "Infant", baseOffsetWeeks: 39, strategy: "Up to 5 yrs." },
+        { id: "pcvB", name: "PCV Booster", window: "9 Mos", group: "Infant", baseOffsetWeeks: 39, dependsOn: "pcv2", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "je1", name: "JE-1", window: "9 Mos", group: "Infant", baseOffsetWeeks: 39, condition: "je", strategy: "Endemic areas." },
+        { id: "mr2", name: "MR-2", window: "16-24 Mos", group: "Toddler", baseOffsetWeeks: 69, dependsOn: "mr1", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "dptB1", name: "DPT Booster-1", window: "16-24 Mos", group: "Toddler", baseOffsetWeeks: 69, dependsOn: "penta3", minIntervalWeeks: 24, strategy: "6mo gap required." },
+        { id: "je2", name: "JE-2", window: "16-24 Mos", group: "Toddler", baseOffsetWeeks: 69, condition: "je", dependsOn: "je1", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "dptB2", name: "DPT Booster-2", window: "5-6 Yrs", group: "Toddler", baseOffsetWeeks: 260, strategy: "Max 7 yrs." },
+        { id: "hpv1", name: "HPV-1", window: "9-14 Yrs", group: "Adolescent", baseOffsetWeeks: 468, condition: "female", strategy: "Girls only." },
+        { id: "hpv2", name: "HPV-2", window: "6 Mos Post Dose 1", group: "Adolescent", baseOffsetWeeks: 494, condition: "female", dependsOn: "hpv1", minIntervalWeeks: 24, strategy: "6mo gap." },
+        { id: "td10", name: "Td-10", window: "10 Yrs", group: "Adolescent", baseOffsetWeeks: 520, strategy: "Tetanus/Diphtheria." },
+        { id: "td16", name: "Td-16", window: "16 Yrs", group: "Adolescent", baseOffsetWeeks: 832, strategy: "Tetanus/Diphtheria." }
+    ];
+
+    const milestonesDb = {
+        2: [ { id: "m2_1", domain: "Social", text: "Social smile.", sig: "Visual deficit." }, { id: "m2_2", domain: "Lang", text: "Coos.", sig: "Hearing deficit." }, { id: "m2_3", domain: "Motor", text: "Head steady.", sig: "Hypotonia." } ],
+        4: [ { id: "m4_1", domain: "Social", text: "Laughs out loud.", sig: "Social delay." }, { id: "m4_2", domain: "Motor", text: "Reaches for toys.", sig: "Motor delay." }, { id: "m4_3", domain: "Motor", text: "Rolls tummy to back.", sig: "Hyper/hypotonia." } ],
+        6: [ { id: "m6_1", domain: "Motor", text: "Sits without support.", sig: "CP red flag." }, { id: "m6_2", domain: "Lang", text: "Babbles.", sig: "Hearing loss." }, { id: "m6_3", domain: "Motor", text: "Transfers objects.", sig: "Hemiplegia." } ],
+        9: [ { id: "m9_1", domain: "Motor", text: "Pincer grasp.", sig: "Fine motor delay." }, { id: "m9_2", domain: "Motor", text: "Pulls to stand.", sig: "Hypotonia." }, { id: "m9_3", domain: "Lang", text: "Responds to name.", sig: "Hearing/ASD." }, { id: "m9_4", domain: "Motor", text: "Pats a cake.", sig: "Coordination." } ],
+        12: [ { id: "m12_1", domain: "Lang", text: "1-2 words.", sig: "Speech delay." }, { id: "m12_2", domain: "Motor", text: "Cruises/Walks.", sig: "Pathology." }, { id: "m12_3", domain: "Social", text: "Points to objects.", sig: "ASD risk." } ],
+        18: [ { id: "m18_1", domain: "Motor", text: "Walks alone/backwards.", sig: "Neuro eval." }, { id: "m18_2", domain: "Lang", text: "10-15 words.", sig: "Speech delay." }, { id: "m18_3", domain: "Motor", text: "Uses spoon.", sig: "Coordination." } ],
+        24: [ { id: "m24_1", domain: "Lang", text: "2-word sentences.", sig: "Speech eval." }, { id: "m24_2", domain: "Cognitive", text: "Points to 3 body parts.", sig: "Cognitive delay." }, { id: "m24_3", domain: "Social", text: "Parallel play.", sig: "ASD risk." } ],
+        36: [ { id: "m36_1", domain: "Lang", text: "3-4 word sentences.", sig: "Articulation." }, { id: "m36_2", domain: "Motor", text: "Pedals tricycle.", sig: "Coordination." }, { id: "m36_3", domain: "Motor", text: "Copies a circle.", sig: "Visual-motor." } ]
+    };
+
+    // --- 2. GLOBAL STATE ---
+    let appSettings;
+    try { appSettings = JSON.parse(localStorage.getItem('clinic_settings')) || { docName: "Dr. Peter Suraj Joseph", qual: "MBBS, MD (Pediatrics)", clinicName: "Pediatric Clinical Hub", tagline: "", phone: "", address: "", logo: "", isDark: false }; } catch(e) { appSettings = { docName: "Dr. Peter Suraj Joseph", qual: "MBBS, MD (Pediatrics)", clinicName: "Pediatric Clinical Hub", tagline: "", phone: "", address: "", logo: "", isDark: false }; }
+
+    let globalPatientsStore;
+    try { globalPatientsStore = JSON.parse(localStorage.getItem('nis_patients')) || {}; } catch(e) { globalPatientsStore = {}; }
+    
+    let customDrugsStore;
+    try { customDrugsStore = JSON.parse(localStorage.getItem('custom_drugs')) || { "antibiotics": [], "antipyretics": [], "antihistamines": [], "git": [], "respiratory": [] }; } catch(e) { customDrugsStore = { "antibiotics": [], "antipyretics": [], "antihistamines": [], "git": [], "respiratory": [] }; }
+
+    let activePatientId = null; 
+    let currentPatientAgeInMonths = 0; 
+    let pendingPrescriptionDrug = null;
+    let wtChartInstance = null; 
+    let htChartInstance = null;
+    // --- 2. INITIALIZATION & UI ROUTING ---
+    document.addEventListener("DOMContentLoaded", function() {
+        applySettingsToUI();
+        renderPatientBadges(); 
+        renderFoodDB(foodsDb);
+        populateFoodSelect();
+        buildMilestoneReference();
+        populateDrugs(); 
+        
+        if(Object.keys(globalPatientsStore).length === 0) { 
+            document.getElementById('calcWeight').value = "10"; 
+            calculateDose(); 
+        }
+        switchMainFeature('trackerFeatureView', document.querySelector('.feature-btn.active'));
+    });
+
+    function applySettingsToUI() {
+        if(appSettings.isDark) { document.body.classList.add('dark-mode'); document.getElementById('darkModeToggle').checked = true; }
+        else { document.body.classList.remove('dark-mode'); document.getElementById('darkModeToggle').checked = false; }
+        if(document.getElementById('setDocName')) document.getElementById('setDocName').value = appSettings.docName || "";
+        if(document.getElementById('setClinic')) document.getElementById('setClinic').value = appSettings.clinicName || "";
+    }
+
+    function toggleDarkMode(isDark) {
+        if(isDark) { document.body.classList.add('dark-mode'); appSettings.isDark = true; }
+        else { document.body.classList.remove('dark-mode'); appSettings.isDark = false; }
+        localStorage.setItem('clinic_settings', JSON.stringify(appSettings));
+    }
+
+    function openSettingsModal() { 
+        document.getElementById('setDocName').value = appSettings.docName || "";
+        document.getElementById('setQual').value = appSettings.qual || "";
+        document.getElementById('setClinic').value = appSettings.clinicName || "";
+        document.getElementById('setTagline').value = appSettings.tagline || "";
+        document.getElementById('setPhone').value = appSettings.phone || "";
+        document.getElementById('setAddress').value = appSettings.address || "";
+        if(appSettings.logo) document.getElementById('logoPreview').innerHTML = `<img src="${appSettings.logo}" style="max-height:80px;">`;
+        document.getElementById('settingsModal').style.display = "flex"; 
+    }
+    
+    function closeSettingsModal() { document.getElementById('settingsModal').style.display = "none"; }
+    
+    function handleLogoUpload(i) { 
+        const f = i.files[0]; 
+        if(f) { 
+            const reader = new FileReader(); 
+            reader.onload = e => { 
+                appSettings.logo = e.target.result; 
+                document.getElementById('logoPreview').innerHTML = `<img src="${e.target.result}" style="max-height:80px;">`; 
+            }; 
+            reader.readAsDataURL(f); 
+        } 
+    }
+    
+    function saveSettings() { 
+        appSettings.clinicName = document.getElementById('setClinic').value; 
+        appSettings.docName = document.getElementById('setDocName').value; 
+        appSettings.qual = document.getElementById('setQual').value; 
+        appSettings.tagline = document.getElementById('setTagline').value; 
+        appSettings.address = document.getElementById('setAddress').value; 
+        appSettings.phone = document.getElementById('setPhone').value; 
+        localStorage.setItem('clinic_settings', JSON.stringify(appSettings)); 
+        closeSettingsModal(); 
+    }
+
+     function switchMainFeature(viewId, el) {
+        document.querySelectorAll('.view-content').forEach(vc => vc.classList.remove('active-view'));
+        document.querySelectorAll('.feature-btn').forEach(fb => fb.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active-view'); 
+        if(el) el.classList.add('active');
+        
+        const workspace = document.getElementById('activeWorkspace'); 
+        const emptyState = document.getElementById('emptyStatePlaceholder');
+        const unlocked = ['dosageFeatureView', 'growthFeatureView', 'fluidsFeatureView', 'asthmaFeatureView', 'jaundiceFeatureView', 'nutritionFeatureView', 'erFeatureView', 'aboutFeatureView'];
+        
+        if(unlocked.includes(viewId)) {
+            workspace.style.display = 'block'; emptyState.style.display = 'none';
+            let w = parseFloat(document.getElementById('pWeight') ? document.getElementById('pWeight').value : 0);
+            if(!isNaN(w) && w > 0) { 
+                if(document.getElementById('calcWeight')) document.getElementById('calcWeight').value = w; 
+                if(document.getElementById('fluidWeight')) document.getElementById('fluidWeight').value = w; 
+                if(document.getElementById('crashWeight')) document.getElementById('crashWeight').value = w; 
+            }
+            if(viewId === 'dosageFeatureView') calculateDose();
+            if(viewId === 'fluidsFeatureView') calcFluids();
+            if(viewId === 'growthFeatureView') calcGrowth();
+            if(viewId === 'nutritionFeatureView') { calcNutrition(); renderDietRecall(); }
+            if(viewId === 'erFeatureView') calcCrash();
+        } else {
+            // If the module requires a patient and none is selected, show an explicit warning
+            if(!activePatientId) { 
+                workspace.style.display = 'none'; 
+                emptyState.style.display = 'block'; 
+                let moduleName = el ? el.innerText.replace(/[^a-zA-Z\s]/g, '').trim() : 'this module';
+                emptyState.innerHTML = `<h2 style="font-size: 3rem; margin-bottom: 0;">⚠️</h2><h2 class="section-title" style="border:none; justify-content: center; color: var(--warning);">Patient Required</h2><p>Please select or register a patient in the sidebar to access the <b>${moduleName}</b>.</p>`;
+            } else { 
+                workspace.style.display = 'block'; emptyState.style.display = 'none'; 
+                if(viewId === 'milestoneFeatureView') renderMilestoneDashboard(); 
+                if(viewId === 'malnutritionFeatureView') { calcMalnutrition(); renderSensory(); }
+            }
+        }
+    }
+
+    function switchSubTab(subTabId, el) { 
+        const parent = el.parentElement;
+        parent.querySelectorAll('.sub-tab-btn').forEach(stb => stb.classList.remove('active')); 
+        const container = parent.parentElement;
+        container.querySelectorAll('.sub-tab-content').forEach(stc => stc.classList.remove('active')); 
+        document.getElementById(subTabId).classList.add('active'); 
+        el.classList.add('active'); 
+    }
+
+    function toggleMobileRegistry() {
+        const panel = document.getElementById('registryPanel');
+        if(panel.classList.contains('mobile-open')) { panel.classList.remove('mobile-open'); } 
+        else { panel.classList.add('mobile-open'); }
+    }
+
+    // --- 3. PATIENT REGISTRY ---
+    function getExpectedWeight(totalM) {
+        if (!totalM) return 0;
+        let y = Math.floor(totalM / 12);
+        if (totalM < 12) return (totalM + 9) / 2;
+        if (y >= 1 && y <= 6) return (y * 2) + 8;
+        if (y >= 7 && y <= 12) return ((y * 7) - 5) / 2;
+        return (y * 2) + 8; 
+    }
+
+    function prepNewPatient() {
+        activePatientId = null;
+        document.getElementById('pName').value = ""; document.getElementById('pPhone').value = "";
+        document.getElementById('dob').value = ""; document.getElementById('ageYrs').value = ""; document.getElementById('ageMos').value = "";
+        document.getElementById('pWeight').value = ""; document.getElementById('htCm').value = ""; document.getElementById('hcCm').value = "";
+        if(document.getElementById('jeEndemic')) document.getElementById('jeEndemic').checked = false; 
+        document.getElementById('calcWeight').value = ""; document.getElementById('fluidWeight').value = ""; document.getElementById('crashWeight').value = "";
+        
+        // Reset empty state back to default welcome screen
+        const emptyState = document.getElementById('emptyStatePlaceholder');
+        emptyState.innerHTML = `<h2 style="font-size: 3rem; margin-bottom: 0;">🏥</h2><h2 class="section-title" style="border:none; justify-content: center;">Welcome to the Hub</h2><p>Select a module from the menu or register a patient to begin.</p>`;
+        emptyState.style.display = "block";
+        
+        document.getElementById('activeWorkspace').style.display = "none";
+        if(document.getElementById('btnMasterPrint')) document.getElementById('btnMasterPrint').style.display = "none";
+        if(document.getElementById('btnMasterWA')) document.getElementById('btnMasterWA').style.display = "none";
+        if(document.getElementById('mobileBannerText')) document.getElementById('mobileBannerText').innerText = "👤 Select / Register Patient";
+        renderPatientBadges();
+    }
+
+    function calculateAgeFromDob() {
+        const dobVal = document.getElementById('dob').value; if(!dobVal) return;
+        const dob = new Date(dobVal); const today = new Date();
+        let months = (today.getFullYear() - dob.getFullYear()) * 12; months -= dob.getMonth(); months += today.getMonth();
+        let years = Math.floor(months / 12); let remMonths = months % 12;
+        document.getElementById('ageYrs').value = years < 0 ? 0 : years;
+        document.getElementById('ageMos').value = remMonths < 0 ? 0 : remMonths;
+        estimateWeightFromAge();
+    }
+
+    function estimateWeightFromAge() {
+        let y = parseInt(document.getElementById('ageYrs').value) || 0;
+        let m = parseInt(document.getElementById('ageMos').value) || 0;
+        currentPatientAgeInMonths = (y * 12) + m; if(currentPatientAgeInMonths === 0) return;
+        let estKg = getExpectedWeight(currentPatientAgeInMonths);
+        document.getElementById('pWeight').value = estKg.toFixed(1);
+        document.getElementById('calcWeight').value = estKg.toFixed(1);
+        if(document.getElementById('fluidWeight')) document.getElementById('fluidWeight').value = estKg.toFixed(1);
+        if(document.getElementById('crashWeight')) document.getElementById('crashWeight').value = estKg.toFixed(1);
+        if(document.getElementById('calcQuickAge')) document.getElementById('calcQuickAge').value = currentPatientAgeInMonths;
+        if(document.getElementById('crashAge')) document.getElementById('crashAge').value = y;
+        calculateDose(); calcNutrition(); renderDietRecall(); calcCrash();
+    }
+
+    function saveAndRegisterPatient(isBackgroundUpdate = false) {
+        const id = activePatientId || 'p_' + Date.now();
+        let y = parseInt(document.getElementById('ageYrs').value) || 0;
+        let m = parseInt(document.getElementById('ageMos').value) || 0;
+        currentPatientAgeInMonths = (y * 12) + m;
+        let nameStr = document.getElementById('pName').value.trim() || "Anonymous";
+        
+        globalPatientsStore[id] = {
+            id: id, name: nameStr, dob: document.getElementById('dob').value,
+            phone: document.getElementById('pPhone').value.trim(),
+            gender: document.getElementById('gender').value,
+            weight: document.getElementById('pWeight').value,
+            htCm: document.getElementById('htCm').value,
+            hcCm: document.getElementById('hcCm') ? document.getElementById('hcCm').value : "",
+            je: document.getElementById('jeEndemic') ? document.getElementById('jeEndemic').checked : false,
+            ageYrs: y, ageMos: m, totalMonths: currentPatientAgeInMonths,
+            givenDates: globalPatientsStore[id]?.givenDates || {},
+            achievedMilestones: globalPatientsStore[id]?.achievedMilestones || {},
+            rxList: globalPatientsStore[id]?.rxList || [],
+            dietLogs: globalPatientsStore[id]?.dietLogs || []
+        };
+        
+        localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); activePatientId = id;
+        if(document.getElementById('mobileBannerText')) document.getElementById('mobileBannerText').innerText = `👤 ${nameStr} (${y}Y ${m}M)`;
+        
+        if(!isBackgroundUpdate) {
+            document.getElementById('registryPanel').classList.remove('mobile-open');
+            renderPatientBadges(); triggerActiveWorkspaceBuild(id);
+        } else {
+            calculateDose(); renderMilestoneDashboard(); calcGrowth(); calcMalnutrition(); calcNutrition();
+        }
+    }
+
+    function renderPatientBadges() {
+        const container = document.getElementById('patientListContainer'); container.innerHTML = "";
+        Object.values(globalPatientsStore).forEach(p => {
+            const b = document.createElement('div');
+            b.className = "patient-badge" + (p.id === activePatientId ? " active-patient" : "");
+            b.innerHTML = `<span><b>${p.name}</b></span> <small>${p.ageYrs}Y ${p.ageMos}M</small>`;
+            b.onclick = () => {
+                activePatientId = p.id;
+                document.getElementById('pName').value = p.name;
+                document.getElementById('dob').value = p.dob || "";
+                document.getElementById('pPhone').value = p.phone || "";
+                document.getElementById('ageYrs').value = p.ageYrs || 0;
+                document.getElementById('ageMos').value = p.ageMos || 0;
+                document.getElementById('gender').value = p.gender || 'male';
+                document.getElementById('pWeight').value = p.weight || "";
+                document.getElementById('htCm').value = p.htCm || "";
+                if(document.getElementById('hcCm')) document.getElementById('hcCm').value = p.hcCm || "";
+                if(document.getElementById('jeEndemic')) document.getElementById('jeEndemic').checked = p.je || false;
+                currentPatientAgeInMonths = p.totalMonths || 0;
+                document.getElementById('calcWeight').value = p.weight || "";
+                if(document.getElementById('calcQuickAge')) document.getElementById('calcQuickAge').value = p.totalMonths || "";
+                if(document.getElementById('crashWeight')) document.getElementById('crashWeight').value = p.weight || "";
+                if(document.getElementById('crashAge')) document.getElementById('crashAge').value = p.ageYrs || 0;
+                if(document.getElementById('mobileBannerText')) document.getElementById('mobileBannerText').innerText = `👤 ${p.name} (${p.ageYrs}Y ${p.ageMos}M)`;
+                document.getElementById('registryPanel').classList.remove('mobile-open');
+                renderPatientBadges(); triggerActiveWorkspaceBuild(p.id);
+            };
+            container.appendChild(b);
+        });
+    }
+
+    function triggerActiveWorkspaceBuild(pId) {
+        document.getElementById('emptyStatePlaceholder').style.display = "none"; document.getElementById('activeWorkspace').style.display = "block"; 
+        if(document.getElementById('btnMasterPrint')) document.getElementById('btnMasterPrint').style.display = "flex";
+        if(document.getElementById('btnMasterWA')) document.getElementById('btnMasterWA').style.display = "flex";
+        calculateAndRenderTimeline(pId); calculateDose(); renderMilestoneDashboard(); renderRxCartList(); calcGrowth(); calcMalnutrition(); calcNutrition(); renderSensory(); renderDietRecall(); calcCrash();
+    }
+
+    function clearAllData() { 
+        if(confirm("Delete all stored patient logs, custom drugs, and settings?")) { 
+            localStorage.removeItem('nis_patients'); 
+            localStorage.removeItem('custom_drugs'); 
+            localStorage.removeItem('clinic_settings'); 
+            location.reload(); 
+        } 
+    }
+
+    // --- 4. DOSAGE ENGINE ---
+    function populateDrugs() {
+        const cat = document.getElementById('drugCategory').value;
+        const formSelect = document.getElementById('drugFormulation');
+        formSelect.innerHTML = '<option value="">-- Choose Formulation --</option>';
+        if(cat && drugDb[cat]) {
+            let combined = [...drugDb[cat], ...(customDrugsStore[cat] || [])];
+            combined.forEach((drug, idx) => {
+                let opt = document.createElement('option');
+                opt.value = idx; opt.text = drug.name; formSelect.add(opt);
+            });
+        }
+    }
+
+    function saveCustomDrug() {
+        let cat = document.getElementById('newDrugCat').value;
+        let name = document.getElementById('newDrugName').value.trim();
+        let dose = parseFloat(document.getElementById('newDrugDose').value) || 0;
+        let type = document.getElementById('newDrugType').value;
+        let div = parseFloat(document.getElementById('newDrugDiv').value) || 1;
+        let freq = document.getElementById('newDrugFreq').value.trim();
+        let conc = parseFloat(document.getElementById('newDrugConc').value) || 1;
+        let vol = parseFloat(document.getElementById('newDrugVol').value) || 1;
+
+        if(!name || !freq) { alert("Please fill parameters."); return; }
+        if(!customDrugsStore[cat]) customDrugsStore[cat] = [];
+        customDrugsStore[cat].push({ name: name, doseMg: dose, doseType: type, div: div, freq: freq, conc: conc, vol: vol });
+        localStorage.setItem('custom_drugs', JSON.stringify(customDrugsStore));
+        alert(name + " added successfully.");
+        document.getElementById('newDrugName').value = ''; populateDrugs();
+    }
+
+    function quickEstimateWeight() { let m = parseInt(document.getElementById('calcQuickAge').value); if(m){ let w = getExpectedWeight(m); document.getElementById('calcWeight').value = w.toFixed(1); calculateDose(); } }
+
+    function calculateDose() {
+        const weight = parseFloat(document.getElementById('calcWeight').value); 
+        const cat = document.getElementById('drugCategory').value; 
+        const drugIndex = document.getElementById('drugFormulation').value;
+        const outputArea = document.getElementById('calcOutputArea'); 
+        const addButtonArea = document.getElementById('rxAddButtonArea');
+        
+        if(!weight || isNaN(weight) || !cat || drugIndex === "") { outputArea.style.display = 'none'; addButtonArea.innerHTML = ''; pendingPrescriptionDrug = null; return; }
+        let combined = [...(drugDb[cat]||[]), ...(customDrugsStore[cat]||[])];
+        const drug = combined[drugIndex];
+        
+        let volMl = 0; let details = ""; let unitStr = drug.vol === 1 ? 'Unit/Tab' : 'mL';
+        
+        if (drug.doseType === 'fixed') {
+            volMl = drug.vol; details = "Fixed Clinical Direct Output";
+            outputArea.innerHTML = `<div class="result-card"><p style="margin-top:0; color:var(--text-muted); font-weight:600; font-size:0.85rem; letter-spacing:0.05em;">Administer Quantity</p><h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${volMl.toFixed(1)} ${unitStr}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}</p></div>`;
+        } else {
+            let targetMg = drug.doseType === 'perDay' ? (weight * drug.doseMg) / drug.div : (weight * drug.doseMg);
+            volMl = (targetMg * drug.vol) / drug.conc; details = `${targetMg.toFixed(1)} mg/dose Target`;
+            outputArea.innerHTML = `<div class="result-card"><p style="margin-top:0; color:var(--text-muted); font-weight:600; font-size:0.85rem; letter-spacing:0.05em;">Administer Volume</p><h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${volMl.toFixed(1)} ${unitStr}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}</p><div style="font-size:0.85rem; color:#64748b; margin-top:1rem; border-top:1px dashed var(--border-soft); padding-top:1rem;">[(${weight}kg × ${drug.doseMg}mg) × ${drug.vol}] ÷ ${drug.conc}mg</div></div>`;
+        }
+        pendingPrescriptionDrug = { name: drug.name, vol: volMl.toFixed(1), freq: drug.freq, details: details, unit: unitStr };
+        addButtonArea.innerHTML = activePatientId ? `<button onclick='addPendingToRxCart()' class='action'>➕ Add to Prescription Pad</button>` : "";
+        outputArea.style.display = 'block';
+    }
+
+    function addPendingToRxCart() { if(!activePatientId || !pendingPrescriptionDrug) return; globalPatientsStore[activePatientId].rxList.push(pendingPrescriptionDrug); localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); document.getElementById('drugFormulation').value = ""; document.getElementById('calcOutputArea').style.display = 'none'; document.getElementById('rxAddButtonArea').innerHTML = ''; pendingPrescriptionDrug = null; renderRxCartList(); }
+    function removeDrugFromCart(idx) { globalPatientsStore[activePatientId].rxList.splice(idx,1); localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderRxCartList(); }
+    function renderRxCartList() { 
+        const container = document.getElementById('rxCartList'); if(!activePatientId) return; 
+        let list = globalPatientsStore[activePatientId].rxList || []; 
+        container.innerHTML = list.length === 0 ? "<div style='color:var(--text-muted); padding:1rem;'>Prescription pad empty.</div>" : list.map((r,i)=>`<div class='rx-cart-item'><div><h4 style="margin:0 0 5px 0;">${i + 1}. ${r.name}</h4><div style="color:var(--primary); font-weight:bold; font-size:1.05rem;">Take ${r.vol} ${r.unit || 'mL'} &mdash; ${r.freq}</div><div style="margin-top:4px; font-size:0.85rem; color:var(--text-muted);">Target: ${r.details}</div></div><button onclick='removeDrugFromCart(${i})' class='secondary' style='background:var(--danger); color:white; border:none; padding:8px 12px; width:auto;'>Delete</button></div>`).join(""); 
+    }
+
+    // --- 5. IMMUNIZATION TRACKER ---
+    function calculateAndRenderTimeline(pId) {
+        const patient = globalPatientsStore[pId]; const baseDate = new Date(patient.dob || new Date()); const today = new Date();
+        document.getElementById('timelineOutput').innerHTML = ""; document.getElementById('auditOutput').innerHTML = "";
+        let computedTimeline = {};
+        
+        baseVaccineSchema.forEach(v => {
+            if(v.condition === "je" && !patient.je) return;
+            if(v.condition === "female" && patient.gender !== "female") return;
+            let targetDate = new Date(baseDate); targetDate.setDate(targetDate.getDate() + (v.baseOffsetWeeks * 7));
+            let finalDue = new Date(targetDate); let altered = false;
+            if(v.dependsOn && computedTimeline[v.dependsOn]) {
+                const parentDate = new Date(patient.givenDates[v.dependsOn] || computedTimeline[v.dependsOn].projected);
+                const minInterval = new Date(parentDate); minInterval.setDate(minInterval.getDate() + (v.minIntervalWeeks * 7));
+                if(finalDue < minInterval) { finalDue = minInterval; altered = true; }
+            }
+            let status = patient.givenDates[v.id] ? "done" : (finalDue < today ? "overdue" : "upcoming");
+            computedTimeline[v.id] = { ...v, projected: finalDue.toISOString().split('T')[0], actual: patient.givenDates[v.id] || "", isDelayed: altered, status: status };
+        });
+
+        let groups = {}; Object.values(computedTimeline).forEach(item => { if(!groups[item.group]) groups[item.group] = []; groups[item.group].push(item); });
+        for (const [gName, vaxList] of Object.entries(groups)) {
+            const card = document.createElement('div'); card.className = "timeline-section"; card.innerHTML = `<h3 class="section-title">${gName}</h3>`;
+            vaxList.forEach(v => {
+                const prettyDue = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+                const isDone = v.actual !== "";
+                card.innerHTML += `<div class="vaccine-row"><div class="vaccine-info"><h4>${v.name}</h4><div class="vaccine-meta" style="margin-bottom:0.4rem;">Window: ${v.window}</div><div class="action-protocol-card"><b>Strategy:</b> ${v.strategy}</div></div><div class="date-display-box ${v.isDelayed ? 'shifted':''}">${isDone ? '✅ Completed' : prettyDue}</div><div class="date-picker-cell"><input type="checkbox" title="Check for today" class="tick-box" ${isDone ? 'checked' : ''} onchange="toggleVaccineAdministered('${pId}', '${v.id}', this.checked)"><div style="text-align:left;"><label style="margin:0; font-size:10px; color:var(--text-muted);">Given On:</label><input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}', '${v.id}', this.value)"></div></div></div>`;
+            });
+            document.getElementById('timelineOutput').appendChild(card);
+        }
+
+        const odBox = document.createElement('div'); odBox.innerHTML = "<h4 style='color:var(--danger); margin-bottom:1rem;'>⚠️ Overdue</h4>";
+        const dnBox = document.createElement('div'); dnBox.innerHTML = "<h4 style='color:var(--success); margin-bottom:1rem;'>✅ Completed</h4>";
+        const upBox = document.createElement('div'); upBox.innerHTML = "<h4 style='color:var(--primary); margin-bottom:1rem;'>📅 Future</h4>";
+        patient.upcomingVaccinesForWhatsapp = [];
+        Object.values(computedTimeline).forEach(v => {
+            const prettyProj = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+            const card = document.createElement('div'); card.className = `audit-card`;
+            if(v.status === 'overdue') { card.innerHTML = `<div><b style="color:var(--text-main);">${v.name}</b><br><small style="color:var(--text-muted);">Target was: ${prettyProj}</small></div> <span class="status-pill overdue">Missed</span>`; odBox.appendChild(card); patient.upcomingVaccinesForWhatsapp.push(v.name); }
+            else if(v.status === 'done') { card.innerHTML = `<div><b style="color:var(--text-main);">${v.name}</b><br><small style="color:var(--text-muted);">Given on: ${new Date(v.actual).toLocaleDateString('en-IN')}</small></div> <span class="status-pill done">Given</span>`; dnBox.appendChild(card); }
+            else { card.innerHTML = `<div><b style="color:var(--text-main);">${v.name}</b><br><small style="color:var(--text-muted);">Due: ${prettyProj}</small></div> <span class="status-pill upcoming">Upcoming</span>`; upBox.appendChild(card); if(patient.upcomingVaccinesForWhatsapp.length < 4) patient.upcomingVaccinesForWhatsapp.push(v.name); }
+        });
+        document.getElementById('auditOutput').appendChild(odBox); document.getElementById('auditOutput').appendChild(dnBox); document.getElementById('auditOutput').appendChild(upBox);
+    }
+
+    function toggleVaccineAdministered(pId, vId, c) { globalPatientsStore[pId].givenDates[vId]=c?new Date().toISOString().split('T')[0]:""; localStorage.setItem('nis_patients',JSON.stringify(globalPatientsStore)); calculateAndRenderTimeline(pId); }
+    function updateAdministrationDate(pId, vId, val) { globalPatientsStore[pId].givenDates[vId]=val; localStorage.setItem('nis_patients',JSON.stringify(globalPatientsStore)); calculateAndRenderTimeline(pId); }
+
+    // --- 6. NUTRITION & 24H RECALL ---
+    function calcNutrition() {
+        let totalM = currentPatientAgeInMonths || parseInt(document.getElementById('calcQuickAge').value) || 0;
+        let y = Math.floor(totalM / 12);
+        const wt = parseFloat(document.getElementById('pWeight').value || document.getElementById('calcWeight').value);
+        const gender = document.getElementById('gender').value || 'male';
+        const out = document.getElementById('nutriTargetArea');
+        if(totalM === 0 && (!wt || isNaN(wt))) { out.innerHTML = "<div class='tool-result neutral'>Enter Age and Weight to calculate ICMR nutritional targets.</div>"; return; }
+        
+        let kcal = 0; let protein = 0; let wtGain = "";
+        if (totalM < 3) { kcal = wt * 116; protein = wt * 2.3; wtGain = "30 g/day"; }
+        else if (totalM < 6) { kcal = wt * 99; protein = wt * 1.85; wtGain = "20 g/day"; }
+        else if (totalM < 9) { kcal = wt * 95; protein = wt * 1.65; wtGain = "15 g/day"; }
+        else if (totalM < 12) { kcal = wt * 101; protein = wt * 1.5; wtGain = "12 g/day"; }
+        else if (y < 3) { kcal = 1220; protein = 22; wtGain = "8 g/day"; }
+        else if (y < 6) { kcal = 1720; protein = 29; wtGain = "6 g/day"; }
+        else if (y < 10) { kcal = 2050; protein = 36; wtGain = "Avg 3 kg/year"; }
+        else { kcal = gender === 'male' ? 2420 : 2200; protein = 43; wtGain = "Pubertal spurt variance"; }
+        
+        out.innerHTML = `
+            <div class="tool-grid">
+                <div class="result-card">
+                    <p style="margin-top:0; color:var(--text-muted); font-weight:600; text-transform:uppercase; font-size:0.85rem; letter-spacing:0.05em;">Daily Caloric Target</p>
+                    <h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${kcal.toFixed(0)} kcal</h2>
+                    <div style="font-size:0.85rem; color:var(--text-muted);">(ICMR Target based on cohort)</div>
+                </div>
+                <div class="result-card" style="border-color:var(--primary);">
+                    <p style="margin-top:0; color:var(--primary); font-weight:600; text-transform:uppercase; font-size:0.85rem; letter-spacing:0.05em;">Daily Protein Target</p>
+                    <h2 style="font-size:2.5rem; margin:10px 0; color:var(--primary);">${protein.toFixed(1)} g</h2>
+                    <div style="font-size:0.85rem; color:var(--text-muted);">Expected wt gain: <b style="color:var(--text-main);">${wtGain}</b></div>
+                </div>
+            </div>
+        `;
+    }
+
+    function populateFoodSelect() {
+        let sel = document.getElementById('recallFood');
+        sel.innerHTML = '<option value="">-- Select Food Item --</option>';
+        foodsDb.forEach((f, i) => { sel.innerHTML += `<option value="${i}">${f.name} (${f.k} kcal/100g)</option>`; });
+    }
+
+    function addDietRecall() {
+        if(!activePatientId) return alert("Select patient first to use the Diet Recall tool.");
+        let m = document.getElementById('recallMeal').value;
+        let fIdx = document.getElementById('recallFood').value;
+        let q = parseFloat(document.getElementById('recallQty').value);
+        if(fIdx === "" || isNaN(q)) return; let food = foodsDb[fIdx];
+        if(!globalPatientsStore[activePatientId].dietLogs) globalPatientsStore[activePatientId].dietLogs = [];
+        globalPatientsStore[activePatientId].dietLogs.push({ meal: m, name: food.name, qty: q, kcal: (food.k * q)/100, prot: (food.p * q)/100 });
+        localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderDietRecall();
+    }
+
+    function removeDietRecall(idx) { 
+        globalPatientsStore[activePatientId].dietLogs.splice(idx, 1); 
+        localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); 
+        renderDietRecall(); 
+    }
+    
+    function renderDietRecall() {
+        let listArea = document.getElementById('recallListArea'); let sumArea = document.getElementById('recallSummaryArea');
+        if(!activePatientId) { listArea.innerHTML = ""; sumArea.innerHTML = "Select patient."; sumArea.className = "tool-result neutral"; return; }
+        let logs = globalPatientsStore[activePatientId].dietLogs || [];
+        if(logs.length === 0) { listArea.innerHTML = ""; sumArea.innerHTML = "Log a food item to initialize deficiency analyzer."; sumArea.className = "tool-result neutral"; return; }
+        
+        let totK = 0; let totP = 0;
+        let h = `<div style="overflow-x:auto;"><table class="theory-table"><thead><tr><th>Meal</th><th>Food</th><th>Mass</th><th>Protein</th><th>Energy</th><th>Action</th></tr></thead><tbody>`;
+        logs.forEach((l,i)=>{ totK+=l.kcal; totP+=l.prot; h+=`<tr><td>${l.meal}</td><td>${l.name}</td><td>${l.qty}g</td><td>${l.prot.toFixed(1)}g</td><td>${l.kcal.toFixed(0)} kcal</td><td><button class='secondary' onclick='removeDietRecall(${i})' style='background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:4px; width:auto;'>X</button></td></tr>`; });
+        listArea.innerHTML = h + `</tbody></table></div>`;
+        
+        let wt = parseFloat(globalPatientsStore[activePatientId].weight) || 10;
+        let totalM = globalPatientsStore[activePatientId].totalMonths;
+        let y = Math.floor(totalM/12);
+        
+        let tKcal = 0; let tProt = 0;
+        if (totalM < 3) { tKcal = wt * 116; tProt = wt * 2.3; }
+        else if (totalM < 6) { tKcal = wt * 99; tProt = wt * 1.85; }
+        else if (totalM < 9) { tKcal = wt * 95; tProt = wt * 1.65; }
+        else if (totalM < 12) { tKcal = wt * 101; tProt = wt * 1.5; }
+        else if (y < 3) { tKcal = 1220; tProt = 22; }
+        else if (y < 6) { tKcal = 1720; tProt = 29; }
+        else if (y < 10) { tKcal = 2050; tProt = 36; }
+        else { tKcal = 2200; tProt = 43; }
+        
+        let kDiff = totK - tKcal; let pDiff = totP - tProt;
+        let kStat = kDiff < 0 ? `<span style="color:var(--danger)">Deficit of ${Math.abs(kDiff).toFixed(0)} kcal</span>` : `<span style="color:var(--success)">Surplus of ${kDiff.toFixed(0)} kcal</span>`;
+        let pStat = pDiff < 0 ? `<span style="color:var(--danger)">Deficit of ${Math.abs(pDiff).toFixed(1)} g</span>` : `<span style="color:var(--success)">Surplus of ${pDiff.toFixed(1)} g</span>`;
+        
+        sumArea.innerHTML = `
+            <div style="text-align:left;">
+                <h4 style="margin:0 0 10px 0; color:var(--text-main); font-size:1.1rem;">Calories (kcal)</h4>
+                <div style="color:var(--text-muted); font-size:0.9rem; margin-bottom:5px;">Target: ${tKcal.toFixed(0)} | Intake: ${totK.toFixed(0)}</div>
+                <div style="font-weight:700; font-size:1.05rem; margin-bottom:15px;">${kStat}</div>
+                <h4 style="margin:0 0 10px 0; color:var(--text-main); font-size:1.1rem;">Protein (g)</h4>
+                <div style="color:var(--text-muted); font-size:0.9rem; margin-bottom:5px;">Target: ${tProt.toFixed(1)} | Intake: ${totP.toFixed(1)}</div>
+                <div style="font-weight:700; font-size:1.05rem;">${pStat}</div>
+            </div>
+        `;
+        sumArea.className = "tool-result";
+    }
+
+    function renderFoodDB(dataArray) {
+        const tbody = document.getElementById('foodTableBody'); tbody.innerHTML = "";
+        dataArray.forEach(f => { tbody.innerHTML += `<tr><td><b style="color:var(--primary);">${f.name}</b></td><td>${f.cat}</td><td>${f.p}</td><td>${f.c}</td><td>${f.f || 0}</td><td><b style="color:var(--success);">${f.k}</b></td></tr>`; });
+    }
+
+    function filterFoodDB() {
+        let filter = document.getElementById('foodSearch').value.toUpperCase();
+        let filtered = foodsDb.filter(f => f.name.toUpperCase().includes(filter) || f.cat.toUpperCase().includes(filter));
+        renderFoodDB(filtered);
+    }
+
+    // --- 7. TRIAGE, ER & ANTHROPOMETRY ---
+    function calcMalnutrition() {
+        if(!activePatientId) return; const p = globalPatientsStore[activePatientId];
+        const wt = parseFloat(p.weight); const ht = parseFloat(document.getElementById('triageHt').value || p.htCm);
+        let out = document.getElementById('malnGridOutput'); if(!wt || isNaN(wt)) return;
+        let expWt = getExpectedWeight(p.totalMonths); let percent = (wt / expWt) * 100;
+        let oedema = document.getElementById('malnOedemaToggle').checked;
+        let grade = percent <= 50 ? "Grade IV" : (percent <= 60 ? "Grade III" : (percent <= 70 ? "Grade II" : (percent <= 80 ? "Grade I" : "Normal")));
+        out.innerHTML = `<div class='tool-result neutral' style='text-align:left;'><b>IAP Grade (Wt for Age):</b> ${grade} (${percent.toFixed(1)}% of Weech standard)<br><br><b>Clinical State:</b> ${oedema ? (percent <= 60 ? 'Marasmic-Kwashiorkor' : 'Kwashiorkor') : (percent <= 60 ? 'Marasmus' : 'Undernourished')}</div>`;
+    }
+
+    window.evalMAC = function(val) {
+        let v = parseFloat(val); let out = document.getElementById('macOutput');
+        if(!v || isNaN(v)) { out.innerHTML = ""; return; }
+        if(v < 11.5) out.innerHTML = "<span style='color:var(--danger); font-size:1.2rem;'>🚨 Severe Acute Malnutrition (SAM)</span>";
+        else if(v <= 13.5) out.innerHTML = "<span style='color:var(--warning); font-size:1.2rem;'>⚠️ Moderate Acute Malnutrition (MAM)</span>";
+        else out.innerHTML = "<span style='color:var(--success); font-size:1.2rem;'>✅ Normal MAC Profile</span>";
+    }
+
+    function renderSensory() {
+        if(!activePatientId) return;
+        const p = globalPatientsStore[activePatientId]; const out = document.getElementById('sensoryOutputArea'); let html = "";
+        if(p.totalMonths < 2) { html += `<b>Vision:</b> Look for cataracts, wandering eye, nystagmus. Follows objects 45&deg;.<br><br><b>Hearing:</b> Assess Startle response and Rattle test.`; } 
+        else if (p.totalMonths < 6) { html += `<b>Vision (12 wks):</b> Fixes and follows objects till 90&deg;.<br><br><b>Hearing:</b> Startle response/Rattle test.`; } 
+        else if (p.totalMonths < 12) { html += `<b>Vision (6-8 mos):</b> Follows 180&deg;. Fixates on small objects near face.<br><br><b>Hearing (8-10 mos):</b> Distraction hearing test (Child must turn head to sound out of visual range).`; } 
+        else if (p.totalMonths < 36) { html += `<b>Vision (2.5 yrs):</b> Test distant vision (3 meters) and fix/follow. Look for strabismus.<br><br><b>Hearing:</b> Refer for Pure-tone audiometry & speech discrimination if language delayed.`; } 
+        else { html += `<b>Vision:</b> Test distant vision (picture/letter test) and near vision (Snellen's). Should match colors.<br><br><b>Hearing:</b> Routine audiometry screening.`; }
+        out.innerHTML = `<div class="tool-result neutral" style="text-align:left; font-weight:normal; line-height:1.6; padding:1.5rem;">${html}</div>`;
+    }
+
+    function calcCrash() {
+        let wt = parseFloat(document.getElementById('crashWeight').value) || parseFloat(document.getElementById('calcWeight').value);
+        let ageY = parseInt(document.getElementById('crashAge').value) || parseInt(document.getElementById('ageYrs').value) || 0;
+        let totalM = activePatientId ? globalPatientsStore[activePatientId].totalMonths : 0;
+        if(!wt && totalM > 0) wt = getExpectedWeight(totalM);
+        const out = document.getElementById('crashOutputArea');
+        if(!wt || isNaN(wt)) { out.innerHTML = "Awaiting physical vectors weight parameter load."; return; }
+        
+        let defib1 = wt * 2; let defib2 = wt * 4;
+        let adr = wt * 0.1; let amio = wt * 5; let fluid = wt * 20;
+        let et = totalM < 12 ? 3.5 : (ageY / 4) + 4;
+        let depth = totalM < 24 ? wt + 6 : (ageY / 2) + 12;
+
+        out.innerHTML = `
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+                <div style="background:var(--bg-surface); padding:8px; border-radius:6px; border:1px solid var(--danger);">
+                    <small style="color:var(--danger); font-weight:bold;">DEFIB (JOULES)</small>
+                    <div style="font-weight:bold; font-size:1.1rem; margin-top:3px;">1st Shock: ${defib1.toFixed(0)} J</div>
+                    <div style="font-size:0.85rem; color:var(--text-muted);">2nd Shock: ${defib2.toFixed(0)} J</div>
+                </div>
+                <div style="background:var(--bg-surface); padding:8px; border-radius:6px; border:1px solid var(--danger);">
+                    <small style="color:var(--danger); font-weight:bold;">AIRWAY (UNCUFFED)</small>
+                    <div style="font-weight:bold; font-size:1.1rem; margin-top:3px;">ET Size: ${et.toFixed(1)}</div>
+                    <div style="font-size:0.85rem; color:var(--text-muted);">Depth: ${depth.toFixed(1)} cm</div>
+                </div>
+            </div>
+            <div style="background:var(--bg-surface); padding:10px; border-radius:6px; border:1px solid var(--danger);">
+                <div style="font-size:0.8rem; font-weight:bold; color:var(--danger); margin-bottom:5px;">CRITICAL DRUGS VOLUME OUT</div>
+                <div>• Adrenaline (1:10k) IV/IO: <b>${adr.toFixed(2)} mL</b></div>
+                <div>• Amiodarone Bolus: <b>${amio.toFixed(0)} mg</b></div>
+                <div>• Crystalloid Bolus: <b>${fluid.toFixed(0)} mL</b></div>
+            </div>
+        `;
+    }
+
+    function calcGIR() {
+        let wt = parseFloat(document.getElementById('girWt').value);
+        let rate = parseFloat(document.getElementById('girRate').value);
+        let dex = parseFloat(document.getElementById('girDex').value);
+        let out = document.getElementById('girOutput');
+        if(!wt || isNaN(wt) || !rate || isNaN(rate) || !dex || isNaN(dex)) { out.innerHTML = "GIR = [Rate × Dextrose%] / [Weight × 6]"; out.className = "tool-result neutral"; return; }
+        let gir = (rate * dex) / (wt * 6);
+        out.innerHTML = `GIR = <b style="color:var(--primary); font-size:1.2rem;">${gir.toFixed(2)}</b> mg/kg/min`;
+        out.className = gir < 4 || gir > 8 ? "tool-result warning" : "tool-result success";
+    }
+
+    function calcAPGAR() {
+        let score = parseInt(document.getElementById('apgarHR').value) + parseInt(document.getElementById('apgarResp').value) + parseInt(document.getElementById('apgarTone').value) + parseInt(document.getElementById('apgarReflex').value) + parseInt(document.getElementById('apgarColor').value);
+        let out = document.getElementById('apgarOutput');
+        let stat = score >= 7 ? "Normal Transition" : (score >= 4 ? "Mild/Mod Distress" : "Severe Depression Emergency");
+        out.innerHTML = `Score Evaluation: <b style="font-size:1.2rem;">${score}/10</b> (${stat})`;
+        out.className = score >= 7 ? "tool-result success" : "tool-result danger";
+    }
+
+    // --- 8. FLUIDS, PRAM & JAUNDICE ---
+    function calcFluids() {
+        let wt = parseFloat(document.getElementById('fluidWeight').value || document.getElementById('pWeight').value); 
+        let deg = parseFloat(document.getElementById('fluidDehydration').value);
+        let out = document.getElementById('fluidResultArea'); 
+        if(!wt || isNaN(wt)) return;
+        let m = wt <= 10 ? wt*100 : (wt<=20 ? 1000 + (wt-10)*50 : 1500 + (wt-20)*20);
+        let deficit = deg * wt * 10; let total = m + deficit;
+        out.innerHTML = `Total Load Rate: <b>${total.toFixed(0)} mL / 24h</b><br>Maintenance Speed: <b>${(total/24).toFixed(1)} mL/hr</b>`;
+    }
+
+    function calcPRAM() {
+        let score = parseInt(document.getElementById('pramO2').value) + parseInt(document.getElementById('pramSupra').value) + parseInt(document.getElementById('pramScalene').value) + parseInt(document.getElementById('pramAir').value) + parseInt(document.getElementById('pramWheeze').value);
+        const resArea = document.getElementById('pramResultArea');
+        let sev = "Mild"; let cls = "tool-result"; let proto = "Salbutamol MDI/Nebulizer. Discharge with spacer instruction.";
+        if(score >= 8) { sev = "Severe Crisis"; cls = "tool-result danger"; proto = "Continuous Salbutamol + Ipratropium. Systemic Corticosteroids (IV Dex/Hydrocort). Arrange PICU."; }
+        else if (score >= 4) { sev = "Moderate Severity"; cls = "tool-result warning"; proto = "Salbutamol Nebulization Q20 mins × 3 rounds. Oral Prednisolone course."; }
+        resArea.innerHTML = `PRAM Severity Score: <b>${score}/12</b> (${sev})<div style="margin-top:15px; font-size:0.95rem; text-align:left; font-weight:normal; line-height:1.5;"><b>Clinical Management Directive:</b><br>${proto}</div>`;
+        resArea.className = cls;
+    }
+
+    function calcJaundice() {
+        const hr = parseFloat(document.getElementById('jaunHours').value); const tsb = parseFloat(document.getElementById('jaunTSB').value);
+        const risk = document.getElementById('jaunRisk').value; const resArea = document.getElementById('jaunResultArea');
+        if(!hr || isNaN(hr) || !tsb || isNaN(tsb)) { resArea.innerHTML = "Provide parameters."; return; }
+        if(hr < 24) { resArea.innerHTML = "<b>🚨 Critical Hyperbilirubinemia:</b> Visual jaundice &lt; 24 hours of life is strictly pathological. Intercept immediately."; resArea.className = "tool-result danger"; return; }
+        
+        let limit = 15;
+        if (hr <= 24) limit = risk === 'high' ? 8 : (risk === 'med' ? 10 : 12);
+        else if (hr <= 48) limit = risk === 'high' ? 11 : (risk === 'med' ? 13 : 15);
+        else if (hr <= 72) limit = risk === 'high' ? 13 : (risk === 'med' ? 15 : 18);
+        else limit = risk === 'high' ? 14 : (risk === 'med' ? 17 : 20);
+        
+        if(tsb >= limit) { resArea.innerHTML = `<b>🚨 Phototherapy Threshold Breached</b><br>TSB level of ${tsb} mg/dL is at or above safety threshold (${limit} mg/dL).`; resArea.className = "tool-result danger"; }
+        else if (tsb >= limit - 2) { resArea.innerHTML = `<b>⚠️ High-Intermediate Risk Zone Warning</b><br>TSB profile (${tsb} mg/dL) is within 2 mg/dL of emergency line. Repeat in 12-24 hours.`; resArea.className = "tool-result warning"; }
+        else { resArea.innerHTML = `<b>✅ Safe Baseline Zone Metrics</b><br>TSB profile stands within safe margin clearances.`; resArea.className = "tool-result"; }
+    }
+
+    // --- 9. MILESTONES ---
+    function renderMilestoneDashboard() {
+        if(!activePatientId) return;
+        const patient = globalPatientsStore[activePatientId]; const achieved = patient.achievedMilestones || {};
+        const availableAges = Object.keys(milestonesDb).map(Number).sort((a,b)=>a-b);
+        let currentBracket = 0; let upcomingBracket = 0;
+        for(let i=0; i<availableAges.length; i++){ if(currentPatientAgeInMonths >= availableAges[i]) currentBracket = availableAges[i]; else break; }
+        upcomingBracket = availableAges.find(age => age > currentPatientAgeInMonths) || null;
+        
+        const evalContainer = document.getElementById('msEvalContainer');
+        if (currentBracket === 0) { evalContainer.innerHTML = "<p>Patient under milestone tracker bracket parameters.</p>"; } else {
+            let evalHTML = "";
+            availableAges.forEach(age => {
+                if (age <= currentBracket) {
+                    let isCurrent = (age === currentBracket);
+                    let borderStyle = isCurrent ? "border: 2px solid var(--primary);" : "border: 1px solid var(--border-soft);";
+                    let bgStyle = isCurrent ? "background: var(--primary-light);" : "background: var(--bg-surface);";
+                    evalHTML += `<div style="${borderStyle} ${bgStyle} padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1rem; box-shadow: var(--shadow-sm);"><h4 style="margin-top:0; color:var(--primary); margin-bottom:1rem; font-size:1.1rem; border-bottom:1px solid var(--border-soft); padding-bottom:10px;">${isCurrent ? `Current Age Milestone Bracket (${age} Mos)` : `Historical Check Target (${age} Mos)`}</h4>`;
+                    milestonesDb[age].forEach(m => { evalHTML += `<div class="milestone-item"><input type="checkbox" id="${m.id}" ${achieved[m.id] ? 'checked' : ''} onchange="toggleMilestone('${m.id}', this.checked)"><div><span class="milestone-domain">${m.domain}</span><div class="milestone-text"><label for="${m.id}" style="cursor:pointer; font-weight:normal; margin:0;">${m.text}</label></div></div></div>`; });
+                    evalHTML += `</div>`;
+                }
+            });
+            evalContainer.innerHTML = evalHTML;
+        }
+
+        let completedHTML = ""; let missedHTML = "";
+        availableAges.forEach(age => {
+            let aHTML = ""; milestonesDb[age].forEach(m => { if(achieved[m.id]) aHTML += `<div>✅ <b>${m.domain}</b>: ${m.text}</div>`; });
+            if(aHTML) completedHTML += `<h5 style="margin:1rem 0 0.25rem 0; color:var(--success); font-size:0.95rem; border-bottom:1px solid #bbf7d0; padding-bottom:5px;">Achieved via ${age}m vectors:</h5>${aHTML}`;
+            if(age <= currentBracket) { milestonesDb[age].forEach(m => { if(!achieved[m.id]) missedHTML += `<div style="padding:10px; border:1px solid #fecaca; background:rgba(239, 68, 68, 0.05); border-radius:8px; margin-bottom:10px;"><h4 style="margin:0 0 5px 0; color:#991b1b;">🚨 Flagged: ${m.text} (Expected by ${age} Mos)</h4><span class="milestone-domain">${m.domain}</span><div style="font-size:0.85rem; margin-top:5px; color:#7f1d1d;"><b>Significance:</b> ${m.sig}</div></div>`; }); }
+        });
+        document.getElementById('msCompletedContainer').innerHTML = completedHTML || "<p>No milestones recorded.</p>";
+        document.getElementById('msMissedContainer').innerHTML = missedHTML || "<div style='padding:1.5rem; background:rgba(16, 185, 129, 0.1); border:1px solid #16a34a; border-radius:var(--radius-lg); color:#166534; font-weight:bold;'>✅ All verification targets achieved.</div>";
+        document.getElementById('msUpcomingContainer').innerHTML = upcomingBracket ? `<h4 style="margin:1rem 0 0.5rem 0; color:var(--primary); font-size:1.1rem; border-bottom:1px solid var(--border-soft); padding-bottom:5px;">Targeting: ${upcomingBracket} Months</h4>` + milestonesDb[upcomingBracket].map(m => `<div style="padding:1rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); margin-bottom:0.75rem; background:var(--bg-surface); font-size:0.95rem; box-shadow:var(--shadow-sm);"><span class="milestone-domain">${m.domain}</span><div style="font-weight:600; margin-top:5px; color:var(--text-main);">${m.text}</div></div>`).join("") : "<p>Advanced baseline clearance parameters.</p>";
+    }
+
+    function toggleMilestone(mId, isChecked) { globalPatientsStore[activePatientId].achievedMilestones[mId] = isChecked; localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); renderMilestoneDashboard(); }
+    
+    function buildMilestoneReference() {
+        let tableHTML = `<table class="theory-table"><thead><tr><th>Age Bracket</th><th>Domain</th><th>Milestone Marker</th></tr></thead><tbody>`;
+        Object.keys(milestonesDb).forEach(age => {
+            milestonesDb[age].forEach((m, idx) => {
+                if(idx === 0) { tableHTML += `<tr><td rowspan="${milestonesDb[age].length}"><b>${age} Months</b></td><td><span class="milestone-domain">${m.domain}</span></td><td>${m.text}</td></tr>`; } 
+                else { tableHTML += `<tr><td><span class="milestone-domain">${m.domain}</span></td><td>${m.text}</td></tr>`; }
+            });
+        });
+        const refContainer = document.getElementById('msReferenceContainer');
+        if(refContainer) refContainer.innerHTML = tableHTML + `</tbody></table>`;
+    }
+
+    // --- 10. GROWTH CHARTS ---
+    function drawGrowthCharts(patientAgeMonths, currentWeight, currentHeight, patientGender) {
+        if(wtChartInstance) wtChartInstance.destroy(); if(htChartInstance) htChartInstance.destroy();
+        const standardXLabels = [0, 6, 12, 18, 24, 30, 36];
+        const weight50th = patientGender === 'male' ? [3.3, 7.9, 9.6, 10.9, 12.2, 13.3, 14.3] : [3.2, 7.3, 8.9, 10.2, 11.5, 12.7, 13.9];
+        const weight3rd  = patientGender === 'male' ? [2.4, 6.4, 7.8, 8.8, 9.7, 10.5, 11.3] : [2.4, 5.8, 7.0, 7.9, 8.7, 9.4, 10.2];
+        const weight97th = patientGender === 'male' ? [4.3, 9.8, 12.0, 13.7, 15.3, 16.9, 18.3] : [4.2, 9.3, 11.5, 13.2, 15.0, 16.7, 18.1];
+        const height50th = patientGender === 'male' ? [50, 67, 76, 82, 87, 92, 96] : [49, 65, 74, 80, 85, 90, 95];
+        const height3rd  = patientGender === 'male' ? [46, 63, 71, 76, 81, 85, 89] : [45, 61, 69, 74, 79, 83, 87];
+        const height97th = patientGender === 'male' ? [54, 71, 81, 88, 93, 99, 103] : [53, 69, 79, 86, 91, 97, 101];
+
+        const ctxW = document.getElementById('weightChartCanvas');
+        if(ctxW) {
+            wtChartInstance = new Chart(ctxW.getContext('2d'), { type: 'line', data: { labels: standardXLabels, datasets: [ { label: 'Patient Value', data: [{x: patientAgeMonths, y: currentWeight}], backgroundColor: 'red', borderColor: 'red', pointRadius: 7, showLine: false }, { label: 'WHO 97th %', data: weight97th, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 }, { label: 'WHO 50th %', data: weight50th, borderColor: 'rgba(16, 185, 129, 0.8)', fill: false, pointRadius: 0 }, { label: 'WHO 3rd %', data: weight3rd, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Age (Mos)' }, min:0, max:36 } } } });
+        }
+        const ctxH = document.getElementById('heightChartCanvas');
+        if(ctxH) {
+            htChartInstance = new Chart(ctxH.getContext('2d'), { type: 'line', data: { labels: standardXLabels, datasets: [ { label: 'Patient Value', data: [{x: patientAgeMonths, y: currentHeight}], backgroundColor: 'red', borderColor: 'red', pointRadius: 7, showLine: false }, { label: 'WHO 97th %', data: height97th, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 }, { label: 'WHO 50th %', data: height50th, borderColor: 'rgba(16, 185, 129, 0.8)', fill: false, pointRadius: 0 }, { label: 'WHO 3rd %', data: height3rd, borderColor: 'rgba(220, 38, 38, 0.4)', borderDash: [5,5], fill: false, pointRadius: 0 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Age (Mos)' }, min:0, max:36 } } } });
+        }
+    }
+
+    function calcGrowth() {
+        const wt = parseFloat(document.getElementById('pWeight').value || document.getElementById('calcWeight').value || 10);
+        let htObj = document.getElementById('htCm'); let htOnTheGoObj = document.getElementById('triageHt');
+        const ht = parseFloat( (htObj && htObj.value) ? htObj.value : (htOnTheGoObj ? htOnTheGoObj.value : 0) );
+        let totalM = activePatientId ? globalPatientsStore[activePatientId].totalMonths : (parseInt(document.getElementById('calcQuickAge') ? document.getElementById('calcQuickAge').value : 0) || 0);
+        let pGender = document.getElementById('gender') ? document.getElementById('gender').value : 'male';
+        if(!ht || isNaN(ht)) return; drawGrowthCharts(totalM, wt, ht, pGender);
+    }
+
+    function syncGrowthFieldsAndCalc() { let v = document.getElementById('htCmOnTheGo').value; document.getElementById('htCm').value = v; if(activePatientId) saveAndRegisterPatient(true); else calcGrowth(); }
+
+    // --- 11. PDF & PRINT ENGINE ---
+    function loadLocalClinicalPDF(i) { 
+        const f = i.files[0]; 
+        if(f) { 
+            document.getElementById('pdfViewerFrameWrapper').innerHTML = `<iframe src="${URL.createObjectURL(f)}" width="100%" height="100%" style="border:none;"></iframe>`; 
+            document.getElementById('pdfViewerFrameWrapper').style.display="block"; 
+        } 
+    }
+
+    function getPrintHeaderHTML(title) {
+        const p = globalPatientsStore[activePatientId]; if(!p) return "";
+        let logoHtml = appSettings.logo ? `<img src="${appSettings.logo}" class="print-logo">` : `<div style="font-size:40px;">🏥</div>`;
+        return `
+            <div class="print-header-container">
+                ${logoHtml}
+                <div class="print-clinic-details">
+                    <div class="print-clinic-name">${appSettings.clinicName || 'Pediatric Clinical Hub'}</div>
+                    <div class="print-doc-name">${appSettings.docName || 'Dr. Peter Suraj Joseph'}</div>
+                    ${appSettings.qual ? `<div class="print-tagline">${appSettings.qual}</div>` : ''}
+                    ${appSettings.tagline ? `<div class="print-tagline">${appSettings.tagline}</div>` : ''}
+                    ${appSettings.phone ? `<div class="print-tagline">📞 ${appSettings.phone}</div>` : ''}
+                    ${appSettings.address ? `<div class="print-tagline">📍 ${appSettings.address}</div>` : ''}
+                </div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <h1 style="margin-bottom: 10px; font-size:22px; text-transform:uppercase; text-align:center; letter-spacing:1px;">${title}</h1>
+                <div style="font-size: 14px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 10px 0; margin-bottom: 20px; display:flex; justify-content:space-between;">
+                    <span><b>Patient:</b> ${p.name}</span>
+                    <span><b>Age:</b> ${p.ageYrs}Y ${p.ageMos}M</span>
+                    <span><b>Weight:</b> ${p.weight || 'N/A'} kg</span>
+                    <span><b>Gender:</b> ${p.gender.toUpperCase()}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function extractToolResult(elId) {
+        let el = document.getElementById(elId); if(!el) return ""; let txt = el.innerHTML;
+        if(txt.includes("Execute calculation") || txt.includes("Provide") || txt.includes("Enter") || txt.includes("Awaiting data")) return "";
+        return `<div class="tool-result">${txt}</div>`;
+    }
+
+    function executePrint(mode) {
+        if (!activePatientId && mode !== 'prescription') { alert("Please select a patient first."); return; }
+        const engine = document.getElementById('printEngine'); const p = globalPatientsStore[activePatientId] || {}; let html = "";
+
+        if (mode === 'tracker' || mode === 'comprehensive') { html += getPrintHeaderHTML("IMMUNIZATION SCHEDULE REPORT") + document.getElementById('timelineOutput').innerHTML; if (mode === 'comprehensive') html += `<div class="page-break"></div>`; }
+        if (mode === 'prescription' || mode === 'comprehensive') {
+            html += getPrintHeaderHTML("PRESCRIPTION");
+            if (p.rxList && p.rxList.length > 0) {
+                html += `<div class="rx-pad"><div class="rx-symbol">Rx</div>`;
+                p.rxList.forEach((rx, index) => { html += `<div style="margin-bottom: 1.8rem;"><div class="rx-drug-name">${index + 1}. ${rx.name}</div><div class="rx-dosage">Take ${rx.vol} ${rx.unit || 'mL'} &mdash; ${rx.freq}</div><div style="color:#555; font-size:12px; margin-top:5px;">Clinical Targets Formulation context: ${rx.details}</div></div>`; });
+                html += `<div style="margin-top: 80px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center; float:right;"><b>${appSettings.docName}</b><br>Authorized Signature</div><div style="clear:both;"></div></div>`;
+            } else if (pendingPrescriptionDrug) {
+                html += `<div class="rx-pad"><div class="rx-symbol">Rx</div><div style="margin-bottom: 1.8rem;"><div class="rx-drug-name">1. ${pendingPrescriptionDrug.name}</div><div class="rx-dosage">Take ${pendingPrescriptionDrug.vol} ${pendingPrescriptionDrug.unit || 'mL'} &mdash; ${pendingPrescriptionDrug.freq}</div><div style="color:#555; font-size:12px; margin-top:5px;">Targets context: ${pendingPrescriptionDrug.details}</div></div><div style="margin-top: 80px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center; float:right;"><b>${appSettings.docName}</b><br>Authorized Signature</div><div style="clear:both;"></div></div>`;
+            } else { html += `<p>No active formulations staged onto prescription pad parameters.</p>`; }
+            if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
+        }
+        if (mode === 'nutrition' || mode === 'comprehensive') {
+            html += getPrintHeaderHTML("DIET & NUTRITION PLAN");
+            if (p.dietLogs && p.dietLogs.length > 0) { html += `<h3>24-Hour Diet Recall Analysis</h3>`; html += document.getElementById('recallListArea').innerHTML; html += document.getElementById('recallSummaryArea').innerHTML; }
+            html += `<h3 style="margin-top: 30px; color:var(--success);">Target Requirements (ICMR)</h3>` + document.getElementById('nutriTargetArea').innerHTML;
+            html += `<h3 style="margin-top: 30px; color:var(--primary);">Recommended Household Portions</h3><ul style="font-size:1.1rem; line-height:1.6;"><li>1 bowl cooked rice: 120 kcal</li><li>1 Idli / 1 Vada: 50 kcal</li><li>1 Dosa / 1 Chapati: 70 kcal</li><li>Cow's Milk (100ml): 65 kcal</li><li>1 Egg (60g): 60 kcal</li></ul>`;
+            if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
+        }
+        if (mode === 'milestones' || mode === 'comprehensive') {
+            html += getPrintHeaderHTML("DEVELOPMENTAL PROGRESS LOG REPORT");
+            html += `<h3 style="margin-top: 20px;">🌟 Successfully Verified Achieved Milestones</h3>` + document.getElementById('msCompletedContainer').innerHTML;
+            html += `<h3 style="margin-top: 30px;">📅 Anticipatory Developmental Guidance Milestones</h3>` + document.getElementById('msUpcomingContainer').innerHTML;
+            if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
+        }
+        if (mode === 'comprehensive') {
+            html += getPrintHeaderHTML("CLINICAL TRIAGE & ANTHROPOMETRY REPORT");
+            let maln = extractToolResult('malnGridOutput'); if(maln) html += `<h3>Malnutrition & Anthropometry Triage</h3>${maln}`;
+            let fluids = extractToolResult('fluidResultArea'); if(fluids) html += `<h3>IV Fluid Resuscitation Protocol</h3>${fluids}`;
+            let asthma = extractToolResult('pramResultArea'); if(asthma) html += `<h3>Asthma PRAM Triage Score</h3>${asthma}`;
+            let jaun = extractToolResult('jaunResultArea'); if(jaun) html += `<h3>Neonatal Jaundice Triage Risk</h3>${jaun}`;
+            if(!maln && !fluids && !asthma && !jaun) html += `<p>No acute clinical triage metrics evaluated during this session.</p>`;
+        }
+
+        html += `<div style="text-align:center; font-size:10px; color:#777; margin-top:40px; border-top:1px solid #eee; padding-top:10px;">Generated by ${appSettings.clinicName} Clinical Hub</div>`;
+        engine.innerHTML = html; window.print();
+    }
+
+    function sendWACompReport() {
+        if(!activePatientId) return alert("Select patient");
+        const p = globalPatientsStore[activePatientId];
+        let txt = `*Pediatric Clinical Report*\nName: ${p.name}\nAge: ${p.ageYrs}Y ${p.ageMos}M\nWeight: ${p.weight} kg\n\n`;
+        if(p.rxList && p.rxList.length > 0) {
+            txt += `*Active Prescriptions:*\n`;
+            p.rxList.forEach((rx, i) => { txt += `${i+1}. ${rx.name} - ${rx.vol} ${rx.unit || 'mL'} (${rx.freq})\n`; });
+            txt += `\n`;
+        }
+        if(p.upcomingVaccinesForWhatsapp && p.upcomingVaccinesForWhatsapp.length > 0) {
+            txt += `*Upcoming Vaccines:*\n${p.upcomingVaccinesForWhatsapp.join(", ")}\n\n`;
+        }
+        txt += `Please visit the clinic for your detailed follow-up.`;
+        const targetPhone = p.phone ? p.phone.replace(/[^0-9]/g, "") : "";
+        window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`, '_blank');
+    }
+</script>
+</body>
+</html>
