@@ -320,13 +320,21 @@
                                     <option value="git">Gastrointestinal</option>
                                 </select>
                                 <label>Formulation</label><select id="drugFormulation" onchange="calculateDose()"><option value="">-- formulation --</option></select>
+                                <label>Duration (Days)</label><input type="number" id="calcDuration" placeholder="e.g. 5" oninput="calculateDose()">
                             </div>
                             <div style="display:flex; flex-direction:column; gap:10px;">
                                 <div id="calcOutputArea"></div>
                                 <div id="rxAddButtonArea"></div>
                             </div>
                         </div>
-                        <div id="rxCartArea"><div class="rx-cart-container"><h3 class="section-title">Active Prescription Pad</h3><div id="rxCartList"></div></div></div>
+                        <div id="rxCartArea">
+                            <div class="rx-cart-container">
+                                <h3 class="section-title">Active Prescription Pad</h3>
+                                <label>Working Diagnosis / Chief Complaint</label>
+                                <input type="text" id="rxDiagnosis" placeholder="e.g. Viral URI, Acute Otitis Media" oninput="saveAndRegisterPatient(true)" style="margin-bottom:1rem; border-color:var(--primary); font-weight:bold;">
+                                <div id="rxCartList"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -537,7 +545,7 @@
                         <h4 style="margin-top:0;">Letterhead / Rx Builder</h4>
                         <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">These details appear at the top of printed prescriptions.</p>
                         <div class="row-inputs"><div><label>Doctor's Name</label><input type="text" id="setDocName" placeholder="Dr. Peter Suraj Joseph"></div><div><label>Qualifications</label><input type="text" id="setQual" placeholder="MBBS, MD"></div></div>
-                        <label>Clinic Name</label><input type="text" id="setClinic" placeholder="Sunrise Clinic">
+                        <div class="row-inputs"><div><label>Medical Reg. No.</label><input type="text" id="setRegNo" placeholder="e.g. KMC 12345"></div><div><label>Clinic Name</label><input type="text" id="setClinic" placeholder="Sunrise Clinic"></div></div>
                         <label>Tagline</label><input type="text" id="setTagline" placeholder="Child Development Center">
                         <div class="row-inputs"><div><label>Phone</label><input type="text" id="setPhone" placeholder="Phone"></div><div><label>Address</label><input type="text" id="setAddress" placeholder="Location"></div></div>
                         <button class="action" onclick="saveSettings()">💾 Save Settings</button>
@@ -747,7 +755,7 @@
 
     // --- 2. GLOBAL STATE ---
     let appSettings;
-    try { appSettings = JSON.parse(localStorage.getItem('clinic_settings')) || { docName: "Dr. Peter Suraj Joseph", qual: "MBBS, MD (Pediatrics)", clinicName: "Pediatric Clinical Hub", tagline: "", phone: "", address: "", logo: "", isDark: false }; } catch(e) { appSettings = { docName: "Dr. Peter Suraj Joseph", qual: "MBBS, MD (Pediatrics)", clinicName: "Pediatric Clinical Hub", tagline: "", phone: "", address: "", logo: "", isDark: false }; }
+    try { appSettings = JSON.parse(localStorage.getItem('clinic_settings')) || { docName: "Dr. Peter Suraj Joseph", qual: "MBBS, MD (Pediatrics)", regNo: "", clinicName: "Pediatric Clinical Hub", tagline: "", phone: "", address: "", logo: "", isDark: false }; } catch(e) { appSettings = { docName: "Dr. Peter Suraj Joseph", qual: "MBBS, MD (Pediatrics)", regNo: "", clinicName: "Pediatric Clinical Hub", tagline: "", phone: "", address: "", logo: "", isDark: false }; }
 
     let globalPatientsStore;
     try { globalPatientsStore = JSON.parse(localStorage.getItem('nis_patients')) || {}; } catch(e) { globalPatientsStore = {}; }
@@ -792,6 +800,7 @@
     function openSettingsModal() { 
         document.getElementById('setDocName').value = appSettings.docName || "";
         document.getElementById('setQual').value = appSettings.qual || "";
+        if(document.getElementById('setRegNo')) document.getElementById('setRegNo').value = appSettings.regNo || "";
         document.getElementById('setClinic').value = appSettings.clinicName || "";
         document.getElementById('setTagline').value = appSettings.tagline || "";
         document.getElementById('setPhone').value = appSettings.phone || "";
@@ -818,6 +827,7 @@
         appSettings.clinicName = document.getElementById('setClinic').value; 
         appSettings.docName = document.getElementById('setDocName').value; 
         appSettings.qual = document.getElementById('setQual').value; 
+        if(document.getElementById('setRegNo')) appSettings.regNo = document.getElementById('setRegNo').value; 
         appSettings.tagline = document.getElementById('setTagline').value; 
         appSettings.address = document.getElementById('setAddress').value; 
         appSettings.phone = document.getElementById('setPhone').value; 
@@ -947,6 +957,7 @@
             htCm: document.getElementById('htCm').value,
             hcCm: document.getElementById('hcCm') ? document.getElementById('hcCm').value : "",
             je: document.getElementById('jeEndemic') ? document.getElementById('jeEndemic').checked : false,
+            diagnosis: document.getElementById('rxDiagnosis') ? document.getElementById('rxDiagnosis').value : "",
             ageYrs: y, ageMos: m, totalMonths: currentPatientAgeInMonths,
             givenDates: globalPatientsStore[id]?.givenDates || {},
             achievedMilestones: globalPatientsStore[id]?.achievedMilestones || {},
@@ -983,6 +994,7 @@
                 document.getElementById('htCm').value = p.htCm || "";
                 if(document.getElementById('hcCm')) document.getElementById('hcCm').value = p.hcCm || "";
                 if(document.getElementById('jeEndemic')) document.getElementById('jeEndemic').checked = p.je || false;
+                if(document.getElementById('rxDiagnosis')) document.getElementById('rxDiagnosis').value = p.diagnosis || "";
                 currentPatientAgeInMonths = p.totalMonths || 0;
                 document.getElementById('calcWeight').value = p.weight || "";
                 if(document.getElementById('calcQuickAge')) document.getElementById('calcQuickAge').value = p.totalMonths || "";
@@ -1058,16 +1070,18 @@
         const drug = combined[drugIndex];
         
         let volMl = 0; let details = ""; let unitStr = drug.vol === 1 ? 'Unit/Tab' : 'mL';
+        let durVal = document.getElementById('calcDuration') ? document.getElementById('calcDuration').value : "";
+        let durStr = durVal ? ` for ${durVal} days` : "";
         
         if (drug.doseType === 'fixed') {
             volMl = drug.vol; details = "Fixed Clinical Direct Output";
-            outputArea.innerHTML = `<div class="result-card"><p style="margin-top:0; color:var(--text-muted); font-weight:600; font-size:0.85rem; letter-spacing:0.05em;">Administer Quantity</p><h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${volMl.toFixed(1)} ${unitStr}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}</p></div>`;
+            outputArea.innerHTML = `<div class="result-card"><p style="margin-top:0; color:var(--text-muted); font-weight:600; font-size:0.85rem; letter-spacing:0.05em;">Administer Quantity</p><h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${volMl.toFixed(1)} ${unitStr}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}${durStr}</p></div>`;
         } else {
             let targetMg = drug.doseType === 'perDay' ? (weight * drug.doseMg) / drug.div : (weight * drug.doseMg);
             volMl = (targetMg * drug.vol) / drug.conc; details = `${targetMg.toFixed(1)} mg/dose Target`;
-            outputArea.innerHTML = `<div class="result-card"><p style="margin-top:0; color:var(--text-muted); font-weight:600; font-size:0.85rem; letter-spacing:0.05em;">Administer Volume</p><h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${volMl.toFixed(1)} ${unitStr}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}</p><div style="font-size:0.85rem; color:#64748b; margin-top:1rem; border-top:1px dashed var(--border-soft); padding-top:1rem;">[(${weight}kg × ${drug.doseMg}mg) × ${drug.vol}] ÷ ${drug.conc}mg</div></div>`;
+            outputArea.innerHTML = `<div class="result-card"><p style="margin-top:0; color:var(--text-muted); font-weight:600; font-size:0.85rem; letter-spacing:0.05em;">Administer Volume</p><h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${volMl.toFixed(1)} ${unitStr}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}${durStr}</p><div style="font-size:0.85rem; color:#64748b; margin-top:1rem; border-top:1px dashed var(--border-soft); padding-top:1rem;">[(${weight}kg × ${drug.doseMg}mg) × ${drug.vol}] ÷ ${drug.conc}mg</div></div>`;
         }
-        pendingPrescriptionDrug = { name: drug.name, vol: volMl.toFixed(1), freq: drug.freq, details: details, unit: unitStr };
+        pendingPrescriptionDrug = { name: drug.name, vol: volMl.toFixed(1), freq: drug.freq + durStr, details: details, unit: unitStr };
         addButtonArea.innerHTML = activePatientId ? `<button onclick='addPendingToRxCart()' class='action'>➕ Add to Prescription Pad</button>` : "";
         outputArea.style.display = 'block';
     }
@@ -1486,19 +1500,24 @@
                     <div class="print-clinic-name">${appSettings.clinicName || 'Pediatric Clinical Hub'}</div>
                     <div class="print-doc-name">${appSettings.docName || 'Dr. Peter Suraj Joseph'}</div>
                     ${appSettings.qual ? `<div class="print-tagline">${appSettings.qual}</div>` : ''}
+                    ${appSettings.regNo ? `<div class="print-tagline"><b>Reg No:</b> ${appSettings.regNo}</div>` : ''}
                     ${appSettings.tagline ? `<div class="print-tagline">${appSettings.tagline}</div>` : ''}
                     ${appSettings.phone ? `<div class="print-tagline">📞 ${appSettings.phone}</div>` : ''}
                     ${appSettings.address ? `<div class="print-tagline">📍 ${appSettings.address}</div>` : ''}
                 </div>
             </div>
             <div style="margin-bottom: 20px;">
-                <h1 style="margin-bottom: 10px; font-size:22px; text-transform:uppercase; text-align:center; letter-spacing:1px;">${title}</h1>
-                <div style="font-size: 14px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 10px 0; margin-bottom: 20px; display:flex; justify-content:space-between;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 10px;">
+                    <h1 style="margin: 0; font-size:22px; text-transform:uppercase; letter-spacing:1px;">${title}</h1>
+                    <div style="font-size:14px;"><b>Date:</b> ${new Date().toLocaleDateString('en-IN')}</div>
+                </div>
+                <div style="font-size: 14px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 10px 0; margin-bottom: 10px; display:flex; justify-content:space-between;">
                     <span><b>Patient:</b> ${p.name}</span>
                     <span><b>Age:</b> ${p.ageYrs}Y ${p.ageMos}M</span>
                     <span><b>Weight:</b> ${p.weight || 'N/A'} kg</span>
                     <span><b>Gender:</b> ${p.gender.toUpperCase()}</span>
                 </div>
+                ${p.diagnosis ? `<div style="font-size: 14px; margin-bottom:20px;"><b>Diagnosis / C.C:</b> ${p.diagnosis}</div>` : '<div style="margin-bottom:20px;"></div>'}
             </div>
         `;
     }
