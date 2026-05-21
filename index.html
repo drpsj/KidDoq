@@ -49,37 +49,51 @@
         *, *::before, *::after { box-sizing: border-box !important; }
         body, html { margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-main); }
         
-        .app-shell { width: 100vw; max-width: 100vw; height: 100vh; margin: 0; display: flex; overflow: hidden; background: var(--bg-body); transition: background-color 0.3s; }
-        
-        header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 1.25rem 2rem; text-align: left; box-shadow: var(--shadow-md); z-index: 20; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;}
-        header h1 { margin: 0; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px;}
-        header p { margin: 0; opacity: 0.9; font-size: 0.9rem; }
+        /* NEW DYNAMIC HEADER */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: var(--shadow-md); z-index: 200000; flex-shrink: 0; position: relative;
+        }
+        .header-titles { text-align: center; flex: 1; margin: 0 10px; }
+        .header-titles h1 { margin: 0; font-size: 1.1rem; font-weight: 700; letter-spacing: -0.5px;}
+        .header-titles p { margin: 0; opacity: 0.9; font-size: 0.75rem; display: none; }
+        @media(min-width: 768px) { .header-titles h1 { font-size: 1.5rem; } .header-titles p { display: block; } }
 
+        .header-btn {
+            background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white; padding: 8px 12px; border-radius: var(--radius-md); font-weight: bold;
+            cursor: pointer; backdrop-filter: blur(4px); font-size: 0.9rem; transition: background 0.2s;
+            display: flex; align-items: center; gap: 5px; white-space: nowrap;
+        }
+        .header-btn:active { background: rgba(255, 255, 255, 0.3); }
+
+        /* FLOATING PATIENT REGISTRY (Dropdown from top right) */
+        .registry-dropdown {
+            position: fixed; top: 70px; right: 10px; width: 350px; max-width: 95vw;
+            background: var(--bg-body); box-shadow: var(--shadow-float);
+            border-radius: var(--radius-lg); z-index: 100000;
+            display: none; flex-direction: column; max-height: 85vh; overflow-y: auto;
+            border: 1px solid var(--border-soft); padding: 0;
+        }
+        .registry-dropdown.mobile-open { display: flex; animation: springSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        .app-shell { width: 100vw; max-width: 100vw; height: calc(100vh - 65px); margin: 0; display: flex; overflow: hidden; background: var(--bg-body); transition: background-color 0.3s; }
+        
         /* =========================================
            PREMIUM APP DASHBOARD UI
            ========================================= */
         .dashboard-grid {
-            display: grid !important;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
-            gap: 1rem !important;
-            padding-bottom: 2rem !important;
-            margin-top: 1.5rem !important;
+            display: grid !important; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+            gap: 1rem !important; padding-bottom: 2rem !important; margin-top: 1.5rem !important;
         }
 
         .app-card {
-            background: #ffffff !important;
-            border-radius: 24px !important;
-            padding: 1.5rem 0.5rem !important;
-            text-align: center !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02) !important;
-            border: 1px solid rgba(0,0,0,0.03) !important;
-            cursor: pointer !important;
+            background: #ffffff !important; border-radius: 24px !important; padding: 1.5rem 0.5rem !important;
+            text-align: center !important; box-shadow: 0 10px 30px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02) !important;
+            border: 1px solid rgba(0,0,0,0.03) !important; cursor: pointer !important;
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 12px !important;
+            display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 12px !important;
         }
         .app-card:active { transform: scale(0.94) !important; background: #f8fafc !important; }
 
@@ -95,13 +109,10 @@
         .bg-purple { background: #f3e8ff !important; } .bg-orange { background: #ffedd5 !important; }
         .bg-gray { background: #f1f5f9 !important; }
         
-        /* SAAS DESKTOP ENHANCEMENTS (Custom Scrollbars) */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: var(--radius-pill); border: 2px solid var(--bg-body); }
-        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
-        /* FRAMER MOTION EMULATION (Fail-Safe Spring Physics) */
+        
         .view-content { display: none; width: 100%; max-width: 1200px; margin: 0 auto; }
         .view-content.active-view { display: block; opacity: 1; animation: springSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         .sub-tab-content { display: none; } 
@@ -118,65 +129,63 @@
         button.action:active { transform: translateY(1px); }
         button.secondary { background-color: var(--bg-body); color: var(--text-main); border: 1px solid var(--border-soft); padding: 0.6rem; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; width: 100%; transition: background-color 0.2s;}
 
-        /* PATIENT BADGES */
         .patient-list { margin-top: 1rem; border-top: 1px solid var(--border-soft); padding-top: 1rem; }
         .patient-badge { background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-md); margin-bottom: 0.5rem; cursor: pointer; border: 1px solid var(--border-soft); font-size: 0.85rem; display: flex; justify-content: space-between; transition: all 0.2s;}
         .patient-badge.active-patient { border-color: var(--primary); background: var(--primary-light); font-weight: 600; box-shadow: inset 0 0 0 1px var(--primary);}
 
-        /* CONTENT BLOCKS & THEORY CONTAINERS */
         .timeline-section { background: var(--bg-surface); padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); margin-bottom: 2rem; border: none; transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .section-title { color: var(--text-main); border-bottom: none; padding-bottom: 0; margin-top: 0; margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; letter-spacing: -0.5px;}
         .tool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; align-items: start;}
         
         .formula-box { background: var(--primary-light); padding: 1.25rem; border-radius: var(--radius-md); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; border-left: 4px solid var(--primary); color: var(--primary-dark); }
-        .formula-box code { font-family: monospace; font-size: 1rem; font-weight: bold; display: block; margin-top: 5px; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; }
         .theory-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; background: var(--bg-surface); }
         .theory-table th, .theory-table td { padding: 8px 12px; border: 1px solid var(--border-soft); text-align: left; }
         .theory-table th { background: var(--bg-body); color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
 
-        /* OUTPUT STYLES */
         .tool-result { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1.25rem; border-radius: var(--radius-md); color: var(--success); text-align: center; margin-top: 1rem; font-size: 1.1rem; line-height: 1.5;}
         .tool-result.danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: var(--danger); }
         .tool-result.warning { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); color: var(--warning); }
         .tool-result.neutral { background: var(--bg-body); border-color: var(--border-soft); color: var(--text-main); }
         
-        /* SUB-TABS */
         .sub-tabs-nav { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-soft); flex-wrap: wrap; }
         .sub-tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 0.75rem 1rem; cursor: pointer; font-size: 0.95rem; font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.2s;}
         .sub-tab-btn.active { color: var(--primary); border-color: var(--primary); }
-
-        .mobile-toggle-btn { display: none; }
 
         /* =========================================
            TRUE DESKTOP SAAS DASHBOARD (Edge-to-Edge)
            ========================================= */
         @media (min-width: 1024px) {
             .app-shell { flex-direction: row !important; }
-            .sidebar { width: 320px !important; flex-shrink: 0 !important; height: 100vh !important; border-right: 1px solid var(--border-soft); overflow-y: auto; padding: 0; background: var(--bg-surface); z-index: 10; display: flex; flex-direction: column;}
-            .main-content { flex: 1 !important; height: 100vh !important; overflow-y: auto !important; padding: 2.5rem 4rem !important; }
+            .sidebar { width: 320px !important; flex-shrink: 0 !important; height: 100% !important; border-right: 1px solid var(--border-soft); overflow-y: auto; padding: 0; background: var(--bg-surface); z-index: 10; display: flex; flex-direction: column; transition: width 0.3s;}
+            .main-content { flex: 1 !important; height: 100% !important; overflow-y: auto !important; padding: 2.5rem 4rem !important; }
             
-            .app-features-nav { display: flex; flex-direction: column; gap: 0.25rem; padding: 1.5rem; border-bottom: 1px solid var(--border-soft); flex-shrink: 0;}
+            .app-features-nav { display: flex; flex-direction: column; gap: 0.25rem; padding: 1.5rem; flex-shrink: 0;}
             .feature-btn { position: relative; overflow: hidden; background: transparent; color: var(--text-muted); border: none; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s ease;}
             .feature-btn:hover { background: var(--border-soft); color: var(--text-main); }
             .feature-btn.active { background: var(--primary-light); color: var(--primary); font-weight: 700; border-left: 4px solid var(--primary); border-radius: 0 var(--radius-md) var(--radius-md) 0;}
             
+            /* DYNAMIC HIDE NAV ON HOME (DESKTOP) */
+            .app-shell.home-active .sidebar { width: 0 !important; border-right: none !important; padding: 0 !important; }
+            .app-shell.home-active .app-features-nav { display: none !important; }
+
             #doseCalcTab { display: grid !important; grid-template-columns: 400px 1fr !important; gap: 3rem !important; align-items: start !important; }
             .tool-grid { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)) !important; gap: 2rem !important; }
         }
 
         /* =========================================
-           THE BULLETPROOF MOBILE NAV & REGISTRY FIX
+           THE BULLETPROOF MOBILE NAV
            ========================================= */
         @media (max-width: 1023px) {
             body, html { height: 100dvh !important; width: 100vw !important; overflow: hidden !important; margin: 0 !important; padding: 0 !important; background: var(--bg-body) !important; }
-            .app-shell { display: flex !important; flex-direction: column !important; height: 100dvh !important; width: 100vw !important; margin: 0 !important; padding: 0 !important; }
-
-            .mobile-toggle-btn { display: flex !important; justify-content: space-between; align-items: center; width: 100%; padding: 1.25rem; background: var(--bg-surface); color: var(--primary); font-weight: 800; border: none; border-bottom: 1px solid var(--border-soft); font-size: 1.1rem; cursor: pointer; flex-shrink: 0; }
-            .panel { display: none; max-height: 50vh; overflow-y: auto; padding: 1.5rem; background: var(--bg-body); border-bottom: 1px solid var(--border-soft); box-shadow: inset 0 -10px 10px -10px rgba(0,0,0,0.05);}
-            .panel.mobile-open { display: flex; }
+            .app-shell { display: flex !important; flex-direction: column !important; height: calc(100dvh - 65px) !important; width: 100vw !important; margin: 0 !important; padding: 0 !important; }
 
             .sidebar { position: relative !important; width: 100vw !important; height: auto !important; background: transparent !important; border: none !important; z-index: 10 !important; flex-shrink: 0; }
             .main-content { flex: 1 !important; height: auto !important; overflow-y: auto !important; overflow-x: hidden !important; padding: 1rem 1rem 120px 1rem !important; width: 100vw !important; -webkit-overflow-scrolling: touch !important; }
+            
+            /* DYNAMIC HIDE NAV ON HOME (MOBILE) */
+            .app-shell.home-active .app-features-nav { display: none !important; }
+            .app-shell.home-active .main-content { padding-bottom: 2rem !important; }
+
             .timeline-section { padding: 1.5rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);}
             .tool-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important;}
 
@@ -206,24 +215,63 @@
         /* PRINT ENGINE SECURE HIDING */
         @media screen { .print-container { display: none !important; } }
         @media print {
-            body { background: white !important; margin: 0; padding: 0; height: auto; overflow: visible;}
-            .app-shell, header { display: none !important; }
-            .print-container { display: block !important; width: 100%; }
+            body, html { background: white !important; margin: 0 !important; padding: 0 !important; height: auto !important; overflow: visible !important; }
+            .app-shell, header, .registry-dropdown { display: none !important; }
+            .print-container { display: block !important; width: 100% !important; height: auto !important; position: static !important; overflow: visible !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             .page-break { page-break-after: always; }
         }
     </style>
 </head>
 <body>
     <div id="systemToastContainer" style="position:fixed; bottom:100px; right:30px; z-index:99999; display:flex; flex-direction:column; gap:10px; pointer-events:none;"></div>
+  
   <header>
-    <h1>Pediatric Clinical Hub</h1>
-    <p>Point-of-Care Intelligent Workspace Framework</p>
-</header>
+    <button class="header-btn" onclick="switchMainFeature('homeDashboardView')">🏠 <span style="display:none; @media(min-width:768px){display:inline;}">Home</span></button>
+    <div class="header-titles">
+        <h1>Pediatric Clinical Hub</h1>
+        <p>Point-of-Care Intelligent Workspace Framework</p>
+    </div>
+    <button class="header-btn" onclick="document.getElementById('registryPanel').classList.toggle('mobile-open')">
+        <span id="headerPatientText">👤 Patient</span>
+    </button>
+  </header>
 
-<div class="app-shell">
+  <div class="registry-dropdown" id="registryPanel">
+    <div class="panel" style="background: var(--bg-body);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+            <h3 style="margin:0;">Patient Registry</h3>
+            <button onclick="document.getElementById('registryPanel').classList.remove('mobile-open')" style="background:transparent; border:none; font-size:1.2rem; cursor:pointer; color:var(--text-muted);">✖</button>
+        </div>
+        
+        <label>Patient Name</label>
+        <input type="text" id="pName" placeholder="e.g., Baby of Sunita" list="savedPatientNames" autocomplete="off">
+        <datalist id="savedPatientNames"></datalist>
+        <label>Phone (For WhatsApp)</label><input type="text" id="pPhone" placeholder="e.g., 9876543210" oninput="saveAndRegisterPatient(true)">
+        <label>DOB</label><input type="date" id="dob" onchange="calculateAgeFromDob()">
+        <label>Current Age</label>
+        <div class="row-inputs"><input type="number" id="ageYrs" placeholder="Yrs" oninput="estimateWeightFromAge()"><input type="number" id="ageMos" placeholder="Mos" oninput="estimateWeightFromAge()"></div>
+        <div class="row-inputs" style="margin-top:10px;">
+            <div><label>Wt (kg)</label><input type="number" step="0.1" id="pWeight" oninput="saveAndRegisterPatient(true)"></div>
+            <div><label>Ht (cm)</label><input type="number" step="0.1" id="htCm" oninput="saveAndRegisterPatient(true)"></div>
+        </div>
+        <div class="row-inputs" style="margin-top:10px;">
+            <div><label>HC (cm)</label><input type="number" step="0.1" id="hcCm" oninput="saveAndRegisterPatient(true)"></div>
+            <div><label>Gender</label><select id="gender" onchange="saveAndRegisterPatient(true)"><option value="male">Male</option><option value="female">Female</option></select></div>
+        </div>
+        <div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" id="jeEndemic" onchange="saveAndRegisterPatient(true)" style="width:auto; margin:0;"> 
+            <label style="margin:0;">JE Endemic Area?</label>
+        </div>
+        <button class="action" onclick="saveAndRegisterPatient(false)">💾 Save Profile & Proceed</button>
+        <button class="secondary" style="margin-top:10px;" onclick="prepNewPatient()">➕ Clear / New</button>
+        <div class="patient-list" id="patientListContainer"></div>
+    </div>
+  </div>
+
+<div class="app-shell home-active">
     <div class="sidebar">
         <div class="app-features-nav">
-            <button class="feature-btn active" onclick="switchMainFeature('homeDashboardView', this)">🏠 Home</button>
             <button class="feature-btn alert" onclick="switchMainFeature('erFeatureView', this)">🚨 ER & NICU</button>
             <button class="feature-btn" onclick="switchMainFeature('trackerFeatureView', this)">📅 Tracker</button>
             <button class="feature-btn" onclick="switchMainFeature('dosageFeatureView', this)">💊 Dosage</button>
@@ -237,35 +285,6 @@
             <button class="feature-btn" onclick="switchMainFeature('jaundiceFeatureView', this)">🍼 Jaundice</button>
             <button class="feature-btn" onclick="switchMainFeature('aboutFeatureView', this)">ℹ️ Settings</button>
         </div>
-        
-        <button class="mobile-toggle-btn" onclick="document.getElementById('registryPanel').classList.toggle('mobile-open')">
-            <span id="mobileBannerText">👤 Select / Register Patient</span><span>▼</span>
-        </button>
-        <div class="panel" id="registryPanel">
-            <h3 style="margin-top:0;">Patient Registry</h3>
-            <label>Patient Name</label>
-            <input type="text" id="pName" placeholder="e.g., Baby of Sunita" list="savedPatientNames" autocomplete="off">
-            <datalist id="savedPatientNames"></datalist>
-            <label>Phone (For WhatsApp)</label><input type="text" id="pPhone" placeholder="e.g., 9876543210" oninput="saveAndRegisterPatient()">
-            <label>DOB</label><input type="date" id="dob" onchange="calculateAgeFromDob()">
-            <label>Current Age</label>
-            <div class="row-inputs"><input type="number" id="ageYrs" placeholder="Yrs" oninput="estimateWeightFromAge()"><input type="number" id="ageMos" placeholder="Mos" oninput="estimateWeightFromAge()"></div>
-            <div class="row-inputs" style="margin-top:10px;">
-                <div><label>Wt (kg)</label><input type="number" step="0.1" id="pWeight" oninput="saveAndRegisterPatient()"></div>
-                <div><label>Ht (cm)</label><input type="number" step="0.1" id="htCm" oninput="saveAndRegisterPatient()"></div>
-            </div>
-            <div class="row-inputs" style="margin-top:10px;">
-                <div><label>HC (cm)</label><input type="number" step="0.1" id="hcCm" oninput="saveAndRegisterPatient()"></div>
-                <div><label>Gender</label><select id="gender" onchange="saveAndRegisterPatient()"><option value="male">Male</option><option value="female">Female</option></select></div>
-            </div>
-            <div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
-                <input type="checkbox" id="jeEndemic" onchange="saveAndRegisterPatient()" style="width:auto; margin:0;"> 
-                <label style="margin:0;">JE Endemic Area?</label>
-            </div>
-            <button class="action" onclick="saveAndRegisterPatient()">Save Profile</button>
-            <button class="secondary" style="margin-top:10px;" onclick="prepNewPatient()">➕ Clear / New</button>
-            <div class="patient-list" id="patientListContainer"></div>
-        </div>
     </div>
 
     <div class="main-content">
@@ -277,44 +296,34 @@
 
             <div class="dashboard-grid">
                 <div class="app-card" onclick="switchMainFeature('erFeatureView')">
-                    <div class="card-icon bg-red">🚨</div>
-                    <span>ER & NICU</span>
+                    <div class="card-icon bg-red">🚨</div><span>ER & NICU</span>
                 </div>
                 <div class="app-card" onclick="switchMainFeature('dosageFeatureView')">
-                    <div class="card-icon bg-blue">💊</div>
-                    <span>Dosage Calc</span>
+                    <div class="card-icon bg-blue">💊</div><span>Dosage Calc</span>
                 </div>
                 <div class="app-card" onclick="switchMainFeature('trackerFeatureView')">
-                    <div class="card-icon bg-purple">📅</div>
-                    <span>Tracker</span>
+                    <div class="card-icon bg-purple">📅</div><span>Tracker</span>
                 </div>
                 <div class="app-card" onclick="switchMainFeature('prescriptionFeatureView')">
-                    <div class="card-icon bg-green">📝</div>
-                    <span>Prescription</span>
+                    <div class="card-icon bg-green">📝</div><span>Prescription</span>
                 </div>
                 <div class="app-card" onclick="switchMainFeature('nutritionFeatureView')">
-                    <div class="card-icon bg-orange">🍎</div>
-                    <span>Nutrition</span>
+                    <div class="card-icon bg-orange">🍎</div><span>Nutrition</span>
                 </div>
                 <div class="app-card" onclick="switchMainFeature('malnutritionFeatureView')">
-                    <div class="card-icon bg-yellow">🩺</div>
-                    <span>Triage</span>
+                    <div class="card-icon bg-yellow">🩺</div><span>Triage</span>
                 </div>
                 <div class="app-card" onclick="switchMainFeature('milestoneFeatureView')">
-                    <div class="card-icon bg-blue">👶</div>
-                    <span>Milestones</span>
+                    <div class="card-icon bg-blue">👶</div><span>Milestones</span>
                 </div>
                 <div class="app-card" onclick="switchMainFeature('growthFeatureView')">
-                    <div class="card-icon bg-red">📈</div>
-                    <span>Growth</span>
+                    <div class="card-icon bg-red">📈</div><span>Growth</span>
                 </div>
                 <div class="app-card" onclick="switchMainFeature('fluidsFeatureView')">
-                    <div class="card-icon bg-blue">💧</div>
-                    <span>IV Fluids</span>
+                    <div class="card-icon bg-blue">💧</div><span>IV Fluids</span>
                 </div>
                 <div class="app-card" onclick="switchMainFeature('aboutFeatureView')">
-                    <div class="card-icon bg-gray">⚙️</div>
-                    <span>Settings</span>
+                    <div class="card-icon bg-gray">⚙️</div><span>Settings</span>
                 </div>
             </div>
         </div>
@@ -419,13 +428,6 @@
 
             <div id="dosageFeatureView" class="view-content">
                 <h2 class="section-title">💊 Pediatric Dosing Engine</h2>
-                <div style="background: #fffbe8; border: 1px solid #fde68a; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 15px; box-shadow: var(--shadow-sm);">
-                    <div style="font-size: 1.5rem;">⚡</div>
-                    <div style="flex: 1;">
-                        <label style="margin: 0; font-weight: bold; color: #b45309; font-size: 0.9rem;">Quick OPD Calc (Bypass Patient Registry)</label>
-                        <input type="number" id="quickWeightOverride" placeholder="Enter Weight (kg)..." style="margin-top: 5px; border-color: #fcd34d; background: white;" oninput="useQuickWeight()">
-                    </div>
-                </div>
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('doseCalcTab', this)">🧮 Active Calculator</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('doseReverseTab', this)">🔄 Reverse Audit</button>
@@ -436,12 +438,14 @@
                     <div class="timeline-section">
                         <div class="formula-box">
                             <b>Standard Calculation:</b> <code>Volume = (Weight × Dose mg/kg) ÷ (Stock Conc / Base Vol)</code><br>
-                            <small>*Fixed-dose formulations bypass weight scaling and output the absolute Base Volume directly.</small>
+                            <small>*Fixed-dose formulations bypass weight scaling. Operates independently if no patient selected.</small>
                         </div>
                         <div class="tool-grid">
                             <div>
-                                <label>Bedside Weight (kg)</label><input type="number" id="calcWeight" oninput="calculateDose()">
-                                <label>Category</label>
+                                <label style="color:var(--primary); font-size:0.85rem;">Bedside Weight (kg) - Active Universal</label>
+                                <input type="number" id="calcWeight" placeholder="Enter weight for calc..." oninput="calculateDose()" style="border-color:var(--primary); font-weight:bold;">
+                                
+                                <label style="margin-top:15px;">Category</label>
                                 <select id="drugCategory" onchange="populateDrugs(); calculateDose();">
                                     <option value="">-- Select --</option>
                                     <option value="antibiotics">Antibiotics</option>
@@ -574,7 +578,7 @@
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('nutriCalcTab', this)">🧮 ICMR Target Metrics</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('nutriRecallTab', this)">🍽️ 24h Diet Recall Board</button>
-                    <button class="sub-tab-btn" onclick="switchSubTab('nutriDBTab', this)">📊 Reference Matrix</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('nutriDBTab', this); renderFoodDB(foodsDb);">📊 Reference Matrix</button>
                 </div>
                 <div id="nutriCalcTab" class="sub-tab-content active"><div class="timeline-section"><div id="nutriTargetArea"></div></div></div>
                 <div id="nutriRecallTab" class="sub-tab-content">
@@ -669,7 +673,7 @@
                     <button class="sub-tab-btn active" onclick="switchSubTab('msEvalTab', this)">📋 Checklist</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('msProgressTab', this)">📈 Dashboard</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('msMissedTab', this)">🚨 Red Flags</button>
-                    <button class="sub-tab-btn" onclick="switchSubTab('msReferenceTab', this)">📘 Standards</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('msReferenceTab', this); buildMilestoneReference();">📘 Standards</button>
                 </div>
                 <div id="msEvalTab" class="sub-tab-content active"><div class="timeline-section"><h3 style="color:var(--primary); margin-top:0;">Comprehensive Evaluation</h3><div id="msEvalContainer"></div></div></div>
                 <div id="msProgressTab" class="sub-tab-content"><div class="timeline-section"><h3 style="color:var(--primary); margin-top:0;">Developmental Dashboard</h3><div class="tool-grid"><div id="msCompletedContainer"></div><div id="msUpcomingContainer"></div></div></div></div>
@@ -1013,7 +1017,6 @@
     let pendingPrescriptionDrug = null;
     let wtChartInstance = null; 
     let htChartInstance = null;
-    window.tempQuickWeight = null; // Fix for Quick OPD Calculator
 
     // --- 3. INITIALIZATION & UI ROUTING ---
     document.addEventListener("DOMContentLoaded", function() {
@@ -1029,36 +1032,39 @@
 
     // --- 4. CORE NAVIGATION ENGINE (FIXED) ---
     function switchMainFeature(viewId, btnElement) {
-        // 1. Hide ALL view contents safely
+        // Hide ALL view contents
         const allViews = document.querySelectorAll('.view-content');
         allViews.forEach(view => {
             view.style.display = 'none';
             view.classList.remove('active-view');
         });
 
-        // 2. Clear out active styling from all bottom/sidebar buttons
+        // Clear active styling from bottom/sidebar buttons
         const allBtns = document.querySelectorAll('.feature-btn');
         allBtns.forEach(btn => btn.classList.remove('active'));
 
         const workspace = document.getElementById('activeWorkspace');
         const homeDash = document.getElementById('homeDashboardView');
+        const shell = document.querySelector('.app-shell');
         
-        // 3. Security Check: Block tools if no patient is loaded (unless overridden)
+        // Security Check
         const needsPatient = ['trackerFeatureView', 'prescriptionFeatureView', 'nutritionFeatureView', 'malnutritionFeatureView', 'milestoneFeatureView'];
         if (needsPatient.includes(viewId) && !activePatientId) {
             if(typeof showSystemToast === 'function') showSystemToast("⚠️ Please select or register a patient first!");
-            viewId = 'homeDashboardView'; // Force route back to home
-            btnElement = document.querySelector('.feature-btn[onclick*="homeDashboardView"]'); // Highlight Home button
+            viewId = 'homeDashboardView'; 
+            btnElement = document.querySelector('.feature-btn[onclick*="homeDashboardView"]'); 
         }
 
-        // 4. Handle showing the workspace vs home dashboard
+        // Hide/Show Global Nav on Home Screen
         if (viewId === 'homeDashboardView') {
+            shell.classList.add('home-active');
             if(workspace) workspace.style.display = 'none';
             if(homeDash) {
                 homeDash.style.display = 'block';
                 setTimeout(() => homeDash.classList.add('active-view'), 10);
             }
         } else {
+            shell.classList.remove('home-active');
             if(homeDash) homeDash.style.display = 'none';
             if(workspace) workspace.style.display = 'block';
             
@@ -1068,17 +1074,17 @@
                 setTimeout(() => targetView.classList.add('active-view'), 10);
             }
             
-            // Auto-trigger specific calculators when opening a tab
+            // Auto-trigger specific calculators
             if(viewId === 'dosageFeatureView') calculateDose();
             if(viewId === 'fluidsFeatureView') calcFluids();
             if(viewId === 'growthFeatureView' && activePatientId) calcGrowth();
-            if(viewId === 'nutritionFeatureView') { calcNutrition(); renderDietRecall(); }
+            if(viewId === 'nutritionFeatureView') { calcNutrition(); renderDietRecall(); renderFoodDB(foodsDb); }
             if(viewId === 'erFeatureView') calcCrash();
-            if(viewId === 'milestoneFeatureView' && activePatientId) renderMilestoneDashboard();
+            if(viewId === 'milestoneFeatureView' && activePatientId) { renderMilestoneDashboard(); buildMilestoneReference(); }
             if(viewId === 'malnutritionFeatureView' && activePatientId) { calcMalnutrition(); renderSensory(); }
         }
 
-        // 5. Highlight the matching navigation button
+        // Highlight matching navigation button
         if (btnElement) {
             btnElement.classList.add('active');
         } else {
@@ -1086,7 +1092,7 @@
             if (matchingBtn) matchingBtn.classList.add('active');
         }
         
-        // 6. Smooth scroll the content area back to the top
+        // Smooth scroll
         const mainContent = document.querySelector('.main-content');
         if (mainContent) mainContent.scrollTop = 0;
     }
@@ -1131,14 +1137,12 @@
         document.getElementById('pWeight').value = ""; document.getElementById('htCm').value = ""; document.getElementById('hcCm').value = "";
         if(document.getElementById('jeEndemic')) document.getElementById('jeEndemic').checked = false; 
         document.getElementById('calcWeight').value = ""; document.getElementById('fluidWeight').value = ""; document.getElementById('crashWeight').value = "";
-        window.tempQuickWeight = null;
-        if(document.getElementById('quickWeightOverride')) document.getElementById('quickWeightOverride').value = "";
         
-        switchMainFeature('homeDashboardView'); // Reset to premium dash
+        switchMainFeature('homeDashboardView'); 
         
         if(document.getElementById('btnMasterPrint')) document.getElementById('btnMasterPrint').style.display = "none";
         if(document.getElementById('btnMasterWA')) document.getElementById('btnMasterWA').style.display = "none";
-        if(document.getElementById('mobileBannerText')) document.getElementById('mobileBannerText').innerText = "👤 Select / Register Patient";
+        if(document.getElementById('headerPatientText')) document.getElementById('headerPatientText').innerText = "👤 Patient";
         renderPatientBadges();
     }
 
@@ -1163,6 +1167,7 @@
         if(document.getElementById('crashWeight')) document.getElementById('crashWeight').value = estKg.toFixed(1);
         if(document.getElementById('calcQuickAge')) document.getElementById('calcQuickAge').value = currentPatientAgeInMonths;
         if(document.getElementById('crashAge')) document.getElementById('crashAge').value = y;
+        saveAndRegisterPatient(true);
     }
 
     function saveAndRegisterPatient(isBackgroundUpdate = false) {
@@ -1192,14 +1197,16 @@
         };
         
         localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); activePatientId = id;
-        if(document.getElementById('mobileBannerText')) document.getElementById('mobileBannerText').innerText = `👤 ${nameStr} (${y}Y ${m}M)`;
+        if(document.getElementById('headerPatientText')) document.getElementById('headerPatientText').innerText = `👤 ${nameStr}`;
         
         if(!isBackgroundUpdate) {
             document.getElementById('registryPanel').classList.remove('mobile-open');
-            renderPatientBadges(); triggerActiveWorkspaceBuild(id);
+            renderPatientBadges(); 
+            triggerActiveWorkspaceBuild(id); // ONLY switch screens when explicitly clicking "Save & Proceed"
         } else {
+            // Background update keeps you on your current screen
             if(document.getElementById('activeWorkspace').style.display === 'block') {
-                calculateDose(); renderMilestoneDashboard(); calcGrowth(); calcMalnutrition(); calcNutrition();
+                calculateDose(); calcGrowth(); calcMalnutrition(); calcNutrition();
             }
         }
     }
@@ -1231,7 +1238,7 @@
                 if(document.getElementById('calcQuickAge')) document.getElementById('calcQuickAge').value = p.totalMonths || "";
                 if(document.getElementById('crashWeight')) document.getElementById('crashWeight').value = p.weight || "";
                 if(document.getElementById('crashAge')) document.getElementById('crashAge').value = p.ageYrs || 0;
-                if(document.getElementById('mobileBannerText')) document.getElementById('mobileBannerText').innerText = `👤 ${p.name} (${p.ageYrs}Y ${p.ageMos}M)`;
+                if(document.getElementById('headerPatientText')) document.getElementById('headerPatientText').innerText = `👤 ${p.name}`;
                 document.getElementById('registryPanel').classList.remove('mobile-open');
                 renderPatientBadges(); triggerActiveWorkspaceBuild(p.id);
             };
@@ -1243,7 +1250,7 @@
         if(document.getElementById('btnMasterPrint')) document.getElementById('btnMasterPrint').style.display = "flex";
         if(document.getElementById('btnMasterWA')) document.getElementById('btnMasterWA').style.display = "flex";
         
-        // Open the workspace safely without calling empty state
+        // Open tracker securely
         switchMainFeature('trackerFeatureView'); 
         
         calculateAndRenderTimeline(pId); calculateDose(); renderMilestoneDashboard(); renderRxCartList(); calcGrowth(); calcMalnutrition(); calcNutrition(); renderSensory(); renderDietRecall(); calcCrash();
@@ -1292,21 +1299,10 @@
         document.getElementById('newDrugName').value = ''; populateDrugs();
     }
 
-    function useQuickWeight() {
-        let quickWt = document.getElementById('quickWeightOverride').value;
-        if (quickWt && quickWt > 0) {
-            window.tempQuickWeight = parseFloat(quickWt);
-            document.getElementById('calcWeight').value = quickWt;
-            if(typeof showSystemToast === 'function') showSystemToast(`⚡ Quick Weight set to ${quickWt} kg`);
-        } else {
-            window.tempQuickWeight = null;
-        }
-        calculateDose();
-    }
-
     function calculateDose() {
         try {
-            const weight = window.tempQuickWeight || parseFloat(document.getElementById('calcWeight').value);
+            // UNIFIED WEIGHT LOGIC: Works instantly whether a patient is selected or not
+            const weight = parseFloat(document.getElementById('calcWeight').value);
             const cat = document.getElementById('drugCategory').value;
             const drugIndex = document.getElementById('drugFormulation').value;
             const outputArea = document.getElementById('calcOutputArea');
@@ -1349,7 +1345,7 @@
             if(activePatientId) {
                 btnArea.innerHTML = `<button class="action" onclick="addToRxCart()" style="width:100%; font-size:1.1rem; padding:1rem; margin-top:1rem; background:var(--primary); color:white; border-radius:var(--radius-md); box-shadow:var(--shadow-md);">➕ Add to Prescription Pad</button>`;
             } else {
-                btnArea.innerHTML = `<div style="text-align:center; color:var(--warning); font-size:0.85rem; padding-top:10px;">Select a patient to save this to the pad.</div>`;
+                btnArea.innerHTML = `<div style="text-align:center; color:var(--warning); font-size:0.85rem; padding-top:10px;">Calculation active. (Select a patient above to save this to a prescription pad).</div>`;
             }
         } catch (error) {
             console.error("Calculator Error:", error);
@@ -1358,7 +1354,7 @@
     }
 
     function calcReverse() {
-        const weight = window.tempQuickWeight || parseFloat(document.getElementById('calcWeight').value);
+        const weight = parseFloat(document.getElementById('calcWeight').value);
         const cat = document.getElementById('revCategory').value; const drugIndex = document.getElementById('revFormulation').value;
         const volGiven = parseFloat(document.getElementById('revVol').value); 
         const out = document.getElementById('revOutputArea');
@@ -1579,7 +1575,9 @@
     }
 
     function renderFoodDB(dataArray) {
-        const tbody = document.getElementById('foodTableBody'); tbody.innerHTML = "";
+        const tbody = document.getElementById('foodTableBody'); 
+        if(!tbody) return;
+        tbody.innerHTML = "";
         dataArray.forEach(f => { tbody.innerHTML += `<tr><td><b style="color:var(--primary);">${f.name}</b></td><td>${f.cat}</td><td>${f.p}</td><td>${f.c}</td><td>${f.f || 0}</td><td><b style="color:var(--success);">${f.k}</b></td></tr>`; });
     }
 
@@ -1973,10 +1971,11 @@
         `;
         engine.innerHTML = html; 
         
+        // BUFFER INCREASED TO 500ms TO FIX BLANK PRINTING
         setTimeout(() => {
             window.print();
             engine.innerHTML = ""; 
-        }, 250);
+        }, 500);
     }
 
     function sendWACompReport() {
