@@ -1376,6 +1376,7 @@
         document.getElementById('ageYrs').value = years < 0 ? 0 : years;
         document.getElementById('ageMos').value = remMonths < 0 ? 0 : remMonths;
         estimateWeightFromAge();
+        resetToHomeDashboard();
     }
 
     function estimateWeightFromAge() {
@@ -2273,33 +2274,39 @@ function removeDrug(index) {
 
 // --- CORE NAVIGATION ENGINE ---
     function switchMainFeature(viewId, btnElement) {
-        // 1. Find and hide ALL sections
-        const allViews = document.querySelectorAll('.view-content');
-        allViews.forEach(view => {
-            view.classList.remove('active-view');
-        });
+    // 1. Hide ALL view contents safely
+    const allViews = document.querySelectorAll('.view-content');
+    allViews.forEach(view => {
+        view.style.display = 'none';
+        view.classList.remove('active-view');
+    });
 
-        // 2. Remove the active highlight from ALL buttons
-        const allBtns = document.querySelectorAll('.feature-btn');
-        allBtns.forEach(btn => {
-            btn.classList.remove('active');
-        });
+    // 2. Clear out active styling from all bottom/sidebar buttons
+    const allBtns = document.querySelectorAll('.feature-btn');
+    allBtns.forEach(btn => {
+        btn.classList.remove('active');
+    });
 
-        // 3. Find and show the specific section you clicked
-        const targetView = document.getElementById(viewId);
-        if (targetView) {
-            targetView.classList.add('active-view');
-        } else {
-            // Fail-safe just in case you haven't built that specific page yet
-            console.warn("View not found:", viewId);
-            if(typeof showSystemToast === "function") showSystemToast("⚠️ This section is still under construction!");
-        }
-
-        // 4. Highlight the button you just clicked
-        if (btnElement) {
-            btnElement.classList.add('active');
-        }
+    // 3. Show the target view flawlessly
+    const targetView = document.getElementById(viewId);
+    if (targetView) {
+        targetView.style.display = 'block';
+        setTimeout(() => targetView.classList.add('active-view'), 10);
     }
+
+    // 4. Highlight the matching bottom navigation button if it exists
+    if (btnElement) {
+        btnElement.classList.add('active');
+    } else {
+        // If clicked from a dashboard icon, find and highlight the corresponding bottom button
+        const matchingBtn = document.querySelector(`[onclick*="${viewId}"]`);
+        if (matchingBtn) matchingBtn.classList.add('active');
+    }
+    
+    // Smooth scroll the content area back to the top when switching pages
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) mainContent.scrollTop = 0;
+}
 
     function showSystemToast(msg) {
             const container = document.getElementById('systemToastContainer');
@@ -2365,6 +2372,18 @@ function useQuickWeight() {
 
     // Optional: Find your calculation function (usually called calculateDose) 
     // and make sure it checks for window.tempQuickWeight before failing!
+
+// --- HOME RESET ENGINE ---
+function resetToHomeDashboard() {
+    // 1. Point navigation to the premium icon grid
+    switchMainFeature('homeDashboardView');
+    
+    // 2. Fail-safe placeholder protection so other functions don't crash
+    const emptyState = document.getElementById('emptyStatePlaceholder') || document.getElementById('homeDashboardView');
+    if (emptyState) {
+        emptyState.style.display = "block";
+    }
+}
 
 </script>
 </body>
