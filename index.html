@@ -140,6 +140,42 @@
             .feature-btn { padding: 0.6rem 0.8rem; font-size: 0.85rem; }
         }
 
+        /* DESKTOP SAAS DASHBOARD (Ultra-Wide Optimization) */
+        @media (min-width: 1024px) {
+            /* 1. Transform Dosing Calculator into a 2-Pane UI */
+            #doseCalcTab, #doseReverseTab {
+                display: grid;
+                grid-template-columns: 400px 1fr;
+                gap: 3rem;
+                align-items: start;
+            }
+            
+            /* 2. Make the Prescription Pad Sticky (Stays on screen while scrolling) */
+            #rxCartArea {
+                position: sticky;
+                top: 2rem;
+                align-self: start;
+                max-height: calc(100vh - 4rem);
+                overflow-y: auto;
+            }
+            .rx-cart-container {
+                box-shadow: var(--shadow-md);
+                border: 1px solid var(--border-soft);
+            }
+            
+            /* 3. Transform Triage, Anthropometry & ER into Side-by-Side Grids */
+            .tool-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 2rem;
+            }
+            
+            /* 4. Widen the sidebar slightly for breathing room */
+            .sidebar { width: 320px; padding: 1.5rem; }
+            
+            /* 5. Remove excessive borders on desktop */
+            .view-content { padding: 1rem 2rem; }
+        }
+
         /* MOBILE RESPONSIVE ENGINE - NATIVE APP FEEL */
         .mobile-toggle-btn { display: none; }
         @media (max-width: 900px) {
@@ -175,6 +211,17 @@
             #printEngine { display: block !important; width: 100%; }
             .page-break { page-break-after: always; }
         }
+
+        /* PRINT ENGINE SECURE HIDING */
+        @media screen {
+            .print-container { display: none !important; }
+        }
+        @media print {
+            body { background: white; margin: 0; padding: 0; }
+            .app-shell, .app-features-nav, header, .sidebar { display: none !important; }
+            .print-container { display: block !important; width: 100%; }
+        }
+
     </style>
 </head>
 <body>
@@ -697,7 +744,7 @@
                 </div>
             </div>
 
-        </div> </div> </div> <div id="printEngine" style="display:none;"></div>
+        </div> </div> </div> <div id="printEngine" class="print-container"></div>
         <script>
    // --- 1. CLINICAL DATABASES ---
     const drugDb = {
@@ -1225,36 +1272,54 @@
     function quickEstimateWeight() { let m = parseInt(document.getElementById('calcQuickAge').value); if(m){ let w = getExpectedWeight(m); document.getElementById('calcWeight').value = w.toFixed(1); calculateDose(); } }
 
     function calculateDose() {
-        const weight = parseFloat(document.getElementById('calcWeight').value); 
-        const cat = document.getElementById('drugCategory').value; 
-        const drugIndex = document.getElementById('drugFormulation').value;
-        const outputArea = document.getElementById('calcOutputArea'); 
-        const addButtonArea = document.getElementById('rxAddButtonArea');
-        
-        if(!weight || isNaN(weight) || !cat || drugIndex === "") { outputArea.style.display = 'none'; addButtonArea.innerHTML = ''; pendingPrescriptionDrug = null; return; }
-        let combined = [...(drugDb[cat]||[]), ...(customDrugsStore[cat]||[])];
-        const drug = combined[drugIndex];
-        
-        let volMl = 0; let details = ""; let unitStr = drug.vol === 1 ? 'Unit/Tab' : 'mL';
-        let durVal = document.getElementById('calcDuration') ? document.getElementById('calcDuration').value : "";
-        let durStr = durVal ? ` for ${durVal} days` : "";
-        
-        if (drug.doseType === 'fixed') {
-            volMl = drug.vol; details = "Fixed Clinical Direct Output";
-            outputArea.innerHTML = `<div class="result-card"><p style="margin-top:0; color:var(--text-muted); font-weight:600; font-size:0.85rem; letter-spacing:0.05em;">Administer Quantity</p><h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${volMl.toFixed(1)} ${unitStr}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}${durStr}</p></div>`;
-        } else {
-            let targetMg = drug.doseType === 'perDay' ? (weight * drug.doseMg) / drug.div : (weight * drug.doseMg);
-            if (drug.maxMg && targetMg > drug.maxMg) { 
-                targetMg = drug.maxMg; 
-                details = `⚠️ Adult Max Cap Enforced (${drug.maxMg} mg/dose)`; 
-            } else { 
-                details = `${targetMg.toFixed(1)} mg/dose Target`; 
+        try {
+            const weight = parseFloat(document.getElementById('calcWeight').value);
+            const cat = document.getElementById('drugCategory').value;
+            const drugIndex = document.getElementById('drugFormulation').value;
+            const outputArea = document.getElementById('calcOutputArea');
+            const btnArea = document.getElementById('rxAddButtonArea');
+            
+            if(!weight || !cat || drugIndex === "") {
+                outputArea.innerHTML = "<div class='tool-result neutral'>Awaiting parameters. Ensure weight is entered.</div>";
+                btnArea.innerHTML = ""; pendingPrescriptionDrug = null; return;
             }
-            volMl = (targetMg * drug.vol) / drug.conc; 
-            outputArea.innerHTML = `<div class="result-card"><p style="margin-top:0; color:var(--text-muted); font-weight:600; font-size:0.85rem; letter-spacing:0.05em;">Administer Volume</p><h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${volMl.toFixed(1)} ${unitStr}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}${durStr}</p><div style="font-size:0.85rem; color:#64748b; margin-top:1rem; border-top:1px dashed var(--border-soft); padding-top:1rem;">${drug.maxMg && targetMg === drug.maxMg ? `<span style="color:var(--danger); font-weight:bold;">${details}</span>` : `[(${weight}kg &times; ${drug.doseMg}mg) &times; ${drug.vol}] &divide; ${drug.conc}mg`}</div></div>`;
+            
+            let combined = [...(drugDb[cat] || []), ...(customDrugsStore[cat] || [])];
+            const drug = combined[drugIndex];
+            
+            if (!drug) return; // Fail-safe if drug is undefined
+            
+            let volMl = 0; let details = ""; let unitStr = drug.vol === 1 ? 'Unit/Tab' : 'mL';
+            let durVal = document.getElementById('calcDuration') ? document.getElementById('calcDuration').value : "";
+            let durStr = durVal ? ` for ${durVal} days` : "";
+            
+            if (drug.doseType === 'fixed') {
+                volMl = drug.vol; details = "Fixed Clinical Direct Output";
+                outputArea.innerHTML = `<div class="result-card"><p style="margin-top:0; color:var(--text-muted); font-weight:700; font-size:0.75rem; text-transform:uppercase;">Administer Quantity</p><h2 style="font-size:3rem; margin:10px 0; color:var(--success); letter-spacing:-1px;">${volMl.toFixed(1)} ${unitStr}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}${durStr}</p></div>`;
+            } else {
+                let targetMg = drug.doseType === 'perDay' ? (weight * drug.doseMg) / (drug.div || 1) : (weight * drug.doseMg);
+                
+                // Max Dose Cap Logic (Safeguarded)
+                if (drug.maxMg && targetMg > drug.maxMg) { 
+                    targetMg = drug.maxMg; 
+                    details = `⚠️ Adult Max Cap Enforced (${drug.maxMg} mg/dose)`; 
+                } else { 
+                    details = `${targetMg.toFixed(1)} mg/dose Target`; 
+                }
+                
+                volMl = (targetMg * (drug.vol || 1)) / (drug.conc || 1); 
+                
+                outputArea.innerHTML = `<div class="result-card"><p style="margin-top:0; color:var(--text-muted); font-weight:700; font-size:0.75rem; text-transform:uppercase;">Administer Volume</p><h2 style="font-size:3rem; margin:10px 0; color:var(--success); letter-spacing:-1px;">${volMl.toFixed(1)} ${unitStr}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}${durStr}</p><div style="font-size:0.85rem; color:#64748b; margin-top:1.5rem; border-top:1px dashed var(--border-soft); padding-top:1rem;">${drug.maxMg && targetMg === drug.maxMg ? `<span style="color:var(--danger); font-weight:bold;">${details}</span>` : `[(${weight}kg &times; ${drug.doseMg}mg) &times; ${drug.vol}] &divide; ${drug.conc}mg`}</div></div>`;
+            }
+            
+            let finalDrugName = drug.name + (drug.brand ? ` [${drug.brand}]` : "");
+            pendingPrescriptionDrug = { name: finalDrugName, vol: volMl.toFixed(1), freq: drug.freq + durStr, details: details, unit: unitStr };
+            
+            btnArea.innerHTML = `<button class="action" onclick="addToRxCart()" style="width:100%; font-size:1.1rem; padding:1rem; margin-top:1rem; background:var(--primary); color:white; border-radius:var(--radius-md); box-shadow:var(--shadow-md);">➕ Add to Prescription Pad</button>`;
+        } catch (error) {
+            console.error("Calculator Error:", error);
+            document.getElementById('calcOutputArea').innerHTML = "<div class='tool-result danger'>⚠️ Calculation Error. Please check drug database formatting.</div>";
         }
-        let finalDrugName = drug.name + (drug.brand ? ` [${drug.brand}]` : "");
-        pendingPrescriptionDrug = { name: finalDrugName, vol: volMl.toFixed(1), freq: drug.freq + durStr, details: details, unit: unitStr };
     }
 
     function calcReverse() {
