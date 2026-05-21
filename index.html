@@ -45,6 +45,66 @@
             --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
 
+        /* =========================================
+           PREMIUM APP DASHBOARD UI
+           ========================================= */
+        .dashboard-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+            gap: 1rem !important;
+            padding-bottom: 2rem !important;
+            margin-top: 1.5rem !important;
+        }
+
+        .app-card {
+            background: #ffffff !important;
+            border-radius: 24px !important;
+            padding: 1.5rem 0.5rem !important;
+            text-align: center !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02) !important;
+            border: 1px solid rgba(0,0,0,0.03) !important;
+            cursor: pointer !important;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 12px !important;
+        }
+
+        /* The press animation for mobile */
+        .app-card:active {
+            transform: scale(0.94) !important;
+            background: #f8fafc !important;
+        }
+
+        .card-icon {
+            width: 68px !important;
+            height: 68px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 34px !important;
+            box-shadow: inset 0 -4px 8px rgba(0,0,0,0.06) !important;
+        }
+
+        .app-card span {
+            font-size: 0.9rem !important;
+            font-weight: 700 !important;
+            color: #334155 !important;
+            line-height: 1.2 !important;
+        }
+
+        /* Beautiful Pastel Icon Backgrounds */
+        .bg-red { background: #ffe4e6 !important; }
+        .bg-blue { background: #dbeafe !important; }
+        .bg-green { background: #dcfce3 !important; }
+        .bg-yellow { background: #fef3c7 !important; }
+        .bg-purple { background: #f3e8ff !important; }
+        .bg-orange { background: #ffedd5 !important; }
+        .bg-gray { background: #f1f5f9 !important; }
+
         /* GLOBAL LAYOUT LOCK & BOX-SIZING FIX */
     *, *::before, *::after { box-sizing: border-box !important; }
     body, html { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-main); }
@@ -215,7 +275,7 @@
             .page-break { page-break-after: always; }
         }
 
-      /* =========================================
+        /* =========================================
            MOBILE APP DRAWER (Horizontal Swipe Nav) - BULLETPROOF
            ========================================= */
         @media (max-width: 1023px) {
@@ -272,6 +332,7 @@
             }
             .tool-grid { display: flex !important; flex-direction: column !important; gap: 1.5rem !important; }
         }
+
         /* =========================================
            TRUE DESKTOP SAAS DASHBOARD (Edge-to-Edge)
            ========================================= */
@@ -362,6 +423,56 @@
     </div>
 
     <div class="main-content">
+        <div id="homeDashboardView" class="view-content active-view">
+            
+            <div style="background: linear-gradient(135deg, var(--primary), #1e3a8a); border-radius: 24px; padding: 2rem; color: white; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);">
+                <h2 style="margin: 0; font-size: 1.6rem;">Welcome to the Hub</h2>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">Select a clinical module to begin.</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="app-card" onclick="switchMainFeature('erFeatureView')">
+                    <div class="card-icon bg-red">🚨</div>
+                    <span>ER & NICU</span>
+                </div>
+                <div class="app-card" onclick="switchMainFeature('dosageFeatureView')">
+                    <div class="card-icon bg-blue">💊</div>
+                    <span>Dosage Calc</span>
+                </div>
+                <div class="app-card" onclick="switchMainFeature('trackerFeatureView')">
+                    <div class="card-icon bg-purple">📅</div>
+                    <span>Tracker</span>
+                </div>
+                <div class="app-card" onclick="switchMainFeature('prescriptionFeatureView')">
+                    <div class="card-icon bg-green">📝</div>
+                    <span>Prescription</span>
+                </div>
+                <div class="app-card" onclick="switchMainFeature('nutritionFeatureView')">
+                    <div class="card-icon bg-orange">🍎</div>
+                    <span>Nutrition</span>
+                </div>
+                <div class="app-card" onclick="switchMainFeature('malnutritionFeatureView')">
+                    <div class="card-icon bg-yellow">🩺</div>
+                    <span>Triage</span>
+                </div>
+                <div class="app-card" onclick="switchMainFeature('milestoneFeatureView')">
+                    <div class="card-icon bg-blue">👶</div>
+                    <span>Milestones</span>
+                </div>
+                <div class="app-card" onclick="switchMainFeature('growthFeatureView')">
+                    <div class="card-icon bg-red">📈</div>
+                    <span>Growth</span>
+                </div>
+                <div class="app-card" onclick="switchMainFeature('fluidsFeatureView')">
+                    <div class="card-icon bg-blue">💧</div>
+                    <span>IV Fluids</span>
+                </div>
+                <div class="app-card" onclick="switchMainFeature('aboutFeatureView')">
+                    <div class="card-icon bg-gray">⚙️</div>
+                    <span>Settings</span>
+                </div>
+            </div>
+        </div>
         <div id="emptyStatePlaceholder" class="timeline-section" style="text-align: center;">
             <h2 style="font-size: 3rem; margin-bottom: 0;">🏥</h2>
             <h2 class="section-title" style="border:none; justify-content: center;">Welcome to the Hub</h2>
@@ -2157,7 +2268,7 @@ function removeDrug(index) {
             btnElement.classList.add('active');
         }
     }
-    
+
     function showSystemToast(msg) {
             const container = document.getElementById('systemToastContainer');
             const toast = document.createElement('div');
