@@ -309,64 +309,65 @@
             .print-container { display: block !important; width: 100%; }
         }
 
-        /* =========================================
-           THE BULLETPROOF MOBILE NAV (App Drawer)
+       /* =========================================
+           THE BULLETPROOF MOBILE NAV & REGISTRY FIX
            ========================================= */
         @media (max-width: 1023px) {
             /* 1. Lock the Screen Foundation */
             body, html { height: 100dvh !important; width: 100vw !important; overflow: hidden !important; margin: 0 !important; padding: 0 !important; background: var(--bg-body) !important; }
             .app-shell { display: flex !important; flex-direction: column !important; height: 100dvh !important; width: 100vw !important; margin: 0 !important; padding: 0 !important; }
 
-            /* 2. Main Content Area */
+            /* 2. Free the Patient Registry (Keep it at the top) */
+            .sidebar {
+                position: relative !important;
+                width: 100vw !important;
+                height: auto !important;
+                max-height: 45vh !important; /* Prevents it from taking over the whole screen */
+                overflow-y: auto !important;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 10px 10px 0 10px !important;
+                z-index: 10 !important;
+                transform: none !important;
+            }
+
+            /* 3. Main Content Area (Scrolls beautifully underneath) */
             .main-content {
                 flex: 1 !important;
-                height: calc(100dvh - 80px) !important; /* Exactly screen height minus nav bar */
                 overflow-y: auto !important;
                 overflow-x: hidden !important;
-                padding: 1rem 1rem 100px 1rem !important; /* Huge bottom cushion */
+                padding: 1rem 1rem 100px 1rem !important; /* Huge bottom cushion so nothing hides behind nav */
                 width: 100vw !important;
-                max-width: 100vw !important;
                 -webkit-overflow-scrolling: touch !important;
                 box-sizing: border-box !important;
             }
 
-            /* 3. The Bottom Nav Dock (Forced Full Width to the Edges) */
-            .sidebar {
+            /* 4. ONLY the Nav Buttons jump to the bottom dock */
+            .app-features-nav {
                 position: fixed !important;
                 bottom: 0 !important;
                 left: 0 !important;
                 right: 0 !important;
                 width: 100vw !important;
-                max-width: 100vw !important;
                 height: 80px !important;
-                margin: 0 !important; /* Kills desktop margins */
-                border-radius: 0 !important; /* Kills desktop rounded corners */
                 background: #ffffff !important;
                 border-top: 1px solid #e2e8f0 !important;
                 box-shadow: 0 -5px 25px rgba(0,0,0,0.08) !important;
                 z-index: 999999 !important;
                 display: flex !important;
-                align-items: center !important;
-                padding: 0 !important;
-                box-sizing: border-box !important;
-                transform: none !important; /* Prevents floating glitches */
-            }
-
-            /* 4. The Swiping Track */
-            .app-features-nav {
-                display: flex !important; 
                 flex-direction: row !important;
                 gap: 12px !important;
                 overflow-x: auto !important; 
                 overflow-y: hidden !important;
-                width: 100% !important;
-                height: 100% !important;
                 align-items: center !important;
                 padding: 0 15px !important;
                 margin: 0 !important;
                 -webkit-overflow-scrolling: touch !important;
                 box-sizing: border-box !important;
             }
+
+            /* Hide the ugly scrollbar but keep the swipe */
             .app-features-nav::-webkit-scrollbar { display: none !important; }
             .app-features-nav { -ms-overflow-style: none !important; scrollbar-width: none !important; }
 
