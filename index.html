@@ -147,30 +147,6 @@
             .feature-btn { padding: 0.6rem 0.8rem; font-size: 0.85rem; }
         }
 
-       /* =========================================
-           TRUE DESKTOP SAAS DASHBOARD (Edge-to-Edge)
-           ========================================= */
-        @media (min-width: 1024px) {
-            /* 1. Force Side-by-Side Layout */
-            .app-shell { flex-direction: row !important; }
-            
-            /* 2. Lock Sidebar to the Left */
-            .sidebar { width: 320px !important; flex-shrink: 0 !important; height: 100vh !important; border-right: 1px solid var(--border-soft); overflow-y: auto; padding: 1.5rem; background: var(--bg-surface); z-index: 10; }
-            
-            /* 3. Allow Main Content to Fill the Rest SAFELY */
-            .main-content { flex: 1 !important; max-width: calc(100vw - 320px) !important; height: 100vh !important; overflow-y: auto !important; padding: 2.5rem 4rem !important; }
-            
-            /* 4. The 50/50 Split for the Dosing Module */
-            #doseCalcTab { display: grid !important; grid-template-columns: 400px 1fr !important; gap: 3rem !important; align-items: start !important; }
-            
-            /* 5. Sticky Prescription Pad */
-            #rxCartArea { position: sticky !important; top: 0 !important; }
-            .rx-cart-container { border: 1px solid var(--border-soft); box-shadow: var(--shadow-md); background: white; padding: 2rem; border-radius: var(--radius-lg); }
-            
-            /* 6. Expand Triage grids */
-            .tool-grid { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)) !important; gap: 2rem !important; }
-        }
-            
             /* 2. Fixed Professional Sidebar */
             .sidebar { 
                 width: 320px !important; 
@@ -239,16 +215,6 @@
             .page-break { page-break-after: always; }
         }
 
-        /* PRINT ENGINE SECURE HIDING */
-        @media screen {
-            .print-container { display: none !important; }
-        }
-        @media print {
-            body { background: white; margin: 0; padding: 0; }
-            .app-shell, .app-features-nav, header, .sidebar { display: none !important; }
-            .print-container { display: block !important; width: 100%; }
-        }
-
         /* =========================================
            TRUE DESKTOP SAAS DASHBOARD (Edge-to-Edge)
            ========================================= */
@@ -257,20 +223,30 @@
             .app-shell { flex-direction: row !important; }
             
             /* 2. Lock Sidebar to the Left */
-            .sidebar { width: 320px !important; height: 100vh !important; border-right: 1px solid var(--border-soft); overflow-y: auto; flex-shrink: 0; padding: 1.5rem; background: var(--bg-surface); z-index: 10; }
+            .sidebar { width: 320px !important; flex-shrink: 0 !important; height: 100vh !important; border-right: 1px solid var(--border-soft); overflow-y: auto; padding: 1.5rem; background: var(--bg-surface); z-index: 10; }
             
-            /* 3. Allow Main Content to Fill the Rest */
-            .main-content { flex: 1 !important; height: 100vh !important; overflow-y: auto !important; padding: 2.5rem 4rem !important; }
+            /* 3. Allow Main Content to Fill the Rest SAFELY */
+            .main-content { flex: 1 !important; max-width: calc(100vw - 320px) !important; height: 100vh !important; overflow-y: auto !important; padding: 2.5rem 4rem !important; }
             
             /* 4. The 50/50 Split for the Dosing Module */
-            #doseCalcTab { display: grid !important; grid-template-columns: 450px 1fr !important; gap: 4rem !important; align-items: start !important; }
+            #doseCalcTab { display: grid !important; grid-template-columns: 400px 1fr !important; gap: 3rem !important; align-items: start !important; }
             
             /* 5. Sticky Prescription Pad */
             #rxCartArea { position: sticky !important; top: 0 !important; }
             .rx-cart-container { border: 1px solid var(--border-soft); box-shadow: var(--shadow-md); background: white; padding: 2rem; border-radius: var(--radius-lg); }
             
             /* 6. Expand Triage grids */
-            .tool-grid { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)) !important; }
+            .tool-grid { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)) !important; gap: 2rem !important; }
+        }
+
+        /* PRINT ENGINE SECURE HIDING */
+        @media screen {
+            .print-container { display: none !important; }
+        }
+        @media print {
+            body { background: white; margin: 0; padding: 0; }
+            .app-shell, .app-features-nav, header, .sidebar { display: none !important; }
+            .print-container { display: block !important; width: 100%; }
         }
 
     </style>
@@ -303,7 +279,9 @@
         </button>
         <div class="panel" id="registryPanel">
             <h3 style="margin-top:0;">Patient Registry</h3>
-            <label>Patient Name</label><input type="text" id="pName" placeholder="e.g., Baby of Sunita">
+            <label>Patient Name</label>
+            <input type="text" id="pName" placeholder="e.g., Baby of Sunita" list="savedPatientNames" autocomplete="off">
+            <datalist id="savedPatientNames"></datalist>
             <label>Phone (For WhatsApp)</label><input type="text" id="pPhone" placeholder="e.g., 9876543210" oninput="saveAndRegisterPatient()">
             <label>DOB</label><input type="date" id="dob" onchange="calculateAgeFromDob()">
             <label>Current Age</label>
@@ -751,27 +729,52 @@
                 </div>
             </div>
 
-            <div id="aboutFeatureView" class="view-content">
+           <div id="aboutFeatureView" class="view-content">
                 <h2 class="section-title">ℹ️ System Info & Settings</h2>
                 <div class="timeline-section tool-grid">
+                    
                     <div>
                         <h4 style="margin-top:0;">Display Settings</h4>
                         <div style="display:flex; align-items:center; gap:10px; margin-bottom: 2rem;">
-                            <label style="margin:0;">Dark Mode (Night Duty)</label>
-                            <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode(this.checked)" style="width:20px; height:20px; margin:0;">
+                            <label style="margin:0; font-weight:bold; font-size:0.9rem; color:var(--text-main);">Dark Mode (Night Duty)</label>
+                            <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode(this.checked)" style="width:22px; height:22px; margin:0; cursor:pointer;">
                         </div>
-                        <h4 style="margin-top:0;">Letterhead / Rx Builder</h4>
+
+                        <h4 style="margin-top:0; color:var(--primary);">👨‍⚕️ Letterhead / Rx Builder</h4>
                         <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">These details appear at the top of printed prescriptions.</p>
-                        <div class="row-inputs"><div><label>Doctor's Name</label><input type="text" id="setDocName" placeholder="Dr. Peter Suraj Joseph"></div><div><label>Qualifications</label><input type="text" id="setQual" placeholder="MBBS, MD"></div></div>
-                        <div class="row-inputs"><div><label>Medical Reg. No.</label><input type="text" id="setRegNo" placeholder="e.g. KMC 12345"></div><div><label>Clinic Name</label><input type="text" id="setClinic" placeholder="Sunrise Clinic"></div></div>
-                        <label>Tagline</label><input type="text" id="setTagline" placeholder="Child Development Center">
-                        <div class="row-inputs"><div><label>Phone</label><input type="text" id="setPhone" placeholder="Phone"></div><div><label>Address</label><input type="text" id="setAddress" placeholder="Location"></div></div>
-                        <label style="margin-top:10px;">Upload Signature (PNG/JPG with white/transparent background)</label>
-                        <input type="file" accept="image/*" onchange="handleSignatureUpload(this)">
-                        <div id="sigPreview" style="margin-top:10px; border:1px dashed var(--border-soft); padding:10px; text-align:center; min-height:50px;">No signature loaded.</div>
-                        <button class="action" onclick="saveSettings()">💾 Save Settings</button>
+                        
+                        <div class="panel" style="background:var(--bg-body); border:1px solid var(--border-soft); border-radius:var(--radius-lg);">
+                            <div class="row-inputs"><div><label>Doctor's Name</label><input type="text" id="setDocName" placeholder="Dr. Peter Suraj Joseph"></div><div><label>Qualifications</label><input type="text" id="setQual" placeholder="MBBS, MD"></div></div>
+                            <div class="row-inputs"><div><label>Medical Reg. No.</label><input type="text" id="setRegNo" placeholder="e.g. KMC 12345"></div><div><label>Clinic Name</label><input type="text" id="setClinic" placeholder="Sunrise Clinic"></div></div>
+                            <label>Tagline</label><input type="text" id="setTagline" placeholder="Child Development Center">
+                            <div class="row-inputs"><div><label>Phone</label><input type="text" id="setPhone" placeholder="Phone"></div><div><label>Address</label><input type="text" id="setAddress" placeholder="Location"></div></div>
+                            
+                            <label style="margin-top:10px;">Upload Signature (PNG/JPG with white/transparent bg)</label>
+                            <input type="file" accept="image/*" onchange="handleSignatureUpload(this)" style="padding:0.5rem; font-size:0.85rem;">
+                            <div id="sigPreview" style="margin-top:10px; border:1px dashed var(--border-soft); padding:10px; text-align:center; min-height:50px; border-radius:var(--radius-md); background:var(--bg-surface);">No signature loaded.</div>
+                            
+                            <div style="display:flex; gap:10px; margin-top:1.5rem;">
+                                <button class="action" onclick="document.getElementById('setDocName').focus()" style="flex:1; background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border-soft); box-shadow:none;">✏️ Edit</button>
+                                <button class="action" onclick="saveSettings()" style="flex:2; background:var(--primary); color:white;">💾 Save Profile</button>
+                            </div>
+                        </div>
                     </div>
+
                     <div>
+                        <div style="margin-bottom: 2rem; background:var(--bg-body); padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft);">
+                            <h3 style="color:var(--primary); margin-top:0; font-size:1.1rem;">🗄️ Patient Database Manager</h3>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Manage locally saved records. Type a name in the main registry to auto-fill.</p>
+                            
+                            <div style="background:var(--bg-surface); border-radius:var(--radius-md); padding:1rem; max-height:220px; overflow-y:auto; border:1px solid var(--border-soft); margin-bottom:1rem;" id="settingsPatientList">
+                                <em style="color:var(--text-muted); font-size:0.9rem;">Click refresh to view patient records.</em>
+                            </div>
+                            
+                            <div style="display:flex; gap:10px;">
+                                <button class="action" onclick="renderSettingsPatientList()" style="flex:1; background:var(--primary-light); color:var(--primary-dark); border:none; padding:0.75rem;">🔄 Refresh</button>
+                                <button class="action" onclick="exportDatabase()" style="flex:1; background:var(--bg-surface); border:1px solid var(--border-soft); color:var(--text-main); padding:0.75rem;">📥 Backup Data</button>
+                            </div>
+                        </div>
+
                         <h4 style="margin-top:0; color:var(--primary);">📚 Clinical Guidelines & Sources</h4>
                         <div style="font-size:0.85rem; line-height:1.6; background:var(--bg-body); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-soft); margin-bottom:1rem;">
                             <ul style="margin:0; padding-left:1.2rem; color:var(--text-main);">
@@ -784,7 +787,7 @@
                         </div>
                         
                         <div style="background:rgba(245, 158, 11, 0.1); border-left:4px solid var(--warning); padding:10px; font-size:0.8rem; color:var(--text-main); line-height:1.5; margin-bottom:1.5rem;">
-                            <b>⚠️ Medico-Legal Disclaimer:</b> This framework is a clinical reference tool. All calculations (especially weight-based dosing and fluid resuscitation) must be independently verified against institutional protocols before administration.
+                            <b>⚠️ Medico-Legal Disclaimer:</b> This framework is a clinical reference tool. All calculations must be independently verified against institutional protocols before administration.
                         </div>
 
                         <div style="border-top:1px solid var(--border-soft); padding-top:1rem; text-align:center;">
@@ -795,7 +798,6 @@
                     </div>
                 </div>
             </div>
-
         </div> </div> </div> <div id="printEngine" class="print-container"></div>
         <script>
    // --- 1. CLINICAL DATABASES ---
@@ -2005,6 +2007,70 @@
         window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`, '_blank');
     }
 
+    // --- PRESCRIPTION PAD ENGINE ---
+function addToRxCart() {
+    // 1. Fail-safes
+    if (!activePatientId) {
+        showSystemToast("⚠️ Please Register or Select a patient first!");
+        return;
+    }
+    if (!pendingPrescriptionDrug) {
+        showSystemToast("⚠️ Please calculate a dose first!");
+        return;
+    }
+
+    // 2. Ensure patient Rx array exists
+    if (!globalPatientsStore[activePatientId].rxList) {
+        globalPatientsStore[activePatientId].rxList = [];
+    }
+
+    // 3. Add to Database & Save
+    globalPatientsStore[activePatientId].rxList.push({ ...pendingPrescriptionDrug });
+    localStorage.setItem('clinic_patients', JSON.stringify(globalPatientsStore));
+
+    // 4. Notify & Clean Up
+    showSystemToast(`<b>${pendingPrescriptionDrug.name}</b> added to pad.`);
+    renderRxCart();
+    
+    // Reset the calculator inputs
+    document.getElementById('drugFormulation').value = "";
+    if (document.getElementById('calcDuration')) document.getElementById('calcDuration').value = "";
+    document.getElementById('calcOutputArea').innerHTML = "<div class='tool-result neutral'>Awaiting parameters.</div>";
+    document.getElementById('rxAddButtonArea').innerHTML = ""; 
+    pendingPrescriptionDrug = null;
+}
+
+function renderRxCart() {
+    const cart = document.getElementById('rxCartList');
+    if (!cart) return; // Fail-safe if UI isn't loaded
+
+    if (!activePatientId || !globalPatientsStore[activePatientId].rxList || globalPatientsStore[activePatientId].rxList.length === 0) {
+        cart.innerHTML = "<div style='color:var(--text-muted); font-style:italic; padding:1rem; text-align:center;'>No drugs added to current prescription.</div>";
+        return;
+    }
+
+    let html = "";
+    globalPatientsStore[activePatientId].rxList.forEach((drug, index) => {
+        html += `
+        <div style="background:var(--bg-body); padding:1rem; border-radius:var(--radius-md); border-left:4px solid var(--primary); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:var(--shadow-sm);">
+            <div>
+                <strong style="display:block; font-size:1.05rem; color:var(--primary-dark);">${drug.name}</strong>
+                <span style="font-size:0.9rem; color:var(--text-main); font-weight:600;">${drug.vol} ${drug.unit} — ${drug.freq}</span>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">${drug.details}</div>
+            </div>
+            <button onclick="removeDrug(${index})" style="background:var(--danger); color:white; border:none; padding:8px 12px; border-radius:var(--radius-md); cursor:pointer; font-weight:bold;">X</button>
+        </div>`;
+    });
+    cart.innerHTML = html;
+}
+
+function removeDrug(index) {
+    if (!activePatientId) return;
+    globalPatientsStore[activePatientId].rxList.splice(index, 1);
+    localStorage.setItem('clinic_patients', JSON.stringify(globalPatientsStore));
+    renderRxCart();
+}
+
     function showSystemToast(msg) {
             const container = document.getElementById('systemToastContainer');
             const toast = document.createElement('div');
@@ -2018,6 +2084,43 @@
                 setTimeout(()=>toast.remove(), 300); 
             }, 3000);
         }
+
+// --- SETTINGS DATABASE FUNCTIONS ---
+function renderSettingsPatientList() {
+    const list = document.getElementById('settingsPatientList');
+    if(!list) return;
+    
+    const patientKeys = Object.keys(globalPatientsStore);
+    if(patientKeys.length === 0) {
+        list.innerHTML = "<em style='color:var(--text-muted); font-size:0.9rem;'>No patients saved in database yet.</em>";
+        return;
+    }
+    
+    let html = "";
+    patientKeys.forEach(id => {
+        let p = globalPatientsStore[id];
+        html += `<div style="padding:10px; margin-bottom:6px; background:var(--bg-body); border:1px solid var(--border-soft); border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center;">
+            <div><strong style="color:var(--primary-dark); display:block;">${p.name}</strong> <span style="font-size:0.8rem; color:var(--text-muted);">${p.ageYrs}Y ${p.ageMos}M | ${p.gender.toUpperCase()}</span></div>
+            <div style="font-size:0.9rem; font-weight:bold; background:var(--primary-light); color:var(--primary-dark); padding:4px 8px; border-radius:10px;">${p.weight} kg</div>
+        </div>`;
+    });
+    list.innerHTML = html;
+}
+
+function exportDatabase() {
+    if(Object.keys(globalPatientsStore).length === 0) {
+        if(typeof showSystemToast === "function") showSystemToast("⚠️ Database is empty!");
+        return;
+    }
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(globalPatientsStore));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", `Pediatric_Hub_Backup_${new Date().toISOString().split('T')[0]}.json`);
+    document.body.appendChild(dlAnchorElem);
+    dlAnchorElem.click();
+    dlAnchorElem.remove();
+    if(typeof showSystemToast === "function") showSystemToast("📥 Database backup downloaded successfully!");
+}
 
 </script>
 </body>
