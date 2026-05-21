@@ -149,6 +149,7 @@
             <button class="feature-btn alert" onclick="switchMainFeature('erFeatureView', this)">🚨 ER & NICU</button>
             <button class="feature-btn active" onclick="switchMainFeature('trackerFeatureView', this)">📅 Tracker</button>
             <button class="feature-btn" onclick="switchMainFeature('dosageFeatureView', this)">💊 Dosage</button>
+            <button class="feature-btn" onclick="switchMainFeature('prescriptionFeatureView', this)">📝 Prescription</button>
             <button class="feature-btn special" onclick="switchMainFeature('nutritionFeatureView', this)">🍎 Nutrition</button>
             <button class="feature-btn" onclick="switchMainFeature('malnutritionFeatureView', this)">🩺 Triage</button>
             <button class="feature-btn" onclick="switchMainFeature('milestoneFeatureView', this)">👶 Milestones</button>
@@ -292,10 +293,7 @@
             </div>
 
             <div id="dosageFeatureView" class="view-content">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-                    <h2 class="section-title" style="margin:0; border:none;">💊 Pediatric Dosing Engine</h2>
-                    <button onclick="executePrint('prescription')" class="secondary" style="width:auto; border-color:var(--primary); color:var(--primary);">🖨️ Print Rx</button>
-                </div>
+                <h2 class="section-title">💊 Pediatric Dosing Engine</h2>
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('doseCalcTab', this)">🧮 Active Calculator</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('doseManageTab', this)">⚙️ Add Custom Drug</button>
@@ -327,16 +325,45 @@
                                 <div id="rxAddButtonArea"></div>
                             </div>
                         </div>
-                        <div id="rxCartArea">
-                            <div class="rx-cart-container">
-                                <h3 class="section-title">Active Prescription Pad</h3>
-                                <label>Working Diagnosis / Chief Complaint</label>
-                                <input type="text" id="rxDiagnosis" placeholder="e.g. Viral URI, Acute Otitis Media" oninput="saveAndRegisterPatient(true)" style="margin-bottom:1rem; border-color:var(--primary); font-weight:bold;">
-                                <div id="rxCartList"></div>
-                            </div>
-                        </div>
                     </div>
                 </div>
+
+            <div id="prescriptionFeatureView" class="view-content">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h2 class="section-title" style="margin:0; border:none;">📝 Complete Prescription Pad</h2>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="executePrint('certificate')" class="secondary" style="width:auto; border-color:var(--warning); color:var(--warning);">🖨️ Med Cert</button>
+                        <button onclick="executePrint('prescription')" class="secondary" style="width:auto; border-color:var(--primary); color:var(--primary);">🖨️ Print Rx</button>
+                    </div>
+                </div>
+                
+                <div class="sub-tabs-nav">
+                    <button class="sub-tab-btn active" onclick="switchSubTab('rxNotesTab', this)">📝 Clinical Pad</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('rxCertTab', this)">📄 Certificates</button>
+                </div>
+
+                <div id="rxNotesTab" class="sub-tab-content active">
+                    <div class="timeline-section tool-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div>
+                        <h4 style="margin-top:0; color:var(--primary);">Clinical Notes</h4>
+                        <label>Complaints / Differential Diagnosis</label>
+                        <input type="text" id="rxDiagnosis" placeholder="e.g. Viral URI, Acute Otitis Media" oninput="saveAndRegisterPatient(true)" style="margin-bottom:10px; font-weight:bold;">
+                        
+                        <label>Required Investigations / Scans</label>
+                        <textarea id="rxTests" placeholder="e.g. CBC, CRP, USG Abdomen" oninput="saveAndRegisterPatient(true)" style="width:100%; padding:0.65rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; margin-bottom:10px; resize:vertical; min-height:60px;"></textarea>
+                        
+                        <label>General Advice / Care Plan</label>
+                        <textarea id="rxAdvice" placeholder="e.g. Plenty of oral fluids, tepid sponging..." oninput="saveAndRegisterPatient(true)" style="width:100%; padding:0.65rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; margin-bottom:10px; resize:vertical; min-height:60px;"></textarea>
+                        
+                        <label>Next Review Date</label>
+                        <input type="date" id="rxReview" onchange="saveAndRegisterPatient(true)">
+                    </div>
+                    <div>
+                        <h4 style="margin-top:0; color:var(--primary);">Prescribed Medications</h4>
+                        <div id="rxCartList" style="background:var(--bg-surface); padding:15px; border-radius:8px; border:1px solid var(--border-soft); min-height:300px;"></div>
+                    </div>
+                </div>
+            </div>
 
                 <div id="doseManageTab" class="sub-tab-content">
                     <div class="timeline-section tool-grid">
@@ -548,6 +575,9 @@
                         <div class="row-inputs"><div><label>Medical Reg. No.</label><input type="text" id="setRegNo" placeholder="e.g. KMC 12345"></div><div><label>Clinic Name</label><input type="text" id="setClinic" placeholder="Sunrise Clinic"></div></div>
                         <label>Tagline</label><input type="text" id="setTagline" placeholder="Child Development Center">
                         <div class="row-inputs"><div><label>Phone</label><input type="text" id="setPhone" placeholder="Phone"></div><div><label>Address</label><input type="text" id="setAddress" placeholder="Location"></div></div>
+                        <label style="margin-top:10px;">Upload Signature (PNG/JPG with white/transparent background)</label>
+                        <input type="file" accept="image/*" onchange="handleSignatureUpload(this)">
+                        <div id="sigPreview" style="margin-top:10px; border:1px dashed var(--border-soft); padding:10px; text-align:center; min-height:50px;">No signature loaded.</div>
                         <button class="action" onclick="saveSettings()">💾 Save Settings</button>
                     </div>
                     <div>
@@ -789,6 +819,20 @@
         else { document.body.classList.remove('dark-mode'); document.getElementById('darkModeToggle').checked = false; }
         if(document.getElementById('setDocName')) document.getElementById('setDocName').value = appSettings.docName || "";
         if(document.getElementById('setClinic')) document.getElementById('setClinic').value = appSettings.clinicName || "";
+        if(appSettings.signature && document.getElementById('sigPreview')) document.getElementById('sigPreview').innerHTML = `<img src="${appSettings.signature}" style="max-height:60px;">`;
+    }
+
+    function handleSignatureUpload(i) { 
+        const f = i.files[0]; 
+        if(f) { 
+            const reader = new FileReader(); 
+            reader.onload = e => { 
+                appSettings.signature = e.target.result; 
+                if(document.getElementById('sigPreview')) document.getElementById('sigPreview').innerHTML = `<img src="${e.target.result}" style="max-height:60px;">`; 
+                localStorage.setItem('clinic_settings', JSON.stringify(appSettings)); 
+            }; 
+            reader.readAsDataURL(f); 
+        } 
     }
 
     function toggleDarkMode(isDark) {
@@ -843,7 +887,7 @@
         
         const workspace = document.getElementById('activeWorkspace'); 
         const emptyState = document.getElementById('emptyStatePlaceholder');
-        const unlocked = ['dosageFeatureView', 'growthFeatureView', 'fluidsFeatureView', 'asthmaFeatureView', 'jaundiceFeatureView', 'nutritionFeatureView', 'erFeatureView', 'aboutFeatureView'];
+        const unlocked = ['dosageFeatureView', 'prescriptionFeatureView', 'growthFeatureView', 'fluidsFeatureView', 'asthmaFeatureView', 'jaundiceFeatureView', 'nutritionFeatureView', 'erFeatureView', 'aboutFeatureView'];
         
         if(unlocked.includes(viewId)) {
             workspace.style.display = 'block'; emptyState.style.display = 'none';
@@ -958,6 +1002,9 @@
             hcCm: document.getElementById('hcCm') ? document.getElementById('hcCm').value : "",
             je: document.getElementById('jeEndemic') ? document.getElementById('jeEndemic').checked : false,
             diagnosis: document.getElementById('rxDiagnosis') ? document.getElementById('rxDiagnosis').value : "",
+            tests: document.getElementById('rxTests') ? document.getElementById('rxTests').value : "",
+            advice: document.getElementById('rxAdvice') ? document.getElementById('rxAdvice').value : "",
+            review: document.getElementById('rxReview') ? document.getElementById('rxReview').value : "",
             ageYrs: y, ageMos: m, totalMonths: currentPatientAgeInMonths,
             givenDates: globalPatientsStore[id]?.givenDates || {},
             achievedMilestones: globalPatientsStore[id]?.achievedMilestones || {},
@@ -995,6 +1042,9 @@
                 if(document.getElementById('hcCm')) document.getElementById('hcCm').value = p.hcCm || "";
                 if(document.getElementById('jeEndemic')) document.getElementById('jeEndemic').checked = p.je || false;
                 if(document.getElementById('rxDiagnosis')) document.getElementById('rxDiagnosis').value = p.diagnosis || "";
+                if(document.getElementById('rxTests')) document.getElementById('rxTests').value = p.tests || "";
+                if(document.getElementById('rxAdvice')) document.getElementById('rxAdvice').value = p.advice || "";
+                if(document.getElementById('rxReview')) document.getElementById('rxReview').value = p.review || "";
                 currentPatientAgeInMonths = p.totalMonths || 0;
                 document.getElementById('calcWeight').value = p.weight || "";
                 if(document.getElementById('calcQuickAge')) document.getElementById('calcQuickAge').value = p.totalMonths || "";
@@ -1120,7 +1170,7 @@
             vaxList.forEach(v => {
                 const prettyDue = new Date(v.projected).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
                 const isDone = v.actual !== "";
-                card.innerHTML += `<div class="vaccine-row"><div class="vaccine-info"><h4>${v.name}</h4><div class="vaccine-meta" style="margin-bottom:0.4rem;">Window: ${v.window}</div><div class="action-protocol-card"><b>Strategy:</b> ${v.strategy}</div></div><div class="date-display-box ${v.isDelayed ? 'shifted':''}">${isDone ? '✅ Completed' : prettyDue}</div><div class="date-picker-cell"><input type="checkbox" title="Check for today" class="tick-box" ${isDone ? 'checked' : ''} onchange="toggleVaccineAdministered('${pId}', '${v.id}', this.checked)"><div style="text-align:left;"><label style="margin:0; font-size:10px; color:var(--text-muted);">Given On:</label><input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}', '${v.id}', this.value)"></div></div></div>`;
+                card.innerHTML += `<div class="vaccine-row"><div class="vaccine-info"><h4>${v.name}</h4><div class="vaccine-meta" style="margin-bottom:0.4rem;">Window: ${v.window}</div><div class="action-protocol-card"><b>Strategy:</b> ${v.strategy}</div><div style="font-size:0.85rem; color:var(--primary); margin-top:5px; font-weight:600;">Target: ${prettyDue}</div></div><div class="date-display-box ${v.isDelayed ? 'shifted':''}">${isDone ? '✅ Completed' : prettyDue}</div><div class="date-picker-cell"><input type="checkbox" title="Check for today" class="tick-box" ${isDone ? 'checked' : ''} onchange="toggleVaccineAdministered('${pId}', '${v.id}', this.checked)"><div style="text-align:left;"><label style="margin:0; font-size:10px; color:var(--text-muted);">Given On:</label><input type="date" value="${v.actual}" onchange="updateAdministrationDate('${pId}', '${v.id}', this.value)"><button class="secondary" style="margin-top:5px; font-size:0.75rem; padding:4px; width:100%; border-color:var(--primary); color:var(--primary);" onclick="updateAdministrationDate('${pId}', '${v.id}', '${v.projected}')">🎯 Set Target Date</button></div></div></div>`;
             });
             document.getElementById('timelineOutput').appendChild(card);
         }
@@ -1529,21 +1579,73 @@
     }
 
     function executePrint(mode) {
-        if (!activePatientId && mode !== 'prescription') { alert("Please select a patient first."); return; }
-        const engine = document.getElementById('printEngine'); const p = globalPatientsStore[activePatientId] || {}; let html = "";
+        if (!activePatientId && mode !== 'prescription' && mode !== 'certificate') { alert("Please select a patient first."); return; }
+        const engine = document.getElementById('printEngine'); 
+        
+        // Ghost Patient logic for On-the-go printing
+        let p = globalPatientsStore[activePatientId];
+        if (!p) {
+            p = {
+                name: document.getElementById('pName').value || "____________________",
+                ageYrs: document.getElementById('ageYrs').value || "_",
+                ageMos: document.getElementById('ageMos').value || "_",
+                weight: document.getElementById('pWeight').value || "___",
+                gender: document.getElementById('gender').value || "___",
+                diagnosis: document.getElementById('rxDiagnosis') ? document.getElementById('rxDiagnosis').value : "",
+                tests: document.getElementById('rxTests') ? document.getElementById('rxTests').value : "",
+                advice: document.getElementById('rxAdvice') ? document.getElementById('rxAdvice').value : "",
+                review: document.getElementById('rxReview') ? document.getElementById('rxReview').value : "",
+                rxList: [] // Empty list to prevent crashes
+            };
+        }
+        
+        let html = "";
 
-        if (mode === 'tracker' || mode === 'comprehensive') { html += getPrintHeaderHTML("IMMUNIZATION SCHEDULE REPORT") + document.getElementById('timelineOutput').innerHTML; if (mode === 'comprehensive') html += `<div class="page-break"></div>`; }
+        if (mode === 'tracker' || mode === 'comprehensive') { 
+            html += getPrintHeaderHTML("IMMUNIZATION SCHEDULE REPORT") + document.getElementById('timelineOutput').innerHTML; 
+            if (mode === 'comprehensive') html += `<div class="page-break"></div>`; 
+        }
+        
         if (mode === 'prescription' || mode === 'comprehensive') {
             html += getPrintHeaderHTML("PRESCRIPTION");
+            let sigHtml = appSettings.signature ? `<img src="${appSettings.signature}" style="max-height:60px; margin-bottom:5px;"><br>` : `<br><br><br>`;
+            let extraNotes = "";
+            if (p.tests) extraNotes += `<div style="margin-top:20px; font-size:14px;"><b>Investigations / Scans:</b><br>${p.tests.replace(/\n/g, '<br>')}</div>`;
+            if (p.advice) extraNotes += `<div style="margin-top:15px; font-size:14px;"><b>Advice & Care Plan:</b><br>${p.advice.replace(/\n/g, '<br>')}</div>`;
+            if (p.review) extraNotes += `<div style="margin-top:15px; font-size:14px; font-weight:bold; color:var(--primary);">Next Review Date: ${new Date(p.review).toLocaleDateString('en-IN')}</div>`;
+
             if (p.rxList && p.rxList.length > 0) {
                 html += `<div class="rx-pad"><div class="rx-symbol">Rx</div>`;
-                p.rxList.forEach((rx, index) => { html += `<div style="margin-bottom: 1.8rem;"><div class="rx-drug-name">${index + 1}. ${rx.name}</div><div class="rx-dosage">Take ${rx.vol} ${rx.unit || 'mL'} &mdash; ${rx.freq}</div><div style="color:#555; font-size:12px; margin-top:5px;">Clinical Targets Formulation context: ${rx.details}</div></div>`; });
-                html += `<div style="margin-top: 80px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center; float:right;"><b>${appSettings.docName}</b><br>Authorized Signature</div><div style="clear:both;"></div></div>`;
-            } else if (pendingPrescriptionDrug) {
-                html += `<div class="rx-pad"><div class="rx-symbol">Rx</div><div style="margin-bottom: 1.8rem;"><div class="rx-drug-name">1. ${pendingPrescriptionDrug.name}</div><div class="rx-dosage">Take ${pendingPrescriptionDrug.vol} ${pendingPrescriptionDrug.unit || 'mL'} &mdash; ${pendingPrescriptionDrug.freq}</div><div style="color:#555; font-size:12px; margin-top:5px;">Targets context: ${pendingPrescriptionDrug.details}</div></div><div style="margin-top: 80px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center; float:right;"><b>${appSettings.docName}</b><br>Authorized Signature</div><div style="clear:both;"></div></div>`;
-            } else { html += `<p>No active formulations staged onto prescription pad parameters.</p>`; }
+                p.rxList.forEach((rx, index) => { 
+                    html += `<div style="margin-bottom: 1.8rem;"><div class="rx-drug-name">${index + 1}. ${rx.name}</div><div class="rx-dosage">Take ${rx.vol} ${rx.unit || 'mL'} &mdash; ${rx.freq}</div><div style="color:#555; font-size:12px; margin-top:5px;">Clinical Targets Formulation context: ${rx.details}</div></div>`; 
+                });
+                html += `${extraNotes}<div style="margin-top: 50px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center; float:right;">${sigHtml}<b>${appSettings.docName}</b><br>Authorized Signature</div><div style="clear:both;"></div></div>`;
+            } else if (typeof pendingPrescriptionDrug !== 'undefined' && pendingPrescriptionDrug) {
+                html += `<div class="rx-pad"><div class="rx-symbol">Rx</div><div style="margin-bottom: 1.8rem;"><div class="rx-drug-name">1. ${pendingPrescriptionDrug.name}</div><div class="rx-dosage">Take ${pendingPrescriptionDrug.vol} ${pendingPrescriptionDrug.unit || 'mL'} &mdash; ${pendingPrescriptionDrug.freq}</div><div style="color:#555; font-size:12px; margin-top:5px;">Targets context: ${pendingPrescriptionDrug.details}</div></div>${extraNotes}<div style="margin-top: 50px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center; float:right;">${sigHtml}<b>${appSettings.docName}</b><br>Authorized Signature</div><div style="clear:both;"></div></div>`;
+            } else { 
+                html += `<p>No active medications prescribed.</p>${extraNotes}<div style="margin-top: 50px; border-top: 1px solid #000; width: 250px; padding-top: 5px; text-align: center; float:right;">${sigHtml}<b>${appSettings.docName}</b><br>Authorized Signature</div><div style="clear:both;"></div>`; 
+            }
             if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
         }
+        
+        if (mode === 'certificate') {
+            html += getPrintHeaderHTML("MEDICAL CERTIFICATE");
+            let cType = document.getElementById('certType').value;
+            let cDiag = document.getElementById('certDiagnosis').value || p.diagnosis || "____________________";
+            let cDays = document.getElementById('certDays').value || "____";
+            let cDate = document.getElementById('certStartDate').value ? new Date(document.getElementById('certStartDate').value).toLocaleDateString('en-IN') : "____";
+            let sigHtml = appSettings.signature ? `<img src="${appSettings.signature}" style="max-height:60px; margin-bottom:5px;"><br>` : `<br><br><br>`;
+            
+            html += `<div style="line-height:2; font-size:16px; margin-top:20px; text-align:justify;">`;
+            if (cType === 'sick') {
+                html += `This is to certify that <b>${p.name}</b>, aged <b>${p.ageYrs}Y ${p.ageMos}M</b>, has been examined by me and is diagnosed to be suffering from <b>${cDiag}</b>.<br><br>I consider that a period of rest and absence from school/duty for <b>${cDays}</b> days with effect from <b>${cDate}</b> is absolutely necessary for the restoration of their health.`;
+            } else {
+                html += `This is to certify that I have carefully examined <b>${p.name}</b>, aged <b>${p.ageYrs}Y ${p.ageMos}M</b>. Based on the examination, they have recovered from <b>${cDiag}</b> and are now medically fit to resume school/duty with effect from <b>${cDate}</b>.`;
+            }
+            html += `</div>`;
+            html += `<div style="margin-top: 80px; width: 250px; text-align: center; float:right;">${sigHtml}<b>${appSettings.docName}</b><br>Authorized Signature</div><div style="clear:both;"></div>`;
+        }
+
         if (mode === 'nutrition' || mode === 'comprehensive') {
             html += getPrintHeaderHTML("DIET & NUTRITION PLAN");
             if (p.dietLogs && p.dietLogs.length > 0) { html += `<h3>24-Hour Diet Recall Analysis</h3>`; html += document.getElementById('recallListArea').innerHTML; html += document.getElementById('recallSummaryArea').innerHTML; }
@@ -1551,12 +1653,14 @@
             html += `<h3 style="margin-top: 30px; color:var(--primary);">Recommended Household Portions</h3><ul style="font-size:1.1rem; line-height:1.6;"><li>1 bowl cooked rice: 120 kcal</li><li>1 Idli / 1 Vada: 50 kcal</li><li>1 Dosa / 1 Chapati: 70 kcal</li><li>Cow's Milk (100ml): 65 kcal</li><li>1 Egg (60g): 60 kcal</li></ul>`;
             if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
         }
+        
         if (mode === 'milestones' || mode === 'comprehensive') {
             html += getPrintHeaderHTML("DEVELOPMENTAL PROGRESS LOG REPORT");
             html += `<h3 style="margin-top: 20px;">🌟 Successfully Verified Achieved Milestones</h3>` + document.getElementById('msCompletedContainer').innerHTML;
             html += `<h3 style="margin-top: 30px;">📅 Anticipatory Developmental Guidance Milestones</h3>` + document.getElementById('msUpcomingContainer').innerHTML;
             if (mode === 'comprehensive') html += `<div class="page-break"></div>`;
         }
+        
         if (mode === 'comprehensive') {
             html += getPrintHeaderHTML("CLINICAL TRIAGE & ANTHROPOMETRY REPORT");
             let maln = extractToolResult('malnGridOutput'); if(maln) html += `<h3>Malnutrition & Anthropometry Triage</h3>${maln}`;
@@ -1580,6 +1684,7 @@
         if(!activePatientId) return alert("Select patient");
         const p = globalPatientsStore[activePatientId];
         let txt = `*Pediatric Clinical Report*\nName: ${p.name}\nAge: ${p.ageYrs}Y ${p.ageMos}M\nWeight: ${p.weight} kg\n\n`;
+        if(p.diagnosis) txt += `*Diagnosis:* ${p.diagnosis}\n\n`;
         if(p.rxList && p.rxList.length > 0) {
             txt += `*Active Prescriptions:*\n`;
             p.rxList.forEach((rx, i) => { txt += `${i+1}. ${rx.name} - ${rx.vol} ${rx.unit || 'mL'} (${rx.freq})\n`; });
@@ -1588,6 +1693,9 @@
         if(p.upcomingVaccinesForWhatsapp && p.upcomingVaccinesForWhatsapp.length > 0) {
             txt += `*Upcoming Vaccines:*\n${p.upcomingVaccinesForWhatsapp.join(", ")}\n\n`;
         }
+        if(p.advice) txt += `*Advice:*\n${p.advice}\n\n`;
+        if(p.tests) txt += `*Investigations:*\n${p.tests}\n\n`;
+        if(p.review) txt += `*Next Review:* ${new Date(p.review).toLocaleDateString('en-IN')}\n\n`;
         txt += `Please visit the clinic for your detailed follow-up.`;
         const targetPhone = p.phone ? p.phone.replace(/[^0-9]/g, "") : "";
         window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`, '_blank');
