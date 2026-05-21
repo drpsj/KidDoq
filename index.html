@@ -335,9 +335,11 @@
             /* 3. Main Content Area (Scrolls beautifully underneath) */
             .main-content {
                 flex: 1 !important;
+                height: auto !important;
+                max-height: 100dvh !important;
                 overflow-y: auto !important;
                 overflow-x: hidden !important;
-                padding: 1rem 1rem 100px 1rem !important; /* Huge bottom cushion so nothing hides behind nav */
+                padding: 1rem 1rem 140px 1rem !important; /* Increased bottom cushion significantly */
                 width: 100vw !important;
                 -webkit-overflow-scrolling: touch !important;
                 box-sizing: border-box !important;
@@ -503,12 +505,7 @@
                 </div>
             </div>
         </div>
-        <div id="emptyStatePlaceholder" class="timeline-section" style="text-align: center;">
-            <h2 style="font-size: 3rem; margin-bottom: 0;">🏥</h2>
-            <h2 class="section-title" style="border:none; justify-content: center;">Welcome to the Hub</h2>
-            <p>Select a module from the menu or register a patient to begin.</p>
-        </div>
-
+    
         <div id="activeWorkspace" style="display:none;">
             
             <div style="display:flex; justify-content:flex-end; gap:10px; margin-bottom:1rem; border-bottom: 1px solid var(--border-soft); padding-bottom: 1rem;">
@@ -609,6 +606,13 @@
 
             <div id="dosageFeatureView" class="view-content">
                 <h2 class="section-title">💊 Pediatric Dosing Engine</h2>
+                <div style="background: #fffbe8; border: 1px solid #fde68a; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 15px; box-shadow: var(--shadow-sm);">
+                    <div style="font-size: 1.5rem;">⚡</div>
+                    <div style="flex: 1;">
+                        <label style="margin: 0; font-weight: bold; color: #b45309; font-size: 0.9rem;">Quick OPD Calc (Bypass Patient Registry)</label>
+                        <input type="number" id="quickWeightOverride" placeholder="Enter Weight (kg)..." style="margin-top: 5px; border-color: #fcd34d; background: white;" oninput="useQuickWeight()">
+                    </div>
+                </div>
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('doseCalcTab', this)">🧮 Active Calculator</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('doseReverseTab', this)">🔄 Reverse Audit</button>
@@ -1354,10 +1358,8 @@
         if(document.getElementById('jeEndemic')) document.getElementById('jeEndemic').checked = false; 
         document.getElementById('calcWeight').value = ""; document.getElementById('fluidWeight').value = ""; document.getElementById('crashWeight').value = "";
         
-        // Reset empty state back to default welcome screen
-        const emptyState = document.getElementById('emptyStatePlaceholder');
-        emptyState.innerHTML = `<h2 style="font-size: 3rem; margin-bottom: 0;">🏥</h2><h2 class="section-title" style="border:none; justify-content: center;">Welcome to the Hub</h2><p>Select a module from the menu or register a patient to begin.</p>`;
-        emptyState.style.display = "block";
+        // Reset back to the premium dashboard
+        switchMainFeature('homeDashboardView');
         
         document.getElementById('activeWorkspace').style.display = "none";
         if(document.getElementById('btnMasterPrint')) document.getElementById('btnMasterPrint').style.display = "none";
@@ -2349,6 +2351,20 @@ function exportDatabase() {
     dlAnchorElem.remove();
     if(typeof showSystemToast === "function") showSystemToast("📥 Database backup downloaded successfully!");
 }
+
+function useQuickWeight() {
+        let quickWt = document.getElementById('quickWeightOverride').value;
+        if (quickWt && quickWt > 0) {
+            // Trick the app into thinking we have an active patient just for the calc
+            window.tempQuickWeight = parseFloat(quickWt);
+            if(typeof showSystemToast === 'function') showSystemToast(`⚡ Quick Weight set to ${quickWt} kg`);
+        } else {
+            window.tempQuickWeight = null;
+        }
+    }
+
+    // Optional: Find your calculation function (usually called calculateDose) 
+    // and make sure it checks for window.tempQuickWeight before failing!
 
 </script>
 </body>
