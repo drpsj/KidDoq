@@ -2071,6 +2071,36 @@ function removeDrug(index) {
     renderRxCart();
 }
 
+// --- CORE NAVIGATION ENGINE ---
+    function switchMainFeature(viewId, btnElement) {
+        // 1. Find and hide ALL sections
+        const allViews = document.querySelectorAll('.view-content');
+        allViews.forEach(view => {
+            view.classList.remove('active-view');
+        });
+
+        // 2. Remove the active highlight from ALL buttons
+        const allBtns = document.querySelectorAll('.feature-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // 3. Find and show the specific section you clicked
+        const targetView = document.getElementById(viewId);
+        if (targetView) {
+            targetView.classList.add('active-view');
+        } else {
+            // Fail-safe just in case you haven't built that specific page yet
+            console.warn("View not found:", viewId);
+            if(typeof showSystemToast === "function") showSystemToast("⚠️ This section is still under construction!");
+        }
+
+        // 4. Highlight the button you just clicked
+        if (btnElement) {
+            btnElement.classList.add('active');
+        }
+    }
+    
     function showSystemToast(msg) {
             const container = document.getElementById('systemToastContainer');
             const toast = document.createElement('div');
