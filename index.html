@@ -44,6 +44,11 @@
             --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
             --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
+
+        /* GLOBAL LAYOUT LOCK */
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-main); }
+        .app-shell { width: 100%; max-width: 100% !important; height: 100vh !important; margin: 0 !important; background: var(--bg-body); display: flex; flex-direction: column; overflow: hidden; }
+        .main-content { flex: 1; overflow-y: auto; padding: 1.5rem; }
         
         /* SAAS DESKTOP ENHANCEMENTS (Custom Scrollbars) */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -211,7 +216,7 @@
             .panel { display: none; max-height: 65vh; overflow-y: auto; padding: 1.5rem; background: var(--bg-body); border-bottom: 1px solid var(--border-soft); box-shadow: inset 0 -10px 10px -10px rgba(0,0,0,0.05);}
             .panel.mobile-open { display: flex; }
             
-            .main-content { padding: 1rem; flex: 1; overflow-y: auto; }
+            .main-content { padding: 1rem; padding-bottom: 100px !important; flex: 1; overflow-y: auto; }
             .view-content { max-width: 100%; }
             .timeline-section { padding: 1.5rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);}
             .tool-grid { grid-template-columns: 1fr; gap: 1.5rem;}
@@ -233,6 +238,30 @@
             body { background: white; margin: 0; padding: 0; }
             .app-shell, .app-features-nav, header, .sidebar { display: none !important; }
             .print-container { display: block !important; width: 100%; }
+        }
+
+        /* =========================================
+           TRUE DESKTOP SAAS DASHBOARD (Edge-to-Edge)
+           ========================================= */
+        @media (min-width: 1024px) {
+            /* 1. Force Side-by-Side Layout */
+            .app-shell { flex-direction: row !important; }
+            
+            /* 2. Lock Sidebar to the Left */
+            .sidebar { width: 320px !important; height: 100vh !important; border-right: 1px solid var(--border-soft); overflow-y: auto; flex-shrink: 0; padding: 1.5rem; background: var(--bg-surface); z-index: 10; }
+            
+            /* 3. Allow Main Content to Fill the Rest */
+            .main-content { flex: 1 !important; height: 100vh !important; overflow-y: auto !important; padding: 2.5rem 4rem !important; }
+            
+            /* 4. The 50/50 Split for the Dosing Module */
+            #doseCalcTab { display: grid !important; grid-template-columns: 450px 1fr !important; gap: 4rem !important; align-items: start !important; }
+            
+            /* 5. Sticky Prescription Pad */
+            #rxCartArea { position: sticky !important; top: 0 !important; }
+            .rx-cart-container { border: 1px solid var(--border-soft); box-shadow: var(--shadow-md); background: white; padding: 2rem; border-radius: var(--radius-lg); }
+            
+            /* 6. Expand Triage grids */
+            .tool-grid { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)) !important; }
         }
 
     </style>
@@ -1980,7 +2009,7 @@
                 setTimeout(()=>toast.remove(), 300); 
             }, 3000);
         }
-        
+
 </script>
 </body>
 </html>
