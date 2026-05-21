@@ -140,42 +140,55 @@
             .feature-btn { padding: 0.6rem 0.8rem; font-size: 0.85rem; }
         }
 
-        /* DESKTOP SAAS DASHBOARD (Ultra-Wide Optimization) */
+       /* =========================================
+           TRUE DESKTOP SAAS DASHBOARD (Edge-to-Edge)
+           ========================================= */
         @media (min-width: 1024px) {
-            /* 1. Transform Dosing Calculator into a 2-Pane UI */
-            #doseCalcTab, #doseReverseTab {
-                display: grid;
-                grid-template-columns: 400px 1fr;
-                gap: 3rem;
-                align-items: start;
+            /* 1. Break out of the box - go full screen */
+            body { padding: 0 !important; background: var(--bg-body) !important; overflow: hidden; }
+            .app-shell { 
+                height: 100vh !important; 
+                width: 100vw !important; 
+                max-width: none !important; 
+                border-radius: 0 !important; 
+                box-shadow: none !important; 
+                display: flex !important; 
+                flex-direction: row !important; 
+                margin: 0 !important;
             }
             
-            /* 2. Make the Prescription Pad Sticky (Stays on screen while scrolling) */
-            #rxCartArea {
-                position: sticky;
-                top: 2rem;
-                align-self: start;
-                max-height: calc(100vh - 4rem);
-                overflow-y: auto;
-            }
-            .rx-cart-container {
-                box-shadow: var(--shadow-md);
-                border: 1px solid var(--border-soft);
+            /* 2. Fixed Professional Sidebar */
+            .sidebar { 
+                width: 320px !important; 
+                height: 100vh !important; 
+                border-right: 1px solid var(--border-soft) !important; 
+                border-radius: 0 !important; 
+                position: relative !important;
             }
             
-            /* 3. Transform Triage, Anthropometry & ER into Side-by-Side Grids */
-            .tool-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 2rem;
+            /* 3. Expansive Main Content Area */
+            .main-content { 
+                flex: 1 !important; 
+                height: 100vh !important; 
+                overflow-y: auto !important; 
+                padding: 2.5rem 4rem !important; 
             }
             
-            /* 4. Widen the sidebar slightly for breathing room */
-            .sidebar { width: 320px; padding: 1.5rem; }
+            /* 4. The 50/50 Split for the Dosing Module */
+            #doseCalcTab { 
+                display: grid !important; 
+                grid-template-columns: 450px 1fr !important; /* Left calc, Right pad */
+                gap: 4rem !important; 
+                align-items: start !important; 
+            }
             
-            /* 5. Remove excessive borders on desktop */
-            .view-content { padding: 1rem 2rem; }
+            /* 5. Keep the Pad glued to the screen while scrolling */
+            #rxCartArea { position: sticky !important; top: 2rem !important; margin-top: 0 !important; }
+            .rx-cart-container { border: 1px solid var(--border-soft); box-shadow: var(--shadow-md); background: white; padding: 2rem; border-radius: var(--radius-lg); }
+            
+            /* 6. Expand Triage grids */
+            .tool-grid { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)) !important; }
         }
-
         /* MOBILE RESPONSIVE ENGINE - NATIVE APP FEEL */
         .mobile-toggle-btn { display: none; }
         @media (max-width: 900px) {
@@ -225,6 +238,7 @@
     </style>
 </head>
 <body>
+    <div id="systemToastContainer" style="position:fixed; bottom:30px; right:30px; z-index:9999; display:flex; flex-direction:column; gap:10px; pointer-events:none;"></div>
   <header>
     <h1>Pediatric Clinical Hub</h1>
     <p>Point-of-Care Intelligent Workspace Framework</p>
@@ -1952,6 +1966,21 @@
         const targetPhone = p.phone ? p.phone.replace(/[^0-9]/g, "") : "";
         window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`, '_blank');
     }
+
+    function showSystemToast(msg) {
+            const container = document.getElementById('systemToastContainer');
+            const toast = document.createElement('div');
+            toast.style.cssText = 'background:var(--success); color:white; padding:12px 24px; border-radius:var(--radius-pill); box-shadow:var(--shadow-float); font-weight:bold; font-size:0.9rem; animation: springSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); pointer-events:auto; display:flex; align-items:center; gap:8px;';
+            toast.innerHTML = `<span>✅</span> ${msg}`;
+            container.appendChild(toast);
+            setTimeout(() => { 
+                toast.style.opacity = '0'; 
+                toast.style.transform = 'translateY(20px)'; 
+                toast.style.transition = 'all 0.3s ease'; 
+                setTimeout(()=>toast.remove(), 300); 
+            }, 3000);
+        }
+        
 </script>
 </body>
 </html>
