@@ -328,43 +328,6 @@
                     </div>
                 </div>
 
-            <div id="prescriptionFeatureView" class="view-content">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-                    <h2 class="section-title" style="margin:0; border:none;">📝 Complete Prescription Pad</h2>
-                    <div style="display:flex; gap:10px;">
-                        <button onclick="executePrint('certificate')" class="secondary" style="width:auto; border-color:var(--warning); color:var(--warning);">🖨️ Med Cert</button>
-                        <button onclick="executePrint('prescription')" class="secondary" style="width:auto; border-color:var(--primary); color:var(--primary);">🖨️ Print Rx</button>
-                    </div>
-                </div>
-                
-                <div class="sub-tabs-nav">
-                    <button class="sub-tab-btn active" onclick="switchSubTab('rxNotesTab', this)">📝 Clinical Pad</button>
-                    <button class="sub-tab-btn" onclick="switchSubTab('rxCertTab', this)">📄 Certificates</button>
-                </div>
-
-                <div id="rxNotesTab" class="sub-tab-content active">
-                    <div class="timeline-section tool-grid" style="grid-template-columns: 1fr 1fr;">
-                    <div>
-                        <h4 style="margin-top:0; color:var(--primary);">Clinical Notes</h4>
-                        <label>Complaints / Differential Diagnosis</label>
-                        <input type="text" id="rxDiagnosis" placeholder="e.g. Viral URI, Acute Otitis Media" oninput="saveAndRegisterPatient(true)" style="margin-bottom:10px; font-weight:bold;">
-                        
-                        <label>Required Investigations / Scans</label>
-                        <textarea id="rxTests" placeholder="e.g. CBC, CRP, USG Abdomen" oninput="saveAndRegisterPatient(true)" style="width:100%; padding:0.65rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; margin-bottom:10px; resize:vertical; min-height:60px;"></textarea>
-                        
-                        <label>General Advice / Care Plan</label>
-                        <textarea id="rxAdvice" placeholder="e.g. Plenty of oral fluids, tepid sponging..." oninput="saveAndRegisterPatient(true)" style="width:100%; padding:0.65rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; margin-bottom:10px; resize:vertical; min-height:60px;"></textarea>
-                        
-                        <label>Next Review Date</label>
-                        <input type="date" id="rxReview" onchange="saveAndRegisterPatient(true)">
-                    </div>
-                    <div>
-                        <h4 style="margin-top:0; color:var(--primary);">Prescribed Medications</h4>
-                        <div id="rxCartList" style="background:var(--bg-surface); padding:15px; border-radius:8px; border:1px solid var(--border-soft); min-height:300px;"></div>
-                    </div>
-                </div>
-            </div>
-
                 <div id="doseManageTab" class="sub-tab-content">
                     <div class="timeline-section tool-grid">
                         <div>
@@ -383,6 +346,73 @@
                 </div>
             </div>
 
+            <div id="prescriptionFeatureView" class="view-content">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h2 class="section-title" style="margin:0; border:none;">📝 Complete Prescription Pad</h2>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="executePrint('certificate')" class="secondary" style="width:auto; border-color:var(--warning); color:var(--warning);">🖨️ Print Cert/Note</button>
+                        <button onclick="executePrint('prescription')" class="secondary" style="width:auto; border-color:var(--primary); color:var(--primary);">🖨️ Print Rx</button>
+                    </div>
+                </div>
+                
+                <div class="sub-tabs-nav">
+                    <button class="sub-tab-btn active" onclick="switchSubTab('rxNotesTab', this)">📝 Clinical Pad</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('rxCertTab', this)">📄 Certificates & Notes</button>
+                </div>
+
+                <div id="rxNotesTab" class="sub-tab-content active">
+                    <div class="timeline-section tool-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div>
+                            <h4 style="margin-top:0; color:var(--primary);">Clinical Notes</h4>
+                            <label>Complaints / Differential Diagnosis</label>
+                            <input type="text" id="rxDiagnosis" placeholder="e.g. Viral URI, Acute Otitis Media" oninput="saveAndRegisterPatient(true)" style="margin-bottom:10px; font-weight:bold;">
+                            
+                            <label>Required Investigations / Scans</label>
+                            <textarea id="rxTests" placeholder="e.g. CBC, CRP, USG Abdomen" oninput="saveAndRegisterPatient(true)" style="width:100%; padding:0.65rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; margin-bottom:10px; resize:vertical; min-height:60px;"></textarea>
+                            
+                            <label>General Advice / Care Plan</label>
+                            <textarea id="rxAdvice" placeholder="e.g. Plenty of oral fluids, tepid sponging..." oninput="saveAndRegisterPatient(true)" style="width:100%; padding:0.65rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; margin-bottom:10px; resize:vertical; min-height:60px;"></textarea>
+                            
+                            <label>Next Review Date</label>
+                            <input type="date" id="rxReview" onchange="saveAndRegisterPatient(true)">
+                        </div>
+                        <div>
+                            <h4 style="margin-top:0; color:var(--primary);">Prescribed Medications</h4>
+                            <div id="rxCartList" style="background:var(--bg-surface); padding:15px; border-radius:8px; border:1px solid var(--border-soft); min-height:300px;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="rxCertTab" class="sub-tab-content">
+                    <div class="timeline-section tool-grid" style="grid-template-columns: 1fr 1.5fr;">
+                        <div>
+                            <h4 style="margin-top:0; color:var(--warning);">Universal Note Generator</h4>
+                            <label>Template Category</label>
+                            <select id="certCategory" onchange="generateCertTemplate()">
+                                <option value="none">-- Select Template --</option>
+                                <option value="leave">Medical Leave / Bed Rest</option>
+                                <option value="fitness">Fitness / Rejoining (School/Sports)</option>
+                                <option value="attendance">Attendance / Visit Proof</option>
+                                <option value="referral">Specialist / Lab Referral</option>
+                                <option value="advice">Advice / Diet / Home Care</option>
+                                <option value="exemption">Medical Exemption / Authorization</option>
+                            </select>
+                            
+                            <label style="margin-top:10px;">Document Title</label>
+                            <input type="text" id="certTitle" placeholder="e.g. FITNESS CERTIFICATE">
+                            
+                            <label style="margin-top:10px;">Relevant Dates / Days</label>
+                            <input type="text" id="certDates" placeholder="e.g. 3 days from 12-Nov" oninput="generateCertTemplate()">
+                            <button class="secondary" style="margin-top:10px; width:100%;" onclick="generateCertTemplate()">🔄 Auto-Fill Template</button>
+                        </div>
+                        <div>
+                            <h4 style="margin-top:0; color:var(--primary);">Final Document Content (Editable)</h4>
+                            <textarea id="certBody" style="width:100%; padding:1rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; font-size:0.95rem; line-height:1.6; min-height:250px; resize:vertical;" placeholder="Select a template on the left, or manually type your certificate/note here..."></textarea>
+                            <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;"><b>Note:</b> You can freely edit this text. Whatever is in this box will be printed directly above your signature.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="nutritionFeatureView" class="view-content">
                 <h2 class="section-title">🍎 Nutrition Tracker & 24h Recall</h2>
                 <div class="sub-tabs-nav">
@@ -1578,6 +1608,43 @@
         return `<div class="tool-result">${txt}</div>`;
     }
 
+    function generateCertTemplate() {
+        let pId = activePatientId;
+        let pName = pId ? globalPatientsStore[pId].name : (document.getElementById('pName').value || "________________");
+        let pAgeY = pId ? globalPatientsStore[pId].ageYrs : (document.getElementById('ageYrs').value || "_");
+        let pAgeM = pId ? globalPatientsStore[pId].ageMos : (document.getElementById('ageMos').value || "_");
+        let pDiag = document.getElementById('rxDiagnosis') ? document.getElementById('rxDiagnosis').value : "________________";
+        let cDates = document.getElementById('certDates').value || "________________";
+        let cat = document.getElementById('certCategory').value;
+        let titleInput = document.getElementById('certTitle');
+        let body = document.getElementById('certBody');
+        
+        if(!pDiag) pDiag = "________________";
+        let text = "";
+        
+        if (cat === "leave") {
+            titleInput.value = "MEDICAL LEAVE / REST CERTIFICATE";
+            text = `This is to certify that ${pName}, aged ${pAgeY}Y ${pAgeM}M, has been examined by me and is diagnosed to be suffering from ${pDiag}.\n\nI consider that a period of rest and absence from school/duty for ${cDates} is absolutely necessary for the restoration of their health.`;
+        } else if (cat === "fitness") {
+            titleInput.value = "MEDICAL FITNESS CERTIFICATE";
+            text = `This is to certify that I have carefully examined ${pName}, aged ${pAgeY}Y ${pAgeM}M. \n\nBased on the examination, they have recovered from ${pDiag} and are now medically fit to resume normal school/sports/duty activities with effect from ${cDates}.`;
+        } else if (cat === "attendance") {
+            titleInput.value = "ATTENDANCE / CLINIC VISIT CERTIFICATE";
+            text = `This is to certify that ${pName}, aged ${pAgeY}Y ${pAgeM}M, attended this clinic on ${new Date().toLocaleDateString('en-IN')} for clinical consultation and evaluation regarding ${pDiag}.`;
+        } else if (cat === "referral") {
+            titleInput.value = "CLINICAL REFERRAL NOTE";
+            text = `To the Consulting Specialist,\n\nKindly examine ${pName}, aged ${pAgeY}Y ${pAgeM}M, who has been diagnosed with / is being evaluated for ${pDiag}.\n\nPatient is being referred for further specialist evaluation and management.\n\nClinical Notes / Investigations:\n[Enter specific clinical findings or test results here]`;
+        } else if (cat === "advice") {
+            titleInput.value = "CLINICAL ADVICE / CARE PLAN";
+            text = `Patient: ${pName} (${pAgeY}Y ${pAgeM}M)\nDiagnosis: ${pDiag}\n\nThe following care instructions and medical advice must be strictly followed:\n\n1. \n2. \n3. `;
+        } else if (cat === "exemption") {
+            titleInput.value = "MEDICAL EXEMPTION / AUTHORIZATION";
+            text = `This is to certify that ${pName}, aged ${pAgeY}Y ${pAgeM}M, is currently under medical care for ${pDiag}.\n\nDue to this condition, the following is authorized / recommended:\n[State specific exemption e.g., exempt from physical activity, authorized to carry asthma inhaler, special toilet breaks]`;
+        }
+        
+        if (cat !== "none") body.value = text;
+    }
+
     function executePrint(mode) {
         if (!activePatientId && mode !== 'prescription' && mode !== 'certificate') { alert("Please select a patient first."); return; }
         const engine = document.getElementById('printEngine'); 
@@ -1629,20 +1696,16 @@
         }
         
         if (mode === 'certificate') {
-            html += getPrintHeaderHTML("MEDICAL CERTIFICATE");
-            let cType = document.getElementById('certType').value;
-            let cDiag = document.getElementById('certDiagnosis').value || p.diagnosis || "____________________";
-            let cDays = document.getElementById('certDays').value || "____";
-            let cDate = document.getElementById('certStartDate').value ? new Date(document.getElementById('certStartDate').value).toLocaleDateString('en-IN') : "____";
+            let cTitle = document.getElementById('certTitle') ? document.getElementById('certTitle').value : "MEDICAL CERTIFICATE";
+            html += getPrintHeaderHTML(cTitle);
+            
+            let cBodyText = document.getElementById('certBody') ? document.getElementById('certBody').value : "No content provided.";
+            // Convert line breaks to HTML breaks for printing
+            cBodyText = cBodyText.replace(/\n/g, '<br>');
+            
             let sigHtml = appSettings.signature ? `<img src="${appSettings.signature}" style="max-height:60px; margin-bottom:5px;"><br>` : `<br><br><br>`;
             
-            html += `<div style="line-height:2; font-size:16px; margin-top:20px; text-align:justify;">`;
-            if (cType === 'sick') {
-                html += `This is to certify that <b>${p.name}</b>, aged <b>${p.ageYrs}Y ${p.ageMos}M</b>, has been examined by me and is diagnosed to be suffering from <b>${cDiag}</b>.<br><br>I consider that a period of rest and absence from school/duty for <b>${cDays}</b> days with effect from <b>${cDate}</b> is absolutely necessary for the restoration of their health.`;
-            } else {
-                html += `This is to certify that I have carefully examined <b>${p.name}</b>, aged <b>${p.ageYrs}Y ${p.ageMos}M</b>. Based on the examination, they have recovered from <b>${cDiag}</b> and are now medically fit to resume school/duty with effect from <b>${cDate}</b>.`;
-            }
-            html += `</div>`;
+            html += `<div style="line-height:2; font-size:16px; margin-top:20px; text-align:justify;">${cBodyText}</div>`;
             html += `<div style="margin-top: 80px; width: 250px; text-align: center; float:right;">${sigHtml}<b>${appSettings.docName}</b><br>Authorized Signature</div><div style="clear:both;"></div>`;
         }
 
