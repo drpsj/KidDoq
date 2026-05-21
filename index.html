@@ -296,6 +296,7 @@
                 <h2 class="section-title">💊 Pediatric Dosing Engine</h2>
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('doseCalcTab', this)">🧮 Active Calculator</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('doseReverseTab', this)">🔄 Reverse Audit</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('doseManageTab', this)">⚙️ Add Custom Drug</button>
                 </div>
                 
@@ -325,6 +326,27 @@
                                 <div id="rxAddButtonArea"></div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div id="doseReverseTab" class="sub-tab-content">
+                    <div class="timeline-section tool-grid" style="background: rgba(14, 165, 233, 0.05); border-color: var(--accent);">
+                        <div>
+                            <h3 style="color:var(--accent); margin-top:0;">Audit Administered Dose</h3>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Enter the volume the parent administered to back-calculate the exact mg/kg received.</p>
+                            <label>Category</label>
+                            <select id="revCategory" onchange="populateRevDrugs(); calcReverse();">
+                                <option value="">-- Select --</option>
+                                <option value="antibiotics">Antibiotics</option>
+                                <option value="antipyretics">Antipyretics & Analgesics</option>
+                                <option value="antihistamines">Antihistamines / Cold</option>
+                                <option value="respiratory">Respiratory Suite</option>
+                                <option value="git">Gastrointestinal</option>
+                            </select>
+                            <label>Formulation Given</label><select id="revFormulation" onchange="calcReverse()"><option value="">-- formulation --</option></select>
+                            <label>Volume Administered (mL or Tabs)</label><input type="number" step="0.1" id="revVol" oninput="calcReverse()">
+                        </div>
+                        <div id="revOutputArea" class="tool-result neutral">Awaiting volume parameters to audit mg/kg limits.</div>
                     </div>
                 </div>
 
@@ -611,12 +633,25 @@
                         <button class="action" onclick="saveSettings()">💾 Save Settings</button>
                     </div>
                     <div>
-                        <h4 style="margin-top:0; color:var(--primary);">About Pediatric Clinical Hub</h4>
-                        <p style="font-size:0.95rem; line-height:1.6;">The Pediatric Clinical Hub is an advanced, client-side, zero-latency bedside assistance platform compiled to deliver decision tracking in high-throughput OPDs and NICUs.</p>
-                        <p style="font-size:0.85rem; color:var(--success); border-left:3px solid var(--success); padding-left:10px;">All computations execute entirely client-side preserving strict data privacy parameters. No patient data leaves your device.</p>
-                        <div style="margin-top:2rem; border-top:1px solid var(--border-soft); padding-top:1rem; text-align:center;">
-                            <span style="font-size:0.85rem; color:var(--text-muted);">Principal Architect:</span>
-                            <h3 style="margin:5px 0 0 0; color:var(--primary);">Dr. Peter Suraj Joseph</h3>
+                        <h4 style="margin-top:0; color:var(--primary);">📚 Clinical Guidelines & Sources</h4>
+                        <div style="font-size:0.85rem; line-height:1.6; background:var(--bg-body); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-soft); margin-bottom:1rem;">
+                            <ul style="margin:0; padding-left:1.2rem; color:var(--text-main);">
+                                <li style="margin-bottom:6px;"><b>Growth & Triage:</b> WHO Multicentre Growth Reference Study (MGRS) & IAP Guidelines 2024</li>
+                                <li style="margin-bottom:6px;"><b>Immunization:</b> National Immunization Schedule (NIS) India</li>
+                                <li style="margin-bottom:6px;"><b>Nutrition:</b> ICMR-NIN Dietary Guidelines for Indians</li>
+                                <li style="margin-bottom:6px;"><b>Pharmacopeia:</b> Harriet Lane Handbook (22nd Ed) & Nelson Textbook of Pediatrics</li>
+                                <li style="margin-bottom:6px;"><b>Neonatology:</b> AAP Guidelines (Bhutani Nomogram) & Holliday-Segar Protocol</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background:rgba(245, 158, 11, 0.1); border-left:4px solid var(--warning); padding:10px; font-size:0.8rem; color:var(--text-main); line-height:1.5; margin-bottom:1.5rem;">
+                            <b>⚠️ Medico-Legal Disclaimer:</b> This framework is a clinical reference tool. All calculations (especially weight-based dosing and fluid resuscitation) must be independently verified against institutional protocols before administration.
+                        </div>
+
+                        <div style="border-top:1px solid var(--border-soft); padding-top:1rem; text-align:center;">
+                            <h3 style="margin:0 0 5px 0; color:var(--primary); font-size:1.1rem;">Pediatric Clinical Hub v2.0</h3>
+                            <span style="font-size:0.85rem; color:var(--text-muted);">Architected & Developed by <b>Dr. Peter Suraj Joseph</b></span><br>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">100% Client-Side Execution • Zero Data Tracking</span>
                         </div>
                     </div>
                 </div>
@@ -624,111 +659,111 @@
 
         </div> </div> </div> <div id="printEngine" style="display:none;"></div>
         <script>
-    // --- 1. CLINICAL DATABASES ---
+   // --- 1. CLINICAL DATABASES ---
     const drugDb = {
         "antibiotics": [
-            { name: "Amoxicillin 125mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
-            { name: "Amoxicillin 250mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
-            { name: "Amox+Clav 62.5mg/ml drops", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 62.5, vol: 1 },
-            { name: "Amox+Clav 156mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 156, vol: 5 },
-            { name: "Amox+Clav (200/28)mg/5ml", doseMg: 40, doseType: "perDay", div: 2, freq: "BID", conc: 200, vol: 5 },
-            { name: "Amox+Clav 312mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 312, vol: 5 },
-            { name: "Amox+Clav (400/57)mg/5ml", doseMg: 40, doseType: "perDay", div: 2, freq: "BID", conc: 400, vol: 5 },
-            { name: "Amox+Clav (600/42.9)mg/5ml", doseMg: 90, doseType: "perDay", div: 2, freq: "BID", conc: 600, vol: 5 },
-            { name: "Cefixime 100mg/5ml", doseMg: 8, doseType: "perDay", div: 2, freq: "BID", conc: 100, vol: 5 },
-            { name: "Cefaclor 125mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
-            { name: "Cefaclor 250mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
-            { name: "Cefaclor 375mg/5ml", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 375, vol: 5 },
-            { name: "Cefuroxime 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
-            { name: "Cefuroxime 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
-            { name: "Cefdinir 125mg/5ml", doseMg: 14, doseType: "perDay", div: 1, freq: "QD or BID", conc: 125, vol: 5 },
-            { name: "Cefdinir 250mg/5ml", doseMg: 14, doseType: "perDay", div: 1, freq: "QD or BID", conc: 250, vol: 5 },
-            { name: "Cephalexin 125mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
-            { name: "Cephalexin 250mg/5ml", doseMg: 40, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
-            { name: "Cefadroxil 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
-            { name: "Cefadroxil 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
-            { name: "Cefadroxil 500mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 500, vol: 5 },
-            { name: "Cephradine 125mg/5ml", doseMg: 25, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
-            { name: "Cephradine 250mg/5ml", doseMg: 25, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
-            { name: "Cefpodoxime 40mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 40, vol: 5 },
-            { name: "Cefpodoxime 50mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 50, vol: 5 },
-            { name: "Cefpodoxime 100mg/5ml", doseMg: 10, doseType: "perDay", div: 2, freq: "BID", conc: 100, vol: 5 },
-            { name: "Cefprozil 125mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
-            { name: "Cefprozil 250mg/5ml", doseMg: 30, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
-            { name: "Azithromycin 100mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "QD (3-5 days)", conc: 100, vol: 5 },
-            { name: "Azithromycin 200mg/5ml", doseMg: 10, doseType: "perDose", div: 1, freq: "QD (3-5 days)", conc: 200, vol: 5 },
-            { name: "Erythromycin 200mg/5ml", doseMg: 40, doseType: "perDay", div: 4, freq: "QID", conc: 200, vol: 5 },
-            { name: "Erythromycin 400mg/5ml", doseMg: 40, doseType: "perDay", div: 4, freq: "QID", conc: 400, vol: 5 },
-            { name: "Clarithromycin 125mg/5ml", doseMg: 15, doseType: "perDay", div: 2, freq: "BID", conc: 125, vol: 5 },
-            { name: "Clarithromycin 250mg/5ml", doseMg: 15, doseType: "perDay", div: 2, freq: "BID", conc: 250, vol: 5 },
-            { name: "Mebendazole 100mg/5ml", doseMg: 100, doseType: "fixed", div: 1, freq: "Stat (Repeat 2wks)", conc: 100, vol: 5 },
-            { name: "Metronidazole 125mg/5ml", doseMg: 30, doseType: "perDay", div: 3, freq: "TID", conc: 125, vol: 5 },
-            { name: "Metronidazole 200mg/5ml", doseMg: 30, doseType: "perDay", div: 3, freq: "TID", conc: 200, vol: 5 },
-            { name: "Co-trimoxazole (40/200)mg/5ml", doseMg: 8, doseType: "perDay", div: 2, freq: "BID", conc: 40, vol: 5 }
+            { name: "Amoxicillin 125mg/5ml", brand: "Novamox / Synmox", doseMg: 40, doseType: "perDay", maxMg: 500, div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Amoxicillin 250mg/5ml", brand: "Novamox / Synmox", doseMg: 40, doseType: "perDay", maxMg: 500, div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Amox+Clav 62.5mg/ml drops", brand: "Augmentin / Clavam", doseMg: 40, doseType: "perDay", maxMg: 875, div: 3, freq: "TID", conc: 62.5, vol: 1 },
+            { name: "Amox+Clav 156mg/5ml", brand: "Augmentin / Clavam", doseMg: 40, doseType: "perDay", maxMg: 875, div: 3, freq: "TID", conc: 156, vol: 5 },
+            { name: "Amox+Clav (200/28)mg/5ml", brand: "Advent", doseMg: 40, doseType: "perDay", maxMg: 875, div: 2, freq: "BID", conc: 200, vol: 5 },
+            { name: "Amox+Clav 312mg/5ml", brand: "Augmentin Duo", doseMg: 40, doseType: "perDay", maxMg: 875, div: 3, freq: "TID", conc: 312, vol: 5 },
+            { name: "Amox+Clav (400/57)mg/5ml", brand: "Clavam Forte", doseMg: 40, doseType: "perDay", maxMg: 875, div: 2, freq: "BID", conc: 400, vol: 5 },
+            { name: "Amox+Clav (600/42.9)mg/5ml", brand: "Megamentin", doseMg: 90, doseType: "perDay", maxMg: 875, div: 2, freq: "BID", conc: 600, vol: 5 },
+            { name: "Cefixime 100mg/5ml", brand: "Taxim-O / Zifi", doseMg: 8, doseType: "perDay", maxMg: 200, div: 2, freq: "BID", conc: 100, vol: 5 },
+            { name: "Cefaclor 125mg/5ml", brand: "Keflor", doseMg: 20, doseType: "perDay", maxMg: 500, div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Cefaclor 250mg/5ml", brand: "Keflor", doseMg: 20, doseType: "perDay", maxMg: 500, div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Cefaclor 375mg/5ml", brand: "Keflor", doseMg: 20, doseType: "perDay", maxMg: 500, div: 3, freq: "TID", conc: 375, vol: 5 },
+            { name: "Cefuroxime 125mg/5ml", brand: "Ceftum / Zocef", doseMg: 30, doseType: "perDay", maxMg: 500, div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cefuroxime 250mg/5ml", brand: "Ceftum / Zocef", doseMg: 30, doseType: "perDay", maxMg: 500, div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Cefdinir 125mg/5ml", brand: "Adcef", doseMg: 14, doseType: "perDay", maxMg: 300, div: 1, freq: "QD or BID", conc: 125, vol: 5 },
+            { name: "Cefdinir 250mg/5ml", brand: "Adcef", doseMg: 14, doseType: "perDay", maxMg: 300, div: 1, freq: "QD or BID", conc: 250, vol: 5 },
+            { name: "Cephalexin 125mg/5ml", brand: "Sporidex", doseMg: 40, doseType: "perDay", maxMg: 500, div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Cephalexin 250mg/5ml", brand: "Sporidex", doseMg: 40, doseType: "perDay", maxMg: 500, div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Cefadroxil 125mg/5ml", brand: "Odoxil", doseMg: 30, doseType: "perDay", maxMg: 500, div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cefadroxil 250mg/5ml", brand: "Odoxil", doseMg: 30, doseType: "perDay", maxMg: 500, div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Cefadroxil 500mg/5ml", brand: "Odoxil", doseMg: 30, doseType: "perDay", maxMg: 500, div: 2, freq: "BID", conc: 500, vol: 5 },
+            { name: "Cephradine 125mg/5ml", doseMg: 25, doseType: "perDay", maxMg: 500, div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cephradine 250mg/5ml", doseMg: 25, doseType: "perDay", maxMg: 500, div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Cefpodoxime 40mg/5ml", brand: "Macpod / Cepodem", doseMg: 10, doseType: "perDay", maxMg: 200, div: 2, freq: "BID", conc: 40, vol: 5 },
+            { name: "Cefpodoxime 50mg/5ml", brand: "Macpod / Cepodem", doseMg: 10, doseType: "perDay", maxMg: 200, div: 2, freq: "BID", conc: 50, vol: 5 },
+            { name: "Cefpodoxime 100mg/5ml", brand: "Macpod / Cepodem", doseMg: 10, doseType: "perDay", maxMg: 200, div: 2, freq: "BID", conc: 100, vol: 5 },
+            { name: "Cefprozil 125mg/5ml", brand: "Refzil O", doseMg: 30, doseType: "perDay", maxMg: 500, div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Cefprozil 250mg/5ml", brand: "Refzil O", doseMg: 30, doseType: "perDay", maxMg: 500, div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Azithromycin 100mg/5ml", brand: "Azee / Zithrox", doseMg: 10, doseType: "perDose", maxMg: 500, div: 1, freq: "QD (3-5 days)", conc: 100, vol: 5 },
+            { name: "Azithromycin 200mg/5ml", brand: "Azee / Zithrox", doseMg: 10, doseType: "perDose", maxMg: 500, div: 1, freq: "QD (3-5 days)", conc: 200, vol: 5 },
+            { name: "Erythromycin 200mg/5ml", brand: "Erythrocin", doseMg: 40, doseType: "perDay", maxMg: 500, div: 4, freq: "QID", conc: 200, vol: 5 },
+            { name: "Erythromycin 400mg/5ml", brand: "Erythrocin", doseMg: 40, doseType: "perDay", maxMg: 500, div: 4, freq: "QID", conc: 400, vol: 5 },
+            { name: "Clarithromycin 125mg/5ml", brand: "ClariBid", doseMg: 15, doseType: "perDay", maxMg: 500, div: 2, freq: "BID", conc: 125, vol: 5 },
+            { name: "Clarithromycin 250mg/5ml", brand: "ClariBid", doseMg: 15, doseType: "perDay", maxMg: 500, div: 2, freq: "BID", conc: 250, vol: 5 },
+            { name: "Mebendazole 100mg/5ml", brand: "Mebex", doseMg: 100, doseType: "fixed", div: 1, freq: "Stat (Repeat 2wks)", conc: 100, vol: 5 },
+            { name: "Metronidazole 125mg/5ml", brand: "Flagyl / Metrogyl", doseMg: 30, doseType: "perDay", maxMg: 500, div: 3, freq: "TID", conc: 125, vol: 5 },
+            { name: "Metronidazole 200mg/5ml", brand: "Flagyl / Metrogyl", doseMg: 30, doseType: "perDay", maxMg: 500, div: 3, freq: "TID", conc: 200, vol: 5 },
+            { name: "Co-trimoxazole (40/200)mg/5ml", brand: "Septran", doseMg: 8, doseType: "perDay", maxMg: 160, div: 2, freq: "BID", conc: 40, vol: 5 }
         ],
         "antipyretics": [
-            { name: "Paracetamol 100mg/ml drops", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 100, vol: 1 },
-            { name: "Paracetamol 120mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 120, vol: 5 },
-            { name: "Paracetamol 125mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 125, vol: 5 },
-            { name: "Paracetamol 250mg/5ml syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "Q6H PRN", conc: 250, vol: 5 },
-            { name: "Paracetamol 500 mg Tablet", doseMg: 15, doseType: "fixed", div: 1, freq: "QID (PRN)", conc: 500, vol: 1 },
-            { name: "Paracetamol 650 mg Tablet", doseMg: 15, doseType: "fixed", div: 1, freq: "QID (PRN)", conc: 650, vol: 1 },
-            { name: "Paracetamol Suppository 80mg", doseMg: 15, doseType: "fixed", div: 1, freq: "Q6H PRN", conc: 80, vol: 1 },
-            { name: "Paracetamol Suppository 120mg", doseMg: 15, doseType: "fixed", div: 1, freq: "Q6H PRN", conc: 120, vol: 1 },
-            { name: "Paracetamol Suppository 250mg", doseMg: 15, doseType: "fixed", div: 1, freq: "Q6H PRN", conc: 250, vol: 1 },
-            { name: "Ibuprofen 40mg/ml drops", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H", conc: 40, vol: 1 },
-            { name: "Ibuprofen 100mg/5ml susp", doseMg: 10, doseType: "perDose", div: 1, freq: "Q6-8H", conc: 100, vol: 5 },
-            { name: "Diclofenac Suppository 12.5mg", doseMg: 1, doseType: "fixed", div: 1, freq: "BID or TID", conc: 12.5, vol: 1 },
-            { name: "Diclofenac Suppository 25mg", doseMg: 1, doseType: "fixed", div: 1, freq: "BID or TID", conc: 25, vol: 1 }
+            { name: "Paracetamol 100mg/ml drops", brand: "Calpol / Crocin", doseMg: 15, doseType: "perDose", maxMg: 1000, div: 1, freq: "Q6H PRN", conc: 100, vol: 1 },
+            { name: "Paracetamol 120mg/5ml syrup", brand: "Calpol / Crocin", doseMg: 15, doseType: "perDose", maxMg: 1000, div: 1, freq: "Q6H PRN", conc: 120, vol: 5 },
+            { name: "Paracetamol 125mg/5ml syrup", brand: "Calpol / Crocin", doseMg: 15, doseType: "perDose", maxMg: 1000, div: 1, freq: "Q6H PRN", conc: 125, vol: 5 },
+            { name: "Paracetamol 250mg/5ml syrup", brand: "Calpol 250 / P-250", doseMg: 15, doseType: "perDose", maxMg: 1000, div: 1, freq: "Q6H PRN", conc: 250, vol: 5 },
+            { name: "Paracetamol 500 mg Tablet", brand: "Crocin 500 / Dolo", doseMg: 15, doseType: "fixed", maxMg: 1000, div: 1, freq: "QID (PRN)", conc: 500, vol: 1 },
+            { name: "Paracetamol 650 mg Tablet", brand: "Dolo 650", doseMg: 15, doseType: "fixed", maxMg: 1000, div: 1, freq: "QID (PRN)", conc: 650, vol: 1 },
+            { name: "Paracetamol Suppository 80mg", brand: "Neomol", doseMg: 15, doseType: "fixed", maxMg: 1000, div: 1, freq: "Q6H PRN", conc: 80, vol: 1 },
+            { name: "Paracetamol Suppository 120mg", brand: "Neomol", doseMg: 15, doseType: "fixed", maxMg: 1000, div: 1, freq: "Q6H PRN", conc: 120, vol: 1 },
+            { name: "Paracetamol Suppository 250mg", brand: "Neomol", doseMg: 15, doseType: "fixed", maxMg: 1000, div: 1, freq: "Q6H PRN", conc: 250, vol: 1 },
+            { name: "Ibuprofen 40mg/ml drops", brand: "Ibugesic", doseMg: 10, doseType: "perDose", maxMg: 400, div: 1, freq: "Q6-8H", conc: 40, vol: 1 },
+            { name: "Ibuprofen 100mg/5ml susp", brand: "Ibugesic / Brufen", doseMg: 10, doseType: "perDose", maxMg: 400, div: 1, freq: "Q6-8H", conc: 100, vol: 5 },
+            { name: "Diclofenac Suppository 12.5mg", brand: "Voveran", doseMg: 1, doseType: "fixed", maxMg: 50, div: 1, freq: "BID or TID", conc: 12.5, vol: 1 },
+            { name: "Diclofenac Suppository 25mg", brand: "Voveran", doseMg: 1, doseType: "fixed", maxMg: 50, div: 1, freq: "BID or TID", conc: 25, vol: 1 }
         ],
         "antihistamines": [
-            { name: "Dimetindene maleate 1mg/ml drops", doseMg: 0.1, doseType: "perDay", div: 3, freq: "TID", conc: 1, vol: 1 },
-            { name: "Dimetindene maleate 0.1mg/ml syrup", doseMg: 0.1, doseType: "perDay", div: 3, freq: "TID", conc: 0.1, vol: 1 },
-            { name: "Chlorpheniramine 2mg/5ml syrup", doseMg: 0.35, doseType: "perDay", div: 4, freq: "Q6H", conc: 2, vol: 5 },
-            { name: "Cetirizine 10mg/ml drops", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 10, vol: 1 },
-            { name: "Cetirizine 1mg/ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 1, vol: 1 },
-            { name: "Cetirizine 5mg/5ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "QD", conc: 5, vol: 5 },
-            { name: "Levocetirizine 2.5mg/5ml syrup", doseMg: 0.125, doseType: "perDose", div: 1, freq: "QD", conc: 2.5, vol: 5 },
-            { name: "Loratadine 1mg/ml syrup", doseMg: 0.2, doseType: "perDose", div: 1, freq: "QD", conc: 1, vol: 1 },
-            { name: "Desloratadine 0.5mg/ml syrup", doseMg: 0.1, doseType: "perDose", div: 1, freq: "QD", conc: 0.5, vol: 1 },
-            { name: "Fexofenadine 30mg/5ml susp", doseMg: 2, doseType: "perDay", div: 2, freq: "BID", conc: 30, vol: 5 },
-            { name: "Promethazine 6.25mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 6.25, vol: 5 },
-            { name: "Dexamethasone 0.5mg/5ml syrup", doseMg: 0.3, doseType: "perDose", div: 1, freq: "Stat or QD", conc: 0.5, vol: 5 },
-            { name: "Prednisolone 15mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 2, freq: "BID", conc: 15, vol: 5 }
+            { name: "Dimetindene maleate 1mg/ml drops", brand: "Fenistil", doseMg: 0.1, doseType: "perDay", maxMg: 1, div: 3, freq: "TID", conc: 1, vol: 1 },
+            { name: "Dimetindene maleate 0.1mg/ml syrup", brand: "Fenistil", doseMg: 0.1, doseType: "perDay", maxMg: 1, div: 3, freq: "TID", conc: 0.1, vol: 1 },
+            { name: "Chlorpheniramine 2mg/5ml syrup", brand: "Piriton", doseMg: 0.35, doseType: "perDay", maxMg: 4, div: 4, freq: "Q6H", conc: 2, vol: 5 },
+            { name: "Cetirizine 10mg/ml drops", brand: "Cetzine / Zyrtec", doseMg: 0.25, doseType: "perDose", maxMg: 10, div: 1, freq: "QD", conc: 10, vol: 1 },
+            { name: "Cetirizine 1mg/ml syrup", brand: "Cetzine / Zyrtec", doseMg: 0.25, doseType: "perDose", maxMg: 10, div: 1, freq: "QD", conc: 1, vol: 1 },
+            { name: "Cetirizine 5mg/5ml syrup", brand: "Cetzine / Zyrtec", doseMg: 0.25, doseType: "perDose", maxMg: 10, div: 1, freq: "QD", conc: 5, vol: 5 },
+            { name: "Levocetirizine 2.5mg/5ml syrup", brand: "L-Cetzine / Xyzal", doseMg: 0.125, doseType: "perDose", maxMg: 5, div: 1, freq: "QD", conc: 2.5, vol: 5 },
+            { name: "Loratadine 1mg/ml syrup", brand: "Claritin", doseMg: 0.2, doseType: "perDose", maxMg: 10, div: 1, freq: "QD", conc: 1, vol: 1 },
+            { name: "Desloratadine 0.5mg/ml syrup", brand: "Aerius", doseMg: 0.1, doseType: "perDose", maxMg: 5, div: 1, freq: "QD", conc: 0.5, vol: 1 },
+            { name: "Fexofenadine 30mg/5ml susp", brand: "Allegra", doseMg: 2, doseType: "perDay", maxMg: 60, div: 2, freq: "BID", conc: 30, vol: 5 },
+            { name: "Promethazine 6.25mg/5ml syrup", brand: "Phenergan", doseMg: 1, doseType: "perDay", maxMg: 25, div: 3, freq: "TID", conc: 6.25, vol: 5 },
+            { name: "Dexamethasone 0.5mg/5ml syrup", brand: "Dexona", doseMg: 0.3, doseType: "perDose", maxMg: 10, div: 1, freq: "Stat or QD", conc: 0.5, vol: 5 },
+            { name: "Prednisolone 15mg/5ml syrup", brand: "Omnacortil", doseMg: 1.5, doseType: "perDay", maxMg: 60, div: 2, freq: "BID", conc: 15, vol: 5 }
         ],
         "git": [
-            { name: "Domperidone 1mg/ml syrup", doseMg: 0.25, doseType: "perDose", div: 1, freq: "TID (Before meals)", conc: 1, vol: 1 },
-            { name: "Metoclopramide 5mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID", conc: 5, vol: 5 },
-            { name: "Ondansetron 4mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID or Stat", conc: 4, vol: 5 },
-            { name: "Simethicone 40mg/ml drops", doseMg: 1, doseType: "perDose", div: 1, freq: "QID (After meals)", conc: 40, vol: 1 },
-            { name: "Hyoscine butylbromide 5mg/5ml", doseMg: 0.5, doseType: "perDose", div: 1, freq: "TID", conc: 5, vol: 5 },
-            { name: "Prifinium bromide 7.5mg/5ml", doseMg: 1, doseType: "perDose", div: 1, freq: "TID", conc: 7.5, vol: 5 },
-            { name: "Loperamide 1mg/5ml syrup", doseMg: 0.1, doseType: "perDose", div: 1, freq: "BID (Avoid <2 yrs)", conc: 1, vol: 5 },
-            { name: "Lactulose 66.7g/100ml syrup", doseMg: 667, doseType: "perDay", div: 2, freq: "BID", conc: 667, vol: 1 },
-            { name: "Glycerin Suppository", doseMg: 1, doseType: "fixed", div: 1, freq: "PRN", conc: 1, vol: 1 }
+            { name: "Domperidone 1mg/ml syrup", brand: "Domstal", doseMg: 0.25, doseType: "perDose", maxMg: 10, div: 1, freq: "TID (Before meals)", conc: 1, vol: 1 },
+            { name: "Metoclopramide 5mg/5ml syrup", brand: "Perinorm", doseMg: 0.15, doseType: "perDose", maxMg: 10, div: 1, freq: "TID", conc: 5, vol: 5 },
+            { name: "Ondansetron 4mg/5ml syrup", brand: "Emeset / Zofer", doseMg: 0.15, doseType: "perDose", maxMg: 8, div: 1, freq: "TID or Stat", conc: 4, vol: 5 },
+            { name: "Simethicone 40mg/ml drops", brand: "Colicaid", doseMg: 1, doseType: "perDose", maxMg: 40, div: 1, freq: "QID (After meals)", conc: 40, vol: 1 },
+            { name: "Hyoscine butylbromide 5mg/5ml", brand: "Buscopan", doseMg: 0.5, doseType: "perDose", maxMg: 20, div: 1, freq: "TID", conc: 5, vol: 5 },
+            { name: "Prifinium bromide 7.5mg/5ml", doseMg: 1, doseType: "perDose", maxMg: 30, div: 1, freq: "TID", conc: 7.5, vol: 5 },
+            { name: "Loperamide 1mg/5ml syrup", brand: "Imodium", doseMg: 0.1, doseType: "perDose", maxMg: 2, div: 1, freq: "BID (Avoid <2 yrs)", conc: 1, vol: 5 },
+            { name: "Lactulose 66.7g/100ml syrup", brand: "Duphalac / Looz", doseMg: 667, doseType: "perDay", maxMg: 2000, div: 2, freq: "BID", conc: 667, vol: 1 },
+            { name: "Glycerin Suppository", brand: "Hallens", doseMg: 1, doseType: "fixed", div: 1, freq: "PRN", conc: 1, vol: 1 }
         ],
         "respiratory": [
-            { name: "Ascoril LS Junior Syrup", doseMg: 0, doseType: "fixed", div: 3, freq: "TID", conc: 0, vol: 5 },
+            { name: "Ascoril LS Junior Syrup", brand: "Ascoril LS", doseMg: 0, doseType: "fixed", div: 3, freq: "TID", conc: 0, vol: 5 },
             { name: "Kuff-X Syrup", doseMg: 0, doseType: "fixed", div: 3, freq: "TID", conc: 0, vol: 5 },
             { name: "Kuff-D Syrup", doseMg: 0, doseType: "fixed", div: 2, freq: "BID", conc: 0, vol: 5 },
-            { name: "Ambroxol 7.5mg/ml drops", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 7.5, vol: 1 },
-            { name: "Ambroxol 15mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 15, vol: 5 },
-            { name: "Ambroxol 30mg/5ml syrup", doseMg: 1.5, doseType: "perDay", div: 3, freq: "TID", conc: 30, vol: 5 },
-            { name: "Bromhexine HCl 4mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 4, vol: 5 },
-            { name: "Butamirate citrate 5mg/ml drops", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 5, vol: 1 },
-            { name: "Butamirate citrate 7.5mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 7.5, vol: 5 },
-            { name: "Carbocisteine 2% (100mg/5ml)", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 100, vol: 5 },
-            { name: "Carbocisteine 5% (250mg/5ml)", doseMg: 20, doseType: "perDay", div: 3, freq: "TID", conc: 250, vol: 5 },
-            { name: "Dextromethorphan 15mg/5ml syrup", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 15, vol: 5 },
-            { name: "Guaifenesin 100mg/5ml syrup", doseMg: 10, doseType: "perDay", div: 4, freq: "QID", conc: 100, vol: 5 },
-            { name: "Terbutaline 1.5mg/5ml syrup", doseMg: 0.05, doseType: "perDose", div: 1, freq: "TID", conc: 1.5, vol: 5 },
-            { name: "Salbutamol 2mg/5ml syrup", doseMg: 0.15, doseType: "perDose", div: 1, freq: "TID", conc: 2, vol: 5 },
-            { name: "Montelukast 4mg/5mg/10mg", doseMg: 0.2, doseType: "perDose", div: 1, freq: "QD (Evening)", conc: 4, vol: 1 },
-            { name: "Chlorpheniramine+Dextro (2/15)", doseMg: 1, doseType: "perDay", div: 3, freq: "TID", conc: 15, vol: 5 },
-            { name: "Chlorphen+Pseudo (2/30)", doseMg: 4, doseType: "perDay", div: 3, freq: "TID", conc: 30, vol: 5 },
-            { name: "PCM+Chlorphen+Pseudo syrup", doseMg: 15, doseType: "perDose", div: 1, freq: "TID", conc: 125, vol: 5 },
-            { name: "Triprolidine+Pseudo (1.25/30)", doseMg: 4, doseType: "perDay", div: 3, freq: "TID", conc: 30, vol: 5 },
-            { name: "Guai+Tripro+Pseudo syrup", doseMg: 10, doseType: "perDay", div: 3, freq: "TID", conc: 100, vol: 5 }
+            { name: "Ambroxol 7.5mg/ml drops", brand: "Ambrolite", doseMg: 1.5, doseType: "perDay", maxMg: 30, div: 3, freq: "TID", conc: 7.5, vol: 1 },
+            { name: "Ambroxol 15mg/5ml syrup", brand: "Ambrolite", doseMg: 1.5, doseType: "perDay", maxMg: 30, div: 3, freq: "TID", conc: 15, vol: 5 },
+            { name: "Ambroxol 30mg/5ml syrup", brand: "Ambrolite", doseMg: 1.5, doseType: "perDay", maxMg: 30, div: 3, freq: "TID", conc: 30, vol: 5 },
+            { name: "Bromhexine HCl 4mg/5ml syrup", brand: "Bisolvon", doseMg: 1, doseType: "perDay", maxMg: 8, div: 3, freq: "TID", conc: 4, vol: 5 },
+            { name: "Butamirate citrate 5mg/ml drops", brand: "Sinecod", doseMg: 1, doseType: "perDay", maxMg: 15, div: 3, freq: "TID", conc: 5, vol: 1 },
+            { name: "Butamirate citrate 7.5mg/5ml syrup", brand: "Sinecod", doseMg: 1, doseType: "perDay", maxMg: 15, div: 3, freq: "TID", conc: 7.5, vol: 5 },
+            { name: "Carbocisteine 2% (100mg/5ml)", brand: "Mucoclear", doseMg: 20, doseType: "perDay", maxMg: 750, div: 3, freq: "TID", conc: 100, vol: 5 },
+            { name: "Carbocisteine 5% (250mg/5ml)", brand: "Mucoclear", doseMg: 20, doseType: "perDay", maxMg: 750, div: 3, freq: "TID", conc: 250, vol: 5 },
+            { name: "Dextromethorphan 15mg/5ml syrup", brand: "Alex", doseMg: 1, doseType: "perDay", maxMg: 30, div: 3, freq: "TID", conc: 15, vol: 5 },
+            { name: "Guaifenesin 100mg/5ml syrup", brand: "Robitussin", doseMg: 10, doseType: "perDay", maxMg: 400, div: 4, freq: "QID", conc: 100, vol: 5 },
+            { name: "Terbutaline 1.5mg/5ml syrup", brand: "Bricanyl", doseMg: 0.05, doseType: "perDose", maxMg: 2.5, div: 1, freq: "TID", conc: 1.5, vol: 5 },
+            { name: "Salbutamol 2mg/5ml syrup", brand: "Asthalin", doseMg: 0.15, doseType: "perDose", maxMg: 4, div: 1, freq: "TID", conc: 2, vol: 5 },
+            { name: "Montelukast 4mg/5mg/10mg", brand: "Singulair / Montair", doseMg: 0.2, doseType: "perDose", maxMg: 10, div: 1, freq: "QD (Evening)", conc: 4, vol: 1 },
+            { name: "Chlorpheniramine+Dextro (2/15)", brand: "Ascoril D", doseMg: 1, doseType: "perDay", maxMg: 4, div: 3, freq: "TID", conc: 15, vol: 5 },
+            { name: "Chlorphen+Pseudo (2/30)", brand: "Sinarest", doseMg: 4, doseType: "perDay", maxMg: 60, div: 3, freq: "TID", conc: 30, vol: 5 },
+            { name: "PCM+Chlorphen+Pseudo syrup", brand: "Sinarest AF", doseMg: 15, doseType: "perDose", maxMg: 1000, div: 1, freq: "TID", conc: 125, vol: 5 },
+            { name: "Triprolidine+Pseudo (1.25/30)", brand: "Actifed", doseMg: 4, doseType: "perDay", maxMg: 60, div: 3, freq: "TID", conc: 30, vol: 5 },
+            { name: "Guai+Tripro+Pseudo syrup", brand: "Actifed Plus", doseMg: 10, doseType: "perDay", maxMg: 400, div: 3, freq: "TID", conc: 100, vol: 5 }
         ]
     };
 
@@ -1113,8 +1148,19 @@
             let combined = [...drugDb[cat], ...(customDrugsStore[cat] || [])];
             combined.forEach((drug, idx) => {
                 let opt = document.createElement('option');
-                opt.value = idx; opt.text = drug.name; formSelect.add(opt);
+                opt.value = idx; 
+                opt.text = drug.name + (drug.brand ? ` [${drug.brand}]` : ""); 
+                formSelect.add(opt);
             });
+        }
+    }
+
+    function populateRevDrugs() {
+        const cat = document.getElementById('revCategory').value; const formSelect = document.getElementById('revFormulation');
+        formSelect.innerHTML = '<option value="">-- Choose Formulation --</option>';
+        if(cat && drugDb[cat]) {
+            let combined = [...drugDb[cat], ...(customDrugsStore[cat] || [])];
+            combined.forEach((drug, idx) => { let opt = document.createElement('option'); opt.value = idx; opt.text = drug.name + (drug.brand ? ` [${drug.brand}]` : ""); formSelect.add(opt); });
         }
     }
 
@@ -1158,10 +1204,36 @@
             outputArea.innerHTML = `<div class="result-card"><p style="margin-top:0; color:var(--text-muted); font-weight:600; font-size:0.85rem; letter-spacing:0.05em;">Administer Quantity</p><h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${volMl.toFixed(1)} ${unitStr}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}${durStr}</p></div>`;
         } else {
             let targetMg = drug.doseType === 'perDay' ? (weight * drug.doseMg) / drug.div : (weight * drug.doseMg);
-            volMl = (targetMg * drug.vol) / drug.conc; details = `${targetMg.toFixed(1)} mg/dose Target`;
-            outputArea.innerHTML = `<div class="result-card"><p style="margin-top:0; color:var(--text-muted); font-weight:600; font-size:0.85rem; letter-spacing:0.05em;">Administer Volume</p><h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${volMl.toFixed(1)} ${unitStr}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}${durStr}</p><div style="font-size:0.85rem; color:#64748b; margin-top:1rem; border-top:1px dashed var(--border-soft); padding-top:1rem;">[(${weight}kg × ${drug.doseMg}mg) × ${drug.vol}] ÷ ${drug.conc}mg</div></div>`;
+            if (drug.maxMg && targetMg > drug.maxMg) { 
+                targetMg = drug.maxMg; 
+                details = `⚠️ Adult Max Cap Enforced (${drug.maxMg} mg/dose)`; 
+            } else { 
+                details = `${targetMg.toFixed(1)} mg/dose Target`; 
+            }
+            volMl = (targetMg * drug.vol) / drug.conc; 
+            outputArea.innerHTML = `<div class="result-card"><p style="margin-top:0; color:var(--text-muted); font-weight:600; font-size:0.85rem; letter-spacing:0.05em;">Administer Volume</p><h2 style="font-size:2.5rem; margin:10px 0; color:var(--success);">${volMl.toFixed(1)} ${unitStr}</h2><p style="color:var(--primary); font-weight:bold; font-size:1.1rem; margin-bottom:0;">Frequency: ${drug.freq}${durStr}</p><div style="font-size:0.85rem; color:#64748b; margin-top:1rem; border-top:1px dashed var(--border-soft); padding-top:1rem;">${drug.maxMg && targetMg === drug.maxMg ? `<span style="color:var(--danger); font-weight:bold;">${details}</span>` : `[(${weight}kg &times; ${drug.doseMg}mg) &times; ${drug.vol}] &divide; ${drug.conc}mg`}</div></div>`;
         }
-        pendingPrescriptionDrug = { name: drug.name, vol: volMl.toFixed(1), freq: drug.freq + durStr, details: details, unit: unitStr };
+        let finalDrugName = drug.name + (drug.brand ? ` [${drug.brand}]` : "");
+        pendingPrescriptionDrug = { name: finalDrugName, vol: volMl.toFixed(1), freq: drug.freq + durStr, details: details, unit: unitStr };
+    }
+
+    function calcReverse() {
+        const weight = parseFloat(document.getElementById('calcWeight').value);
+        const cat = document.getElementById('revCategory').value; const drugIndex = document.getElementById('revFormulation').value;
+        const volGiven = parseFloat(document.getElementById('revVol').value); const out = document.getElementById('revOutputArea');
+        if(!weight || !cat || drugIndex === "" || !volGiven || isNaN(volGiven)) { out.innerHTML = "Awaiting volume parameters."; out.className = "tool-result neutral"; return; }
+        
+        let combined = [...(drugDb[cat]||[]), ...(customDrugsStore[cat]||[])]; const drug = combined[drugIndex];
+        if (drug.doseType === 'fixed') { out.innerHTML = "Fixed dose formulation. Standard is " + drug.vol + " unit(s)."; out.className="tool-result"; return; }
+        
+        let mgGiven = (volGiven * drug.conc) / drug.vol;
+        let targetDosePerDose = drug.doseType === 'perDay' ? (drug.doseMg / drug.div) : drug.doseMg;
+        let mgPerKgGiven = mgGiven / weight;
+        let percent = (mgPerKgGiven / targetDosePerDose) * 100;
+        let status = percent > 120 ? "<span style='color:var(--danger)'>⚠️ Overdose</span>" : (percent < 80 ? "<span style='color:var(--warning)'>⚠️ Underdose</span>" : "<span style='color:var(--success)'>✅ Optimal Range</span>");
+        
+        out.innerHTML = `<div style="text-align:left;"><div style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase;">Administered Load Profile</div><h2 style="margin:5px 0;">${mgGiven.toFixed(1)} mg total</h2><div style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">= ${mgPerKgGiven.toFixed(2)} mg/kg/dose</div><div style="padding-top:10px; border-top:1px dashed var(--border-soft);"><b>Target Protocol:</b> ${targetDosePerDose.toFixed(1)} mg/kg/dose<br><b>Audit Status:</b> ${status} (${percent.toFixed(0)}%)</div></div>`;
+        out.className = percent > 120 ? "tool-result danger" : (percent < 80 ? "tool-result warning" : "tool-result");
         addButtonArea.innerHTML = activePatientId ? `<button onclick='addPendingToRxCart()' class='action'>➕ Add to Prescription Pad</button>` : "";
         outputArea.style.display = 'block';
     }
@@ -1733,7 +1805,19 @@
             if(!maln && !fluids && !asthma && !jaun) html += `<p>No acute clinical triage metrics evaluated during this session.</p>`;
         }
 
-        html += `<div style="text-align:center; font-size:10px; color:#777; margin-top:40px; border-top:1px solid #eee; padding-top:10px;">Generated by ${appSettings.clinicName} Clinical Hub</div>`;
+        html += `
+            <div style="margin-top:50px; border-top:1px solid #ccc; padding-top:15px; text-align:center; font-family:sans-serif;">
+                <div style="font-size:10px; color:#555; font-weight:bold; margin-bottom:5px;">
+                    Reference: IAP Guidelines 2024 · WHO MGRS · ICMR-NIN · Harriet Lane 22nd Ed.
+                </div>
+                <div style="font-size:9px; color:#777; margin-bottom:8px;">
+                    ⚠️ Clinical reference only. Verify doses against standard institutional protocols before administration.
+                </div>
+                <div style="font-size:9px; color:#999;">
+                    Generated via ${appSettings.clinicName} Clinical Engine
+                </div>
+            </div>
+        `;
         engine.innerHTML = html; 
         
         // Allow the DOM to update, open print dialog, then securely clear the engine
