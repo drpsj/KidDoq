@@ -45,10 +45,12 @@
             --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
 
-        /* GLOBAL LAYOUT LOCK */
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-main); }
-        .app-shell { width: 100%; max-width: 100% !important; height: 100vh !important; margin: 0 !important; background: var(--bg-body); display: flex; flex-direction: column; overflow: hidden; }
-        .main-content { flex: 1; overflow-y: auto; padding: 1.5rem; }
+        /* GLOBAL LAYOUT LOCK & BOX-SIZING FIX */
+    *, *::before, *::after { box-sizing: border-box !important; }
+    body, html { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-main); }
+    
+    .app-shell { width: 100vw !important; max-width: 100vw !important; height: 100vh !important; margin: 0 !important; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-body); }
+    .main-content { flex: 1; overflow-y: auto; overflow-x: hidden; width: 100%; padding: 1.5rem; }
         
         /* SAAS DESKTOP ENHANCEMENTS (Custom Scrollbars) */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -149,18 +151,25 @@
            TRUE DESKTOP SAAS DASHBOARD (Edge-to-Edge)
            ========================================= */
         @media (min-width: 1024px) {
-            /* 1. Break out of the box - go full screen */
-            body { padding: 0 !important; background: var(--bg-body) !important; overflow: hidden; }
-            .app-shell { 
-                height: 100vh !important; 
-                width: 100vw !important; 
-                max-width: none !important; 
-                border-radius: 0 !important; 
-                box-shadow: none !important; 
-                display: flex !important; 
-                flex-direction: row !important; 
-                margin: 0 !important;
-            }
+            /* 1. Force Side-by-Side Layout */
+            .app-shell { flex-direction: row !important; }
+            
+            /* 2. Lock Sidebar to the Left */
+            .sidebar { width: 320px !important; flex-shrink: 0 !important; height: 100vh !important; border-right: 1px solid var(--border-soft); overflow-y: auto; padding: 1.5rem; background: var(--bg-surface); z-index: 10; }
+            
+            /* 3. Allow Main Content to Fill the Rest SAFELY */
+            .main-content { flex: 1 !important; max-width: calc(100vw - 320px) !important; height: 100vh !important; overflow-y: auto !important; padding: 2.5rem 4rem !important; }
+            
+            /* 4. The 50/50 Split for the Dosing Module */
+            #doseCalcTab { display: grid !important; grid-template-columns: 400px 1fr !important; gap: 3rem !important; align-items: start !important; }
+            
+            /* 5. Sticky Prescription Pad */
+            #rxCartArea { position: sticky !important; top: 0 !important; }
+            .rx-cart-container { border: 1px solid var(--border-soft); box-shadow: var(--shadow-md); background: white; padding: 2rem; border-radius: var(--radius-lg); }
+            
+            /* 6. Expand Triage grids */
+            .tool-grid { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)) !important; gap: 2rem !important; }
+        }
             
             /* 2. Fixed Professional Sidebar */
             .sidebar { 
