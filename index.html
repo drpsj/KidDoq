@@ -212,10 +212,15 @@
             .feature-btn.active { background: var(--primary) !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important; }
         }
 
-        /* PRINT ENGINE SECURE HIDING */
+       /* PRINT ENGINE SECURE HIDING */
         @media screen { .print-container { display: none !important; } }
         @media print {
-            body, html { background: white !important; margin: 0 !important; padding: 0 !important; height: auto !important; overflow: visible !important; }
+            @page { margin: 10mm; }
+            body, html { 
+                background: white !important; margin: 0 !important; padding: 0 !important; 
+                height: auto !important; max-height: none !important; min-height: 100% !important; 
+                overflow: visible !important; position: static !important; 
+            }
             .app-shell, header, .registry-dropdown { display: none !important; }
             .print-container { display: block !important; width: 100% !important; height: auto !important; position: static !important; overflow: visible !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
