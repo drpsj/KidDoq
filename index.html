@@ -1971,11 +1971,16 @@
         `;
         engine.innerHTML = html; 
         
-        // BUFFER INCREASED TO 500ms TO FIX BLANK PRINTING
+        // 1. Force the browser to render the HTML instantly (Fixes blank print)
+        void engine.offsetHeight; 
+        
+        // 2. Trigger print IMMEDIATELY (Fixes mobile popup blocker)
+        window.print();
+        
+        // 3. Clean up the screen after the print dialog is closed
         setTimeout(() => {
-            window.print();
             engine.innerHTML = ""; 
-        }, 500);
+        }, 2000);
     }
 
     function sendWACompReport() {
