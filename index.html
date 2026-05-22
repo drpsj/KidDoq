@@ -815,12 +815,13 @@
                         </div>
                 </div>
             </div>
-
-            <div id="databaseFeatureView" class="view-content">
-                <h2 class="section-title">🗄️ Patient Master Database</h2>
+<div id="databaseFeatureView" class="view-content">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h2 class="section-title" style="margin:0; border:none;">🗄️ Patient Master Database</h2>
+                </div>
                 <div class="timeline-section">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:10px;">
-                        <input type="text" id="dbSearchInput" placeholder="🔍 Search by patient name or phone number..." onkeyup="renderFullDatabase()" style="flex:1; min-width:250px; border-color:var(--primary); box-shadow:var(--shadow-sm);">
+                        <input type="text" id="dbSearchInput" placeholder="🔍 Search by patient name or phone number..." onkeyup="renderFullDatabase()" style="flex:1; min-width:250px; border-color:var(--primary); box-shadow:var(--shadow-sm); padding:1rem; font-size:1.05rem; border-radius:var(--radius-md);">
                         <button class="action" onclick="exportDatabase()" style="width:auto; margin:0; background:var(--bg-body); color:var(--text-main); border:1px solid var(--border-soft);">📥 Backup Database</button>
                     </div>
                     <div id="fullDatabaseList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:15px;">
@@ -835,10 +836,17 @@
                         <h4 style="margin-top:0; color:var(--primary);">👨‍⚕️ Letterhead / Rx Builder</h4>
                         <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">These details appear at the top of printed prescriptions.</p>
                         <div class="panel" style="background:var(--bg-body); border:1px solid var(--border-soft); border-radius:var(--radius-lg);">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:1px solid var(--border-soft);">
+                                <label style="margin:0; font-weight:bold; font-size:0.9rem; color:var(--text-main);">🌙 Dark Mode</label>
+                                <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode(this.checked)" style="width:22px; height:22px; margin:0; cursor:pointer;">
+                            </div>
                             <div class="row-inputs"><div><label>Doctor's Name</label><input type="text" id="setDocName" placeholder="Dr. Peter Suraj Joseph"></div><div><label>Qualifications</label><input type="text" id="setQual" placeholder="MBBS, MD"></div></div>
                             <div class="row-inputs"><div><label>Medical Reg. No.</label><input type="text" id="setRegNo" placeholder="e.g. KMC 12345"></div><div><label>Clinic Name</label><input type="text" id="setClinic" placeholder="Sunrise Clinic"></div></div>
                             <label>Tagline</label><input type="text" id="setTagline" placeholder="Child Development Center">
                             <div class="row-inputs"><div><label>Phone</label><input type="text" id="setPhone" placeholder="Phone"></div><div><label>Address</label><input type="text" id="setAddress" placeholder="Location"></div></div>
+                            <label style="margin-top:10px;">Upload Signature (PNG/JPG)</label>
+                            <input type="file" accept="image/*" onchange="handleSignatureUpload(this)" style="padding:0.5rem; font-size:0.85rem;">
+                            <div id="sigPreview" style="margin-top:10px; border:1px dashed var(--border-soft); padding:10px; text-align:center; min-height:50px; border-radius:var(--radius-md); background:var(--bg-surface);">No signature loaded.</div>
                             <button class="action" onclick="saveSettings()" style="background:var(--primary); color:white;">💾 Save Profile</button>
                         </div>
                     </div>
@@ -2022,20 +2030,21 @@
                 </div>
             </div>
         `;
+       // 1. Inject the data into the invisible print container
         engine.innerHTML = html; 
         
-        // 1. Force the browser to render the HTML instantly (Fixes blank print)
+        // 2. Force the mobile browser to render the HTML instantly
         void engine.offsetHeight; 
         
-        // 2. Trigger print IMMEDIATELY (Fixes mobile popup blocker)
+        // 3. Trigger print IMMEDIATELY (Fixes mobile popup blocker)
         window.print();
         
-        // 3. Clean up the screen after the print dialog is closed
-        setTimeout(() => {
-            engine.innerHTML = ""; 
-        }, 2000);
+        // NOTE: We no longer delete engine.innerHTML! 
+        // We leave the data there so the slow mobile print spooler 
+        // has all the time it needs to generate the PDF preview.
+        // The CSS @media screen { display: none } keeps it safely hidden from the user.
     }
-
+    
     function sendWACompReport() {
         if(!activePatientId) return alert("Select patient");
         const p = globalPatientsStore[activePatientId];
@@ -2058,6 +2067,56 @@
     }
 
     // --- 14. SETTINGS DATABASE FUNCTIONS ---
+    // --- SETTINGS & SYSTEM FUNCTIONS ---
+    function toggleDarkMode(isDark) {
+        if(isDark) { document.body.classList.add('dark-mode'); }
+        else { document.body.classList.remove('dark-mode'); }
+        appSettings.isDark = isDark;
+        localStorage.setItem('clinic_settings', JSON.stringify(appSettings));
+    }
+
+    function applySettingsToUI() {
+        if(appSettings.isDark) {
+            document.body.classList.add('dark-mode');
+            const dmToggle = document.getElementById('darkModeToggle');
+            if(dmToggle) dmToggle.checked = true;
+        }
+        if(document.getElementById('setDocName')) document.getElementById('setDocName').value = appSettings.docName || "";
+        if(document.getElementById('setQual')) document.getElementById('setQual').value = appSettings.qual || "";
+        if(document.getElementById('setRegNo')) document.getElementById('setRegNo').value = appSettings.regNo || "";
+        if(document.getElementById('setClinic')) document.getElementById('setClinic').value = appSettings.clinicName || "";
+        if(document.getElementById('setTagline')) document.getElementById('setTagline').value = appSettings.tagline || "";
+        if(document.getElementById('setPhone')) document.getElementById('setPhone').value = appSettings.phone || "";
+        if(document.getElementById('setAddress')) document.getElementById('setAddress').value = appSettings.address || "";
+        if(appSettings.signature && document.getElementById('sigPreview')) {
+            document.getElementById('sigPreview').innerHTML = `<img src="${appSettings.signature}" style="max-height:60px;">`;
+        }
+    }
+
+    function saveSettings() {
+        appSettings.docName = document.getElementById('setDocName').value;
+        appSettings.qual = document.getElementById('setQual').value;
+        appSettings.regNo = document.getElementById('setRegNo').value;
+        appSettings.clinicName = document.getElementById('setClinic').value;
+        appSettings.tagline = document.getElementById('setTagline').value;
+        appSettings.phone = document.getElementById('setPhone').value;
+        appSettings.address = document.getElementById('setAddress').value;
+        localStorage.setItem('clinic_settings', JSON.stringify(appSettings));
+        if(typeof showSystemToast === 'function') showSystemToast("Settings & Profile Saved!");
+    }
+
+    function handleSignatureUpload(input) {
+        if (input.files && input.files[0]) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                appSettings.signature = e.target.result;
+                document.getElementById('sigPreview').innerHTML = `<img src="${e.target.result}" style="max-height:60px; border-radius:8px;">`;
+                localStorage.setItem('clinic_settings', JSON.stringify(appSettings));
+                if(typeof showSystemToast === 'function') showSystemToast("Signature Uploaded!");
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
     function renderSettingsPatientList() {
         const list = document.getElementById('settingsPatientList');
         if(!list) return;
