@@ -212,7 +212,7 @@
             .feature-btn.active { background: var(--primary) !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important; }
         }
 
-       /* PRINT ENGINE SECURE HIDING */
+        /* PRINT ENGINE SECURE HIDING */
         @media screen { .print-container { display: none !important; } }
         @media print {
             @page { margin: 10mm; }
@@ -288,7 +288,8 @@
             <button class="feature-btn" onclick="switchMainFeature('fluidsFeatureView', this)">💧 IV Fluids</button>
             <button class="feature-btn" onclick="switchMainFeature('asthmaFeatureView', this)">🫁 PRAM</button>
             <button class="feature-btn" onclick="switchMainFeature('jaundiceFeatureView', this)">🍼 Jaundice</button>
-            <button class="feature-btn" onclick="switchMainFeature('aboutFeatureView', this)">ℹ️ Settings</button>
+            <button class="feature-btn" onclick="switchMainFeature('databaseFeatureView', this)">🗄️ Database</button>
+            <button class="feature-btn" onclick="switchMainFeature('aboutFeatureView', this)">⚙️ Settings & About</button>
         </div>
     </div>
 
@@ -327,8 +328,11 @@
                 <div class="app-card" onclick="switchMainFeature('fluidsFeatureView')">
                     <div class="card-icon bg-blue">💧</div><span>IV Fluids</span>
                 </div>
+                <div class="app-card" onclick="switchMainFeature('databaseFeatureView')">
+                    <div class="card-icon bg-purple">🗄️</div><span>Database</span>
+                </div>
                 <div class="app-card" onclick="switchMainFeature('aboutFeatureView')">
-                    <div class="card-icon bg-gray">⚙️</div><span>Settings</span>
+                    <div class="card-icon bg-gray">⚙️</div><span>Settings & About</span>
                 </div>
             </div>
         </div>
@@ -809,13 +813,56 @@
                             <span style="font-size:0.85rem; color:var(--text-muted);">Architected & Developed by <b>Dr. Peter Suraj Joseph</b></span><br>
                             <span style="font-size:0.75rem; color:var(--text-muted);">100% Client-Side Execution • Zero Data Tracking</span>
                         </div>
+                </div>
+            </div>
+
+            <div id="databaseFeatureView" class="view-content">
+                <h2 class="section-title">🗄️ Patient Master Database</h2>
+                <div class="timeline-section">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:10px;">
+                        <input type="text" id="dbSearchInput" placeholder="🔍 Search by patient name or phone number..." onkeyup="renderFullDatabase()" style="flex:1; min-width:250px; border-color:var(--primary); box-shadow:var(--shadow-sm);">
+                        <button class="action" onclick="exportDatabase()" style="width:auto; margin:0; background:var(--bg-body); color:var(--text-main); border:1px solid var(--border-soft);">📥 Backup Database</button>
+                    </div>
+                    <div id="fullDatabaseList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:15px;">
+                        </div>
+                </div>
+            </div>
+
+            <div id="aboutFeatureView" class="view-content">
+                <h2 class="section-title">⚙️ Settings & About</h2>
+                <div class="timeline-section tool-grid">
+                    <div>
+                        <h4 style="margin-top:0; color:var(--primary);">👨‍⚕️ Letterhead / Rx Builder</h4>
+                        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">These details appear at the top of printed prescriptions.</p>
+                        <div class="panel" style="background:var(--bg-body); border:1px solid var(--border-soft); border-radius:var(--radius-lg);">
+                            <div class="row-inputs"><div><label>Doctor's Name</label><input type="text" id="setDocName" placeholder="Dr. Peter Suraj Joseph"></div><div><label>Qualifications</label><input type="text" id="setQual" placeholder="MBBS, MD"></div></div>
+                            <div class="row-inputs"><div><label>Medical Reg. No.</label><input type="text" id="setRegNo" placeholder="e.g. KMC 12345"></div><div><label>Clinic Name</label><input type="text" id="setClinic" placeholder="Sunrise Clinic"></div></div>
+                            <label>Tagline</label><input type="text" id="setTagline" placeholder="Child Development Center">
+                            <div class="row-inputs"><div><label>Phone</label><input type="text" id="setPhone" placeholder="Phone"></div><div><label>Address</label><input type="text" id="setAddress" placeholder="Location"></div></div>
+                            <button class="action" onclick="saveSettings()" style="background:var(--primary); color:white;">💾 Save Profile</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-top:0; color:var(--primary);">📚 Clinical Guidelines & Sources</h4>
+                        <div style="font-size:0.85rem; line-height:1.6; background:var(--bg-body); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-soft); margin-bottom:1rem;">
+                            <ul style="margin:0; padding-left:1.2rem; color:var(--text-main);">
+                                <li style="margin-bottom:6px;"><b>Growth & Triage:</b> WHO Multicentre Growth Reference Study (MGRS) & IAP Guidelines 2024</li>
+                                <li style="margin-bottom:6px;"><b>Immunization:</b> National Immunization Schedule (NIS) India</li>
+                                <li style="margin-bottom:6px;"><b>Nutrition:</b> ICMR-NIN Dietary Guidelines for Indians</li>
+                            </ul>
+                        </div>
+                        <div style="background:rgba(245, 158, 11, 0.1); border-left:4px solid var(--warning); padding:10px; font-size:0.8rem; color:var(--text-main); line-height:1.5; margin-bottom:1.5rem;">
+                            <b>⚠️ Medico-Legal Disclaimer:</b> This framework is a clinical reference tool. Verify calculations against standard institutional protocols before administration.
+                        </div>
+                        <div style="border-top:1px solid var(--border-soft); padding-top:1rem; text-align:center;">
+                            <h3 style="margin:0 0 5px 0; color:var(--primary); font-size:1.1rem;">Pediatric Clinical Hub v2.0</h3>
+                            <span style="font-size:0.85rem; color:var(--text-muted);">Architected & Developed by <b>Dr. Peter Suraj Joseph</b></span><br>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">100% Client-Side Execution • Zero Data Tracking</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div> 
-    </div> 
-</div> 
-<div id="printEngine" class="print-container"></div>
+        </div> </div> </div> <div id="printEngine" class="print-container"></div>
 
 <script>
     // --- 1. CLINICAL DATABASES ---
@@ -1087,6 +1134,7 @@
             if(viewId === 'erFeatureView') calcCrash();
             if(viewId === 'milestoneFeatureView' && activePatientId) { renderMilestoneDashboard(); buildMilestoneReference(); }
             if(viewId === 'malnutritionFeatureView' && activePatientId) { calcMalnutrition(); renderSensory(); }
+            if(viewId === 'databaseFeatureView') renderFullDatabase();
         }
 
         // Highlight matching navigation button
@@ -2029,6 +2077,68 @@
             </div>`;
         });
         list.innerHTML = html;
+    }
+
+    // --- DATABASE MANAGER ENGINE ---
+    function renderFullDatabase() {
+        const container = document.getElementById('fullDatabaseList');
+        if(!container) return;
+        
+        const query = document.getElementById('dbSearchInput').value.toLowerCase();
+        const patientKeys = Object.keys(globalPatientsStore).reverse(); // Show newest patients first
+        
+        if(patientKeys.length === 0) {
+            container.innerHTML = "<div style='color:var(--text-muted); font-size:1.1rem; padding:2rem;'>No patients found. Save a patient to build your database.</div>";
+            return;
+        }
+        
+        let html = "";
+        patientKeys.forEach(id => {
+            let p = globalPatientsStore[id];
+            // Filter by name OR phone number
+            if (p.name.toLowerCase().includes(query) || (p.phone && p.phone.includes(query))) {
+                html += `
+                <div style="background:var(--bg-surface); border:1px solid var(--border-soft); border-radius:var(--radius-lg); padding:1.5rem; box-shadow:var(--shadow-sm);">
+                    <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px;">
+                        <div>
+                            <h3 style="margin:0; color:var(--primary-dark); font-size:1.2rem;">${p.name}</h3>
+                            <div style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">${p.ageYrs}Y ${p.ageMos}M | ${p.gender.toUpperCase()}</div>
+                        </div>
+                        <div style="font-size:1.1rem; font-weight:bold; color:var(--primary); background:var(--primary-light); padding:4px 10px; border-radius:12px;">${p.weight} kg</div>
+                    </div>
+                    ${p.phone ? `<div style="font-size:0.85rem; margin-bottom:5px;">📞 ${p.phone}</div>` : ''}
+                    ${p.diagnosis ? `<div style="font-size:0.85rem; margin-bottom:15px; color:var(--warning);"><b>Dx:</b> ${p.diagnosis}</div>` : '<div style="margin-bottom:15px;"></div>'}
+                    <button onclick="loadPatientFromDB('${id}')" class="action" style="margin:0; background:var(--primary-light); color:var(--primary-dark); box-shadow:none; border:1px solid var(--primary);">📂 Open Patient File</button>
+                </div>`;
+            }
+        });
+        container.innerHTML = html;
+    }
+
+    function loadPatientFromDB(id) {
+        activePatientId = id;
+        let p = globalPatientsStore[id];
+        
+        // Auto-fill all background registry data
+        document.getElementById('pName').value = p.name || "";
+        document.getElementById('dob').value = p.dob || "";
+        document.getElementById('pPhone').value = p.phone || "";
+        document.getElementById('ageYrs').value = p.ageYrs || 0;
+        document.getElementById('ageMos').value = p.ageMos || 0;
+        document.getElementById('gender').value = p.gender || 'male';
+        document.getElementById('pWeight').value = p.weight || "";
+        document.getElementById('htCm').value = p.htCm || "";
+        if(document.getElementById('hcCm')) document.getElementById('hcCm').value = p.hcCm || "";
+        if(document.getElementById('jeEndemic')) document.getElementById('jeEndemic').checked = p.je || false;
+        if(document.getElementById('rxDiagnosis')) document.getElementById('rxDiagnosis').value = p.diagnosis || "";
+        
+        currentPatientAgeInMonths = p.totalMonths || 0;
+        document.getElementById('calcWeight').value = p.weight || "";
+        if(document.getElementById('headerPatientText')) document.getElementById('headerPatientText').innerText = `👤 ${p.name}`;
+        
+        // Trigger the workspace to load their specific medical data
+        triggerActiveWorkspaceBuild(id);
+        if(typeof showSystemToast === 'function') showSystemToast(`Opened file: ${p.name}`);
     }
 
     function exportDatabase() {
