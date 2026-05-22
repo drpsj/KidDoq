@@ -213,6 +213,20 @@
         }
 
         /* PRINT ENGINE SECURE HIDING */
+        @media screen { 
+            .print-container { 
+                position: absolute !important; z-index: -9999 !important; 
+                opacity: 0 !important; pointer-events: none !important; 
+            } 
+        }
+        @media print {
+            @page { margin: 10mm; }
+            body, html { background: white !important; margin: 0 !important; padding: 0 !important; height: auto !important; overflow: visible !important; }
+            .app-shell, header, .registry-dropdown, #systemToastContainer { display: none !important; }
+            .print-container { position: static !important; opacity: 1 !important; z-index: auto !important; display: block !important; width: 100% !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .page-break { page-break-after: always; }
+        }
         @media screen { .print-container { display: none !important; } }
         @media print {
             @page { margin: 10mm; }
@@ -270,7 +284,6 @@
         </div>
         <button class="action" onclick="saveAndRegisterPatient(false)">💾 Save Profile & Proceed</button>
         <button class="secondary" style="margin-top:10px;" onclick="prepNewPatient()">➕ Clear / New</button>
-        <div class="patient-list" id="patientListContainer"></div>
     </div>
   </div>
 
@@ -815,15 +828,17 @@
                         </div>
                 </div>
             </div>
-<div id="databaseFeatureView" class="view-content">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-                    <h2 class="section-title" style="margin:0; border:none;">🗄️ Patient Master Database</h2>
-                </div>
+
+           <div id="databaseFeatureView" class="view-content">
+                <h2 class="section-title" style="margin-bottom: 0;">🗄️ Patient Master Database</h2>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-top:5px; margin-bottom:1.5rem;">Search and open existing patient files.</p>
+                
                 <div class="timeline-section">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:10px;">
-                        <input type="text" id="dbSearchInput" placeholder="🔍 Search by patient name or phone number..." onkeyup="renderFullDatabase()" style="flex:1; min-width:250px; border-color:var(--primary); box-shadow:var(--shadow-sm); padding:1rem; font-size:1.05rem; border-radius:var(--radius-md);">
+                        <input type="text" id="dbSearchInput" placeholder="🔍 Search by patient name or phone number..." onkeyup="renderFullDatabase()" style="flex:1; min-width:250px; border:2px solid var(--primary); box-shadow:var(--shadow-sm); padding:1rem; font-size:1.05rem; border-radius:var(--radius-md);">
                         <button class="action" onclick="exportDatabase()" style="width:auto; margin:0; background:var(--bg-body); color:var(--text-main); border:1px solid var(--border-soft);">📥 Backup Database</button>
                     </div>
+                    
                     <div id="fullDatabaseList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:15px;">
                         </div>
                 </div>
@@ -1272,39 +1287,8 @@
         }
     }
 
-    function renderPatientBadges() {
-        const container = document.getElementById('patientListContainer'); container.innerHTML = "";
-        Object.values(globalPatientsStore).forEach(p => {
-            const b = document.createElement('div');
-            b.className = "patient-badge" + (p.id === activePatientId ? " active-patient" : "");
-            b.innerHTML = `<span><b>${p.name}</b></span> <small>${p.ageYrs}Y ${p.ageMos}M</small>`;
-            b.onclick = () => {
-                activePatientId = p.id;
-                document.getElementById('pName').value = p.name;
-                document.getElementById('dob').value = p.dob || "";
-                document.getElementById('pPhone').value = p.phone || "";
-                document.getElementById('ageYrs').value = p.ageYrs || 0;
-                document.getElementById('ageMos').value = p.ageMos || 0;
-                document.getElementById('gender').value = p.gender || 'male';
-                document.getElementById('pWeight').value = p.weight || "";
-                document.getElementById('htCm').value = p.htCm || "";
-                if(document.getElementById('hcCm')) document.getElementById('hcCm').value = p.hcCm || "";
-                if(document.getElementById('jeEndemic')) document.getElementById('jeEndemic').checked = p.je || false;
-                if(document.getElementById('rxDiagnosis')) document.getElementById('rxDiagnosis').value = p.diagnosis || "";
-                if(document.getElementById('rxTests')) document.getElementById('rxTests').value = p.tests || "";
-                if(document.getElementById('rxAdvice')) document.getElementById('rxAdvice').value = p.advice || "";
-                if(document.getElementById('rxReview')) document.getElementById('rxReview').value = p.review || "";
-                currentPatientAgeInMonths = p.totalMonths || 0;
-                document.getElementById('calcWeight').value = p.weight || "";
-                if(document.getElementById('calcQuickAge')) document.getElementById('calcQuickAge').value = p.totalMonths || "";
-                if(document.getElementById('crashWeight')) document.getElementById('crashWeight').value = p.weight || "";
-                if(document.getElementById('crashAge')) document.getElementById('crashAge').value = p.ageYrs || 0;
-                if(document.getElementById('headerPatientText')) document.getElementById('headerPatientText').innerText = `👤 ${p.name}`;
-                document.getElementById('registryPanel').classList.remove('mobile-open');
-                renderPatientBadges(); triggerActiveWorkspaceBuild(p.id);
-            };
-            container.appendChild(b);
-        });
+   function renderPatientBadges() {
+        // Disabled: Patient viewing is now strictly handled by the Database Tab.
     }
 
     function triggerActiveWorkspaceBuild(pId) {
@@ -2030,21 +2014,21 @@
                 </div>
             </div>
         `;
-       // 1. Inject the data into the invisible print container
+        // 1. Clear any old print data first, then inject the new data
+        engine.innerHTML = ""; 
         engine.innerHTML = html; 
         
-        // 2. Force the mobile browser to render the HTML instantly
-        void engine.offsetHeight; 
-        
-        // 3. Trigger print IMMEDIATELY (Fixes mobile popup blocker)
-        window.print();
-        
-        // NOTE: We no longer delete engine.innerHTML! 
-        // We leave the data there so the slow mobile print spooler 
-        // has all the time it needs to generate the PDF preview.
-        // The CSS @media screen { display: none } keeps it safely hidden from the user.
+        // 2. Give the browser 500ms to paint the graphics before calling print
+        setTimeout(() => {
+            window.print();
+            
+            // CRITICAL FIX: We DO NOT clear engine.innerHTML here!
+            // Mobile print spoolers run in the background and need this HTML 
+            // to stay in the DOM for a few seconds to generate the PDF.
+            // The @media screen CSS keeps it completely invisible to the user.
+        }, 500);
     }
-    
+
     function sendWACompReport() {
         if(!activePatientId) return alert("Select patient");
         const p = globalPatientsStore[activePatientId];
