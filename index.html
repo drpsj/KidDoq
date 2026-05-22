@@ -129,10 +129,6 @@
         button.action:active { transform: translateY(1px); }
         button.secondary { background-color: var(--bg-body); color: var(--text-main); border: 1px solid var(--border-soft); padding: 0.6rem; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; width: 100%; transition: background-color 0.2s;}
 
-        .patient-list { margin-top: 1rem; border-top: 1px solid var(--border-soft); padding-top: 1rem; }
-        .patient-badge { background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-md); margin-bottom: 0.5rem; cursor: pointer; border: 1px solid var(--border-soft); font-size: 0.85rem; display: flex; justify-content: space-between; transition: all 0.2s;}
-        .patient-badge.active-patient { border-color: var(--primary); background: var(--primary-light); font-weight: 600; box-shadow: inset 0 0 0 1px var(--primary);}
-
         .timeline-section { background: var(--bg-surface); padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); margin-bottom: 2rem; border: none; transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .section-title { color: var(--text-main); border-bottom: none; padding-bottom: 0; margin-top: 0; margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; letter-spacing: -0.5px;}
         .tool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; align-items: start;}
@@ -227,19 +223,6 @@
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             .page-break { page-break-after: always; }
         }
-        @media screen { .print-container { display: none !important; } }
-        @media print {
-            @page { margin: 10mm; }
-            body, html { 
-                background: white !important; margin: 0 !important; padding: 0 !important; 
-                height: auto !important; max-height: none !important; min-height: 100% !important; 
-                overflow: visible !important; position: static !important; 
-            }
-            .app-shell, header, .registry-dropdown { display: none !important; }
-            .print-container { display: block !important; width: 100% !important; height: auto !important; position: static !important; overflow: visible !important; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            .page-break { page-break-after: always; }
-        }
     </style>
 </head>
 <body>
@@ -259,7 +242,7 @@
   <div class="registry-dropdown" id="registryPanel">
     <div class="panel" style="background: var(--bg-body);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-            <h3 style="margin:0;">Patient Registry</h3>
+            <h3 style="margin:0;">Register New Patient</h3>
             <button onclick="document.getElementById('registryPanel').classList.remove('mobile-open')" style="background:transparent; border:none; font-size:1.2rem; cursor:pointer; color:var(--text-muted);">✖</button>
         </div>
         
@@ -283,7 +266,7 @@
             <label style="margin:0;">JE Endemic Area?</label>
         </div>
         <button class="action" onclick="saveAndRegisterPatient(false)">💾 Save Profile & Proceed</button>
-        <button class="secondary" style="margin-top:10px;" onclick="prepNewPatient()">➕ Clear / New</button>
+        <button class="secondary" style="margin-top:10px;" onclick="prepNewPatient()">➕ Clear Form</button>
     </div>
   </div>
 
@@ -302,7 +285,7 @@
             <button class="feature-btn" onclick="switchMainFeature('asthmaFeatureView', this)">🫁 PRAM</button>
             <button class="feature-btn" onclick="switchMainFeature('jaundiceFeatureView', this)">🍼 Jaundice</button>
             <button class="feature-btn" onclick="switchMainFeature('databaseFeatureView', this)">🗄️ Database</button>
-            <button class="feature-btn" onclick="switchMainFeature('aboutFeatureView', this)">⚙️ Settings & About</button>
+            <button class="feature-btn" onclick="switchMainFeature('aboutFeatureView', this)">⚙️ Settings</button>
         </div>
     </div>
 
@@ -345,7 +328,7 @@
                     <div class="card-icon bg-purple">🗄️</div><span>Database</span>
                 </div>
                 <div class="app-card" onclick="switchMainFeature('aboutFeatureView')">
-                    <div class="card-icon bg-gray">⚙️</div><span>Settings & About</span>
+                    <div class="card-icon bg-gray">⚙️</div><span>Settings</span>
                 </div>
             </div>
         </div>
@@ -357,64 +340,31 @@
                 <button id="btnMasterPrint" class="secondary" style="display:none; width:auto; border-color:var(--primary); color:var(--primary); font-weight:700;" onclick="executePrint('comprehensive')">🖨️ Print Comp. Report</button>
             </div>
 
-          <div id="erFeatureView" class="view-content">
+            <div id="databaseFeatureView" class="view-content">
+                <h2 class="section-title" style="margin-bottom: 0;">🗄️ Patient Master Database</h2>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-top:5px; margin-bottom:1.5rem;">Search and open existing patient files.</p>
+                
+                <div class="timeline-section">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:10px;">
+                        <input type="text" id="dbSearchInput" placeholder="🔍 Search by patient name or phone number..." onkeyup="renderFullDatabase()" style="flex:1; min-width:250px; border:2px solid var(--primary); box-shadow:var(--shadow-sm); padding:1rem; font-size:1.05rem; border-radius:var(--radius-md);">
+                        <button class="action" onclick="exportDatabase()" style="width:auto; margin:0; background:var(--bg-body); color:var(--text-main); border:1px solid var(--border-soft);">📥 Backup Database</button>
+                    </div>
+                    
+                    <div id="fullDatabaseList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:15px;">
+                        </div>
+                </div>
+            </div>
+
+            <div id="erFeatureView" class="view-content">
                 <h2 class="section-title" style="color:var(--danger)">🚨 ER & NICU Resuscitation</h2>
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('erCrashTab', this)">⚡ Crash Cart</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('erNicuTab', this)">🍼 NICU (GIR/APGAR)</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('erVitalsTab', this)">📊 Vitals Matrix</button>
                 </div>
-                
-                <div id="erCrashTab" class="sub-tab-content active">
-                    <div class="timeline-section tool-grid" style="border: 2px solid var(--danger); background: rgba(239, 68, 68, 0.02);">
-                        <div>
-                            <h3 style="color:var(--danger); margin-top:0;">Code Blue Calculator</h3>
-                            <label>Weight (kg)</label><input type="number" id="crashWeight" oninput="calcCrash()">
-                            <label>Age (Yrs)</label><input type="number" id="crashAge" oninput="calcCrash()">
-                            <div class="formula-box" style="margin-top:10px;">
-                                <b>Defibrillation:</b> 2 J/kg &rarr; 4 J/kg<br>
-                                <b>Fluid Bolus:</b> 20 mL/kg (Normal Saline)<br>
-                                <b>Adrenaline (1:10,000):</b> 0.1 mL/kg
-                            </div>
-                        </div>
-                        <div id="crashOutputArea" class="tool-result danger">Input physical vectors to map lines.</div>
-                    </div>
-                </div>
-
-                <div id="erNicuTab" class="sub-tab-content">
-                    <div class="timeline-section tool-grid">
-                        <div>
-                            <h3 style="color:var(--primary); margin-top:0;">GIR Calculator</h3>
-                            <div class="formula-box"><code>GIR = (Rate × Dextrose%) / (Weight × 6)</code></div>
-                            <div class="row-inputs"><div><label>Wt (kg)</label><input type="number" id="girWt" oninput="calcGIR()"></div><div><label>Rate (ml/hr)</label><input type="number" id="girRate" oninput="calcGIR()"></div></div>
-                            <label>Dextrose %</label><input type="number" id="girDex" oninput="calcGIR()">
-                            <div id="girOutput" class="tool-result neutral"></div>
-                        </div>
-                        <div>
-                            <h3 style="color:var(--primary); margin-top:0;">APGAR Score</h3>
-                            <div class="row-inputs" style="gap:5px;"><label>Heart Rate</label><select id="apgarHR" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
-                            <div class="row-inputs" style="gap:5px;"><label>Resp. Effort</label><select id="apgarResp" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
-                            <div class="row-inputs" style="gap:5px;"><label>Muscle Tone</label><select id="apgarTone" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
-                            <div class="row-inputs" style="gap:5px;"><label>Reflex Excitability</label><select id="apgarReflex" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
-                            <div class="row-inputs" style="gap:5px;"><label>Color</label><select id="apgarColor" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
-                            <div id="apgarOutput" class="tool-result success">Score: 10/10</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="erVitalsTab" class="sub-tab-content">
-                    <div class="timeline-section">
-                        <table class="theory-table">
-                            <thead><tr><th>Age Bracket</th><th>Heart Rate (bpm)</th><th>Resp Rate (bpm)</th><th>Systolic BP (mmHg)</th></tr></thead>
-                            <tbody>
-                                <tr><td>Neonate (&lt;28 Days)</td><td>100 - 205</td><td>40 - 60</td><td>60 - 90</td></tr>
-                                <tr><td>Infant (1 - 12 Mos)</td><td>100 - 180</td><td>30 - 53</td><td>87 - 105</td></tr>
-                                <tr><td>Toddler (1 - 3 Yrs)</td><td>98 - 140</td><td>22 - 37</td><td>95 - 105</td></tr>
-                                <tr><td>School Age (6 - 11 Yrs)</td><td>75 - 118</td><td>18 - 25</td><td>97 - 112</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <div id="erCrashTab" class="sub-tab-content active"><div class="timeline-section tool-grid" style="border: 2px solid var(--danger); background: rgba(239, 68, 68, 0.02);"><div><h3 style="color:var(--danger); margin-top:0;">Code Blue Calculator</h3><label>Weight (kg)</label><input type="number" id="crashWeight" oninput="calcCrash()"><label>Age (Yrs)</label><input type="number" id="crashAge" oninput="calcCrash()"><div class="formula-box" style="margin-top:10px;"><b>Defibrillation:</b> 2 J/kg &rarr; 4 J/kg<br><b>Fluid Bolus:</b> 20 mL/kg (NS)<br><b>Adrenaline (1:10,000):</b> 0.1 mL/kg</div></div><div id="crashOutputArea" class="tool-result danger">Input physical vectors to map lines.</div></div></div>
+                <div id="erNicuTab" class="sub-tab-content"><div class="timeline-section tool-grid"><div><h3 style="color:var(--primary); margin-top:0;">GIR Calculator</h3><div class="formula-box"><code>GIR = (Rate × Dex%) / (Weight × 6)</code></div><div class="row-inputs"><div><label>Wt (kg)</label><input type="number" id="girWt" oninput="calcGIR()"></div><div><label>Rate (ml/hr)</label><input type="number" id="girRate" oninput="calcGIR()"></div></div><label>Dextrose %</label><input type="number" id="girDex" oninput="calcGIR()"><div id="girOutput" class="tool-result neutral"></div></div><div><h3 style="color:var(--primary); margin-top:0;">APGAR Score</h3><div class="row-inputs" style="gap:5px;"><label>Heart Rate</label><select id="apgarHR" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div><div class="row-inputs" style="gap:5px;"><label>Resp. Effort</label><select id="apgarResp" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div><div class="row-inputs" style="gap:5px;"><label>Muscle Tone</label><select id="apgarTone" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div><div class="row-inputs" style="gap:5px;"><label>Reflex Excitability</label><select id="apgarReflex" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div><div class="row-inputs" style="gap:5px;"><label>Color</label><select id="apgarColor" onchange="calcAPGAR()"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div><div id="apgarOutput" class="tool-result success">Score: 10/10</div></div></div></div>
+                <div id="erVitalsTab" class="sub-tab-content"><div class="timeline-section"><table class="theory-table"><thead><tr><th>Age Bracket</th><th>Heart Rate (bpm)</th><th>Resp Rate (bpm)</th><th>Systolic BP (mmHg)</th></tr></thead><tbody><tr><td>Neonate (&lt;28 Days)</td><td>100 - 205</td><td>40 - 60</td><td>60 - 90</td></tr><tr><td>Infant (1 - 12 Mos)</td><td>100 - 180</td><td>30 - 53</td><td>87 - 105</td></tr><tr><td>Toddler (1 - 3 Yrs)</td><td>98 - 140</td><td>22 - 37</td><td>95 - 105</td></tr><tr><td>School Age (6 - 11 Yrs)</td><td>75 - 118</td><td>18 - 25</td><td>97 - 112</td></tr></tbody></table></div></div>
             </div>
 
             <div id="trackerFeatureView" class="view-content">
@@ -429,23 +379,7 @@
                 </div>
                 <div id="trackerTimelineSubTab" class="sub-tab-content active"><div id="timelineOutput"></div></div>
                 <div id="trackerAuditSubTab" class="sub-tab-content"><div class="timeline-section"><div id="auditOutput"></div></div></div>
-                <div id="trackerNISTab" class="sub-tab-content">
-                    <div class="timeline-section" style="overflow-x:auto;">
-                        <table class="theory-table" id="nisTableRef">
-                            <thead><tr><th>Age</th><th>Vaccines</th><th>Route/Site</th></tr></thead>
-                            <tbody>
-                                <tr><td>Birth</td><td>BCG, OPV-0, HepB-0</td><td>ID L.Arm / Oral / IM L.Thigh</td></tr>
-                                <tr><td>6 Wks</td><td>Penta-1, OPV-1, RVV-1, fIPV-1, PCV-1</td><td>IM R.Thigh / Oral / Oral / ID R.Arm / IM L.Thigh</td></tr>
-                                <tr><td>10 Wks</td><td>Penta-2, OPV-2, RVV-2</td><td>IM R.Thigh / Oral / Oral</td></tr>
-                                <tr><td>14 Wks</td><td>Penta-3, OPV-3, RVV-3, fIPV-2, PCV-2</td><td>IM R.Thigh / Oral / Oral / ID R.Arm / IM L.Thigh</td></tr>
-                                <tr><td>9 Mos</td><td>MR-1, PCV-B, JE-1, Vit A</td><td>SC R.Arm / IM R.Thigh / SC L.Arm / Oral</td></tr>
-                                <tr><td>16-24 Mos</td><td>MR-2, DPT-B1, OPV-B, JE-2</td><td>SC R.Arm / IM L.Thigh / Oral / SC L.Arm</td></tr>
-                                <tr><td>5-6 Yrs</td><td>DPT-B2</td><td>IM Upper Arm</td></tr>
-                                <tr><td>10 & 16 Yrs</td><td>Td</td><td>IM Upper Arm</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <div id="trackerNISTab" class="sub-tab-content"><div class="timeline-section" style="overflow-x:auto;"><table class="theory-table" id="nisTableRef"><thead><tr><th>Age</th><th>Vaccines</th><th>Route/Site</th></tr></thead><tbody><tr><td>Birth</td><td>BCG, OPV-0, HepB-0</td><td>ID L.Arm / Oral / IM L.Thigh</td></tr><tr><td>6 Wks</td><td>Penta-1, OPV-1, RVV-1, fIPV-1, PCV-1</td><td>IM R.Thigh / Oral / Oral / ID R.Arm / IM L.Thigh</td></tr><tr><td>10 Wks</td><td>Penta-2, OPV-2, RVV-2</td><td>IM R.Thigh / Oral / Oral</td></tr><tr><td>14 Wks</td><td>Penta-3, OPV-3, RVV-3, fIPV-2, PCV-2</td><td>IM R.Thigh / Oral / Oral / ID R.Arm / IM L.Thigh</td></tr><tr><td>9 Mos</td><td>MR-1, PCV-B, JE-1, Vit A</td><td>SC R.Arm / IM R.Thigh / SC L.Arm / Oral</td></tr><tr><td>16-24 Mos</td><td>MR-2, DPT-B1, OPV-B, JE-2</td><td>SC R.Arm / IM L.Thigh / Oral / SC L.Arm</td></tr><tr><td>5-6 Yrs</td><td>DPT-B2</td><td>IM Upper Arm</td></tr><tr><td>10 & 16 Yrs</td><td>Td</td><td>IM Upper Arm</td></tr></tbody></table></div></div>
             </div>
 
             <div id="dosageFeatureView" class="view-content">
@@ -535,25 +469,20 @@
                         <button onclick="executePrint('prescription')" class="secondary" style="width:auto; border-color:var(--primary); color:var(--primary);">🖨️ Print Rx</button>
                     </div>
                 </div>
-                
                 <div class="sub-tabs-nav">
                     <button class="sub-tab-btn active" onclick="switchSubTab('rxNotesTab', this)">📝 Clinical Pad</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('rxCertTab', this)">📄 Certificates & Notes</button>
                 </div>
-
                 <div id="rxNotesTab" class="sub-tab-content active">
                     <div class="timeline-section tool-grid" style="grid-template-columns: 1fr 1fr;">
                         <div>
                             <h4 style="margin-top:0; color:var(--primary);">Clinical Notes</h4>
                             <label>Complaints / Differential Diagnosis</label>
                             <input type="text" id="rxDiagnosis" placeholder="e.g. Viral URI, Acute Otitis Media" oninput="saveAndRegisterPatient(true)" style="margin-bottom:10px; font-weight:bold;">
-                            
                             <label>Required Investigations / Scans</label>
                             <textarea id="rxTests" placeholder="e.g. CBC, CRP, USG Abdomen" oninput="saveAndRegisterPatient(true)" style="width:100%; padding:0.65rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; margin-bottom:10px; resize:vertical; min-height:60px;"></textarea>
-                            
                             <label>General Advice / Care Plan</label>
                             <textarea id="rxAdvice" placeholder="e.g. Plenty of oral fluids, tepid sponging..." oninput="saveAndRegisterPatient(true)" style="width:100%; padding:0.65rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; margin-bottom:10px; resize:vertical; min-height:60px;"></textarea>
-                            
                             <label>Next Review Date</label>
                             <input type="date" id="rxReview" onchange="saveAndRegisterPatient(true)">
                         </div>
@@ -563,7 +492,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <div id="rxCertTab" class="sub-tab-content">
                     <div class="timeline-section tool-grid" style="grid-template-columns: 1fr 1.5fr;">
                         <div>
@@ -578,10 +506,8 @@
                                 <option value="advice">Advice / Diet / Home Care</option>
                                 <option value="exemption">Medical Exemption / Authorization</option>
                             </select>
-                            
                             <label style="margin-top:10px;">Document Title</label>
                             <input type="text" id="certTitle" placeholder="e.g. FITNESS CERTIFICATE">
-                            
                             <label style="margin-top:10px;">Relevant Dates / Days</label>
                             <input type="text" id="certDates" placeholder="e.g. 3 days from 12-Nov" oninput="generateCertTemplate()">
                             <button class="secondary" style="margin-top:10px; width:100%;" onclick="generateCertTemplate()">🔄 Auto-Fill Template</button>
@@ -760,90 +686,6 @@
                 </div>
             </div>
 
-           <div id="aboutFeatureView" class="view-content">
-                <h2 class="section-title">ℹ️ System Info & Settings</h2>
-                <div class="timeline-section tool-grid">
-                    
-                    <div>
-                        <h4 style="margin-top:0;">Display Settings</h4>
-                        <div style="display:flex; align-items:center; gap:10px; margin-bottom: 2rem;">
-                            <label style="margin:0; font-weight:bold; font-size:0.9rem; color:var(--text-main);">Dark Mode (Night Duty)</label>
-                            <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode(this.checked)" style="width:22px; height:22px; margin:0; cursor:pointer;">
-                        </div>
-
-                        <h4 style="margin-top:0; color:var(--primary);">👨‍⚕️ Letterhead / Rx Builder</h4>
-                        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">These details appear at the top of printed prescriptions.</p>
-                        
-                        <div class="panel" style="background:var(--bg-body); border:1px solid var(--border-soft); border-radius:var(--radius-lg);">
-                            <div class="row-inputs"><div><label>Doctor's Name</label><input type="text" id="setDocName" placeholder="Dr. Peter Suraj Joseph"></div><div><label>Qualifications</label><input type="text" id="setQual" placeholder="MBBS, MD"></div></div>
-                            <div class="row-inputs"><div><label>Medical Reg. No.</label><input type="text" id="setRegNo" placeholder="e.g. KMC 12345"></div><div><label>Clinic Name</label><input type="text" id="setClinic" placeholder="Sunrise Clinic"></div></div>
-                            <label>Tagline</label><input type="text" id="setTagline" placeholder="Child Development Center">
-                            <div class="row-inputs"><div><label>Phone</label><input type="text" id="setPhone" placeholder="Phone"></div><div><label>Address</label><input type="text" id="setAddress" placeholder="Location"></div></div>
-                            
-                            <label style="margin-top:10px;">Upload Signature (PNG/JPG with white/transparent bg)</label>
-                            <input type="file" accept="image/*" onchange="handleSignatureUpload(this)" style="padding:0.5rem; font-size:0.85rem;">
-                            <div id="sigPreview" style="margin-top:10px; border:1px dashed var(--border-soft); padding:10px; text-align:center; min-height:50px; border-radius:var(--radius-md); background:var(--bg-surface);">No signature loaded.</div>
-                            
-                            <div style="display:flex; gap:10px; margin-top:1.5rem;">
-                                <button class="action" onclick="document.getElementById('setDocName').focus()" style="flex:1; background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border-soft); box-shadow:none;">✏️ Edit</button>
-                                <button class="action" onclick="saveSettings()" style="flex:2; background:var(--primary); color:white;">💾 Save Profile</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div style="margin-bottom: 2rem; background:var(--bg-body); padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-soft);">
-                            <h3 style="color:var(--primary); margin-top:0; font-size:1.1rem;">🗄️ Patient Database Manager</h3>
-                            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Manage locally saved records. Type a name in the main registry to auto-fill.</p>
-                            
-                            <div style="background:var(--bg-surface); border-radius:var(--radius-md); padding:1rem; max-height:220px; overflow-y:auto; border:1px solid var(--border-soft); margin-bottom:1rem;" id="settingsPatientList">
-                                <em style="color:var(--text-muted); font-size:0.9rem;">Click refresh to view patient records.</em>
-                            </div>
-                            
-                            <div style="display:flex; gap:10px;">
-                                <button class="action" onclick="renderSettingsPatientList()" style="flex:1; background:var(--primary-light); color:var(--primary-dark); border:none; padding:0.75rem;">🔄 Refresh</button>
-                                <button class="action" onclick="exportDatabase()" style="flex:1; background:var(--bg-surface); border:1px solid var(--border-soft); color:var(--text-main); padding:0.75rem;">📥 Backup Data</button>
-                            </div>
-                        </div>
-
-                        <h4 style="margin-top:0; color:var(--primary);">📚 Clinical Guidelines & Sources</h4>
-                        <div style="font-size:0.85rem; line-height:1.6; background:var(--bg-body); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-soft); margin-bottom:1rem;">
-                            <ul style="margin:0; padding-left:1.2rem; color:var(--text-main);">
-                                <li style="margin-bottom:6px;"><b>Growth & Triage:</b> WHO Multicentre Growth Reference Study (MGRS) & IAP Guidelines 2024</li>
-                                <li style="margin-bottom:6px;"><b>Immunization:</b> National Immunization Schedule (NIS) India</li>
-                                <li style="margin-bottom:6px;"><b>Nutrition:</b> ICMR-NIN Dietary Guidelines for Indians</li>
-                                <li style="margin-bottom:6px;"><b>Pharmacopeia:</b> Harriet Lane Handbook (22nd Ed) & Nelson Textbook of Pediatrics</li>
-                                <li style="margin-bottom:6px;"><b>Neonatology:</b> AAP Guidelines (Bhutani Nomogram) & Holliday-Segar Protocol</li>
-                            </ul>
-                        </div>
-                        
-                        <div style="background:rgba(245, 158, 11, 0.1); border-left:4px solid var(--warning); padding:10px; font-size:0.8rem; color:var(--text-main); line-height:1.5; margin-bottom:1.5rem;">
-                            <b>⚠️ Medico-Legal Disclaimer:</b> This framework is a clinical reference tool. All calculations must be independently verified against institutional protocols before administration.
-                        </div>
-
-                        <div style="border-top:1px solid var(--border-soft); padding-top:1rem; text-align:center;">
-                            <h3 style="margin:0 0 5px 0; color:var(--primary); font-size:1.1rem;">Pediatric Clinical Hub v2.0</h3>
-                            <span style="font-size:0.85rem; color:var(--text-muted);">Architected & Developed by <b>Dr. Peter Suraj Joseph</b></span><br>
-                            <span style="font-size:0.75rem; color:var(--text-muted);">100% Client-Side Execution • Zero Data Tracking</span>
-                        </div>
-                </div>
-            </div>
-
-           <div id="databaseFeatureView" class="view-content">
-                <h2 class="section-title" style="margin-bottom: 0;">🗄️ Patient Master Database</h2>
-                <p style="color:var(--text-muted); font-size:0.9rem; margin-top:5px; margin-bottom:1.5rem;">Search and open existing patient files.</p>
-                
-                <div class="timeline-section">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:10px;">
-                        <input type="text" id="dbSearchInput" placeholder="🔍 Search by patient name or phone number..." onkeyup="renderFullDatabase()" style="flex:1; min-width:250px; border:2px solid var(--primary); box-shadow:var(--shadow-sm); padding:1rem; font-size:1.05rem; border-radius:var(--radius-md);">
-                        <button class="action" onclick="exportDatabase()" style="width:auto; margin:0; background:var(--bg-body); color:var(--text-main); border:1px solid var(--border-soft);">📥 Backup Database</button>
-                    </div>
-                    
-                    <div id="fullDatabaseList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:15px;">
-                        </div>
-                </div>
-            </div>
-
             <div id="aboutFeatureView" class="view-content">
                 <h2 class="section-title">⚙️ Settings & About</h2>
                 <div class="timeline-section tool-grid">
@@ -885,6 +727,7 @@
                     </div>
                 </div>
             </div>
+
         </div> </div> </div> <div id="printEngine" class="print-container"></div>
 
 <script>
@@ -1096,7 +939,6 @@
     // --- 3. INITIALIZATION & UI ROUTING ---
     document.addEventListener("DOMContentLoaded", function() {
         applySettingsToUI();
-        renderPatientBadges(); 
         renderFoodDB(foodsDb);
         populateFoodSelect();
         buildMilestoneReference();
@@ -1219,7 +1061,6 @@
         if(document.getElementById('btnMasterPrint')) document.getElementById('btnMasterPrint').style.display = "none";
         if(document.getElementById('btnMasterWA')) document.getElementById('btnMasterWA').style.display = "none";
         if(document.getElementById('headerPatientText')) document.getElementById('headerPatientText').innerText = "👤 Patient";
-        renderPatientBadges();
     }
 
     function calculateAgeFromDob() {
@@ -1277,7 +1118,6 @@
         
         if(!isBackgroundUpdate) {
             document.getElementById('registryPanel').classList.remove('mobile-open');
-            renderPatientBadges(); 
             triggerActiveWorkspaceBuild(id); // ONLY switch screens when explicitly clicking "Save & Proceed"
         } else {
             // Background update keeps you on your current screen
@@ -1285,10 +1125,6 @@
                 calculateDose(); calcGrowth(); calcMalnutrition(); calcNutrition();
             }
         }
-    }
-
-   function renderPatientBadges() {
-        // Disabled: Patient viewing is now strictly handled by the Database Tab.
     }
 
     function triggerActiveWorkspaceBuild(pId) {
@@ -2014,6 +1850,7 @@
                 </div>
             </div>
         `;
+        
         // 1. Clear any old print data first, then inject the new data
         engine.innerHTML = ""; 
         engine.innerHTML = html; 
@@ -2050,8 +1887,7 @@
         window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`, '_blank');
     }
 
-    // --- 14. SETTINGS DATABASE FUNCTIONS ---
-    // --- SETTINGS & SYSTEM FUNCTIONS ---
+    // --- 14. SYSTEM SETTINGS & DATABASE MANAGER ENGINE ---
     function toggleDarkMode(isDark) {
         if(isDark) { document.body.classList.add('dark-mode'); }
         else { document.body.classList.remove('dark-mode'); }
@@ -2073,7 +1909,7 @@
         if(document.getElementById('setPhone')) document.getElementById('setPhone').value = appSettings.phone || "";
         if(document.getElementById('setAddress')) document.getElementById('setAddress').value = appSettings.address || "";
         if(appSettings.signature && document.getElementById('sigPreview')) {
-            document.getElementById('sigPreview').innerHTML = `<img src="${appSettings.signature}" style="max-height:60px;">`;
+            document.getElementById('sigPreview').innerHTML = `<img src="${appSettings.signature}" style="max-height:60px; border-radius:8px;">`;
         }
     }
 
@@ -2101,34 +1937,13 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-    function renderSettingsPatientList() {
-        const list = document.getElementById('settingsPatientList');
-        if(!list) return;
-        
-        const patientKeys = Object.keys(globalPatientsStore);
-        if(patientKeys.length === 0) {
-            list.innerHTML = "<em style='color:var(--text-muted); font-size:0.9rem;'>No patients saved in database yet.</em>";
-            return;
-        }
-        
-        let html = "";
-        patientKeys.forEach(id => {
-            let p = globalPatientsStore[id];
-            html += `<div style="padding:10px; margin-bottom:6px; background:var(--bg-body); border:1px solid var(--border-soft); border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center;">
-                <div><strong style="color:var(--primary-dark); display:block;">${p.name}</strong> <span style="font-size:0.8rem; color:var(--text-muted);">${p.ageYrs}Y ${p.ageMos}M | ${p.gender.toUpperCase()}</span></div>
-                <div style="font-size:0.9rem; font-weight:bold; background:var(--primary-light); color:var(--primary-dark); padding:4px 8px; border-radius:10px;">${p.weight} kg</div>
-            </div>`;
-        });
-        list.innerHTML = html;
-    }
 
-    // --- DATABASE MANAGER ENGINE ---
     function renderFullDatabase() {
         const container = document.getElementById('fullDatabaseList');
         if(!container) return;
         
         const query = document.getElementById('dbSearchInput').value.toLowerCase();
-        const patientKeys = Object.keys(globalPatientsStore).reverse(); // Show newest patients first
+        const patientKeys = Object.keys(globalPatientsStore).reverse(); 
         
         if(patientKeys.length === 0) {
             container.innerHTML = "<div style='color:var(--text-muted); font-size:1.1rem; padding:2rem;'>No patients found. Save a patient to build your database.</div>";
@@ -2138,7 +1953,6 @@
         let html = "";
         patientKeys.forEach(id => {
             let p = globalPatientsStore[id];
-            // Filter by name OR phone number
             if (p.name.toLowerCase().includes(query) || (p.phone && p.phone.includes(query))) {
                 html += `
                 <div style="background:var(--bg-surface); border:1px solid var(--border-soft); border-radius:var(--radius-lg); padding:1.5rem; box-shadow:var(--shadow-sm);">
@@ -2162,7 +1976,6 @@
         activePatientId = id;
         let p = globalPatientsStore[id];
         
-        // Auto-fill all background registry data
         document.getElementById('pName').value = p.name || "";
         document.getElementById('dob').value = p.dob || "";
         document.getElementById('pPhone').value = p.phone || "";
@@ -2179,7 +1992,6 @@
         document.getElementById('calcWeight').value = p.weight || "";
         if(document.getElementById('headerPatientText')) document.getElementById('headerPatientText').innerText = `👤 ${p.name}`;
         
-        // Trigger the workspace to load their specific medical data
         triggerActiveWorkspaceBuild(id);
         if(typeof showSystemToast === 'function') showSystemToast(`Opened file: ${p.name}`);
     }
