@@ -139,8 +139,16 @@
         .tool-result.warning { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); color: var(--warning); }
         .tool-result.neutral { background: var(--bg-body); border-color: var(--border-soft); color: var(--text-main); }
         
-        .sub-tabs-nav { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-soft); flex-wrap: wrap; }
-        .sub-tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 0.75rem 1rem; cursor: pointer; font-size: 0.95rem; font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.2s;}
+        .sub-tabs-nav { 
+            display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-soft); 
+            flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px;
+        }
+        .sub-tabs-nav::-webkit-scrollbar { display: none; /* Hides the ugly scrollbar but keeps it scrollable */ }
+        .sub-tab-btn { 
+            background: transparent; border: none; color: var(--text-muted); padding: 0.75rem 1rem; 
+            cursor: pointer; font-size: 0.95rem; font-weight: 600; border-bottom: 2px solid transparent; 
+            margin-bottom: -2px; transition: color 0.2s; white-space: nowrap; 
+        }
         .sub-tab-btn.active { color: var(--primary); border-color: var(--primary); }
 
         /* TAB BAR (MOBILE) / SIDEBAR (DESKTOP) */
@@ -211,14 +219,11 @@
     <div id="systemToastContainer" style="position:fixed; bottom:100px; right:30px; z-index:99999; display:flex; flex-direction:column; gap:10px; pointer-events:none;"></div>
   
   <header>
-    <div class="brand-logo" onclick="switchMainFeature('homeDashboardView')">
+    <div class="brand-logo" onclick="switchNavTab('homeDashboardView')">
         <img src="kiddoq lite.png" alt="KidDoq Logo" style="width: 32px; height: 32px; object-fit: contain;">
         KidDoq
     </div>
-    <div class="header-active-patient" id="globalPatientBadge" onclick="document.getElementById('registryPanel').classList.toggle('mobile-open')">
-        <span id="headerPatientText">👤 Select Patient</span>
-    </div>
-  </header>
+    </header>
 
   <div class="modal-overlay" id="registryModal" onclick="if(event.target===this) this.classList.remove('active')">
     <div class="modal-content" onclick="event.stopPropagation()">
@@ -254,25 +259,21 @@
 
 <div class="app-shell home-active">
     <nav class="main-nav">
-        <button class="nav-item active" onclick="switchMainFeature('homeDashboardView', this)">
-            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-            Home
-        </button>
-        <button class="nav-item" onclick="switchMainFeature('databaseFeatureView', this)">
+        <button class="nav-item" style="width: 33.3%;" onclick="switchMainFeature('databaseFeatureView', this)">
             <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
             Patients
         </button>
-        <button class="nav-item" onclick="switchMainFeature('homeDashboardView', this)">
+        <button class="nav-item active" style="width: 33.3%;" onclick="switchNavTab('toolsTab')">
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
             Tools
         </button>
-        <button class="nav-item" onclick="switchMainFeature('aboutFeatureView', this)">
+        <button class="nav-item" style="width: 33.3%;" onclick="switchMainFeature('aboutFeatureView', this)">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             Settings
         </button>
     </nav>
 
-    <button class="fab" onclick="document.getElementById('registryPanel').classList.add('mobile-open')">
+    <button class="fab" onclick="document.getElementById('registryModal').classList.add('active')">
         <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
     </button>
 
@@ -341,6 +342,46 @@
                 </div>
             </div>
         </div>
+
+        <div id="toolsTab" class="view-content">
+            <div class="section-header" style="margin-bottom:20px;">
+                <h3 style="font-size:1.3rem;">🧰 Clinical Modules</h3>
+            </div>
+            <div class="tools-grid" style="grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));">
+                <div class="tool-btn" onclick="openClinicalTool('prescriptionFeatureView')">
+                    <div class="tool-icon-wrapper"><img src="icon-rx.png" alt="Rx" style="width:36px; height:36px; object-fit:contain;"></div>
+                    <span>Rx & Dosing</span>
+                </div>
+                <div class="tool-btn" onclick="openClinicalTool('certificateFeatureView')">
+                    <div class="tool-icon-wrapper"><img src="icon-cert.png" alt="Cert" style="width:36px; height:36px; object-fit:contain;"></div>
+                    <span>Certificates</span>
+                </div>
+                <div class="tool-btn" onclick="openClinicalTool('growthFeatureView')">
+                    <div class="tool-icon-wrapper"><img src="icon-growth.png" alt="Growth" style="width:36px; height:36px; object-fit:contain;"></div>
+                    <span>Growth Curves</span>
+                </div>
+                <div class="tool-btn" onclick="openClinicalTool('trackerFeatureView')">
+                    <div class="tool-icon-wrapper"><img src="icon-vax.png" alt="Vax" style="width:36px; height:36px; object-fit:contain;"></div>
+                    <span>Vaccination</span>
+                </div>
+                <div class="tool-btn" onclick="openClinicalTool('erFeatureView')">
+                    <div class="tool-icon-wrapper"><img src="icon-er.png" alt="ER" style="width:36px; height:36px; object-fit:contain;"></div>
+                    <span>ER & Resus</span>
+                </div>
+                <div class="tool-btn" onclick="openClinicalTool('milestoneFeatureView')">
+                    <div class="tool-icon-wrapper"><img src="icon-miles.png" alt="Milestones" style="width:36px; height:36px; object-fit:contain;"></div>
+                    <span>Milestones</span>
+                </div>
+                <div class="tool-btn" onclick="openClinicalTool('malnutritionFeatureView')">
+                    <div class="tool-icon-wrapper"><img src="icon-triage.png" alt="Triage" style="width:36px; height:36px; object-fit:contain;"></div>
+                    <span>Triage & MAC</span>
+                </div>
+                <div class="tool-btn" onclick="openClinicalTool('nutritionFeatureView')">
+                    <div class="tool-icon-wrapper"><img src="icon-diet.png" alt="Diet" style="width:36px; height:36px; object-fit:contain;"></div>
+                    <span>Diet Recall</span>
+                </div>
+            </div>
+        </div>
     
         <div id="activeWorkspace" style="display:none;">
             
@@ -391,23 +432,43 @@
                 <div id="trackerNISTab" class="sub-tab-content"><div class="timeline-section" style="overflow-x:auto;"><table class="theory-table" id="nisTableRef"><thead><tr><th>Age</th><th>Vaccines</th><th>Route/Site</th></tr></thead><tbody><tr><td>Birth</td><td>BCG, OPV-0, HepB-0</td><td>ID L.Arm / Oral / IM L.Thigh</td></tr><tr><td>6 Wks</td><td>Penta-1, OPV-1, RVV-1, fIPV-1, PCV-1</td><td>IM R.Thigh / Oral / Oral / ID R.Arm / IM L.Thigh</td></tr><tr><td>10 Wks</td><td>Penta-2, OPV-2, RVV-2</td><td>IM R.Thigh / Oral / Oral</td></tr><tr><td>14 Wks</td><td>Penta-3, OPV-3, RVV-3, fIPV-2, PCV-2</td><td>IM R.Thigh / Oral / Oral / ID R.Arm / IM L.Thigh</td></tr><tr><td>9 Mos</td><td>MR-1, PCV-B, JE-1, Vit A</td><td>SC R.Arm / IM R.Thigh / SC L.Arm / Oral</td></tr><tr><td>16-24 Mos</td><td>MR-2, DPT-B1, OPV-B, JE-2</td><td>SC R.Arm / IM L.Thigh / Oral / SC L.Arm</td></tr><tr><td>5-6 Yrs</td><td>DPT-B2</td><td>IM Upper Arm</td></tr><tr><td>10 & 16 Yrs</td><td>Td</td><td>IM Upper Arm</td></tr></tbody></table></div></div>
             </div>
 
-            <div id="dosageFeatureView" class="view-content">
-                <h2 class="section-title">💊 Pediatric Dosing Engine</h2>
+            <div id="prescriptionFeatureView" class="view-content">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h2 class="section-title" style="margin:0; border:none;">📝 Prescription & Dosing</h2>
+                    <button onclick="executePrint('prescription')" class="secondary" style="width:auto; border-color:var(--primary); color:var(--primary);">🖨️ Print Rx</button>
+                </div>
                 <div class="sub-tabs-nav">
-                    <button class="sub-tab-btn active" onclick="switchSubTab('doseCalcTab', this)">🧮 Active Calculator</button>
+                    <button class="sub-tab-btn active" onclick="switchSubTab('rxNotesTab', this)">📝 Clinical Pad</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('doseCalcTab', this)">🧮 Dose Calc</button>
                     <button class="sub-tab-btn" onclick="switchSubTab('doseReverseTab', this)">🔄 Reverse Audit</button>
-                    <button class="sub-tab-btn" onclick="switchSubTab('doseManageTab', this)">⚙️ Add Custom Drug</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('doseManageTab', this)">⚙️ Custom Drugs</button>
                 </div>
                 
-                <div id="doseCalcTab" class="sub-tab-content active">
-                    <div class="timeline-section">
-                        <div class="formula-box">
-                            <b>Standard Calculation:</b> <code>Volume = (Weight × Dose mg/kg) ÷ (Stock Conc / Base Vol)</code><br>
-                            <small>*Fixed-dose formulations bypass weight scaling. Operates independently if no patient selected.</small>
+                <div id="rxNotesTab" class="sub-tab-content active">
+                    <div class="timeline-section tool-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div>
+                            <h4 style="margin-top:0; color:var(--primary);">Clinical Notes</h4>
+                            <label>Complaints / Differential Diagnosis</label>
+                            <input type="text" id="rxDiagnosis" placeholder="e.g. Viral URI, Acute Otitis Media" oninput="saveAndRegisterPatient(true)" style="margin-bottom:10px; font-weight:bold;">
+                            <label>Required Investigations / Scans</label>
+                            <textarea id="rxTests" placeholder="e.g. CBC, CRP, USG Abdomen" oninput="saveAndRegisterPatient(true)" style="width:100%; padding:0.65rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; margin-bottom:10px; resize:vertical; min-height:60px;"></textarea>
+                            <label>General Advice / Care Plan</label>
+                            <textarea id="rxAdvice" placeholder="e.g. Plenty of oral fluids, tepid sponging..." oninput="saveAndRegisterPatient(true)" style="width:100%; padding:0.65rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; margin-bottom:10px; resize:vertical; min-height:60px;"></textarea>
+                            <label>Next Review Date</label>
+                            <input type="date" id="rxReview" onchange="saveAndRegisterPatient(true)">
                         </div>
+                        <div>
+                            <h4 style="margin-top:0; color:var(--primary);">Prescribed Medications</h4>
+                            <div id="rxCartList" style="background:var(--bg-surface); padding:15px; border-radius:8px; border:1px solid var(--border-soft); min-height:300px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="doseCalcTab" class="sub-tab-content">
+                    <div class="timeline-section">
                         <div class="tool-grid">
                             <div>
-                                <label style="color:var(--primary); font-size:0.85rem;">Bedside Weight (kg) - Active Universal</label>
+                                <label style="color:var(--primary); font-size:0.85rem;">Bedside Weight (kg)</label>
                                 <input type="number" id="calcWeight" placeholder="Enter weight for calc..." oninput="calculateDose()" style="border-color:var(--primary); font-weight:bold;">
                                 
                                 <label style="margin-top:15px;">Category</label>
@@ -430,77 +491,38 @@
                     </div>
                 </div>
 
-                <div id="doseReverseTab" class="sub-tab-content">
-                    <div class="timeline-section tool-grid" style="background: rgba(14, 165, 233, 0.05); border-color: var(--accent);">
-                        <div>
-                            <h3 style="color:var(--accent); margin-top:0;">Audit Administered Dose</h3>
-                            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Enter the volume the parent administered to back-calculate the exact mg/kg received.</p>
-                            <label>Category</label>
-                            <select id="revCategory" onchange="populateRevDrugs(); calcReverse();">
-                                <option value="">-- Select --</option>
-                                <option value="antibiotics">Antibiotics</option>
-                                <option value="antipyretics">Antipyretics & Analgesics</option>
-                                <option value="antihistamines">Antihistamines / Cold</option>
-                                <option value="respiratory">Respiratory Suite</option>
-                                <option value="git">Gastrointestinal</option>
-                            </select>
-                            <label>Formulation Given</label><select id="revFormulation" onchange="calcReverse()"><option value="">-- formulation --</option></select>
-                            <label>Volume Administered (mL or Tabs)</label><input type="number" step="0.1" id="revVol" oninput="calcReverse()">
-                        </div>
-                        <div id="revOutputArea" class="tool-result neutral">Awaiting volume parameters to audit mg/kg limits.</div>
-                        <div id="revAddButtonArea"></div>
-                    </div>
                 </div>
 
-                <div id="doseManageTab" class="sub-tab-content">
-                    <div class="timeline-section tool-grid">
-                        <div>
-                            <label>Category</label><select id="newDrugCat"><option value="antibiotics">Antibiotics</option><option value="antipyretics">Antipyretics</option><option value="antihistamines">Antihistamines</option><option value="respiratory">Respiratory</option><option value="git">GIT</option></select>
-                            <label>Name & Strength</label><input type="text" id="newDrugName" placeholder="e.g. Cefixime 50mg/ml">
-                            <label>Target Dose (mg/kg)</label><input type="number" step="0.1" id="newDrugDose" placeholder="e.g. 8">
-                            <label>Strategy</label><select id="newDrugType"><option value="perDay">Per Day (Divided)</option><option value="perDose">Per Dose</option><option value="fixed">Fixed Volume (Ignore Wt)</option></select>
-                        </div>
-                        <div>
-                            <label>Divisions/Day</label><input type="number" id="newDrugDiv" placeholder="e.g. 2">
-                            <label>Rx Frequency</label><input type="text" id="newDrugFreq" placeholder="e.g. BID">
-                            <div class="row-inputs"><div><label>Conc (mg)</label><input type="number" id="newDrugConc"></div><div><label>Vol (mL/Tab)</label><input type="number" id="newDrugVol"></div></div>
-                            <button class="action" onclick="saveCustomDrug()">💾 Save to Database</button>
-                        </div>
+            <div id="certificateFeatureView" class="view-content">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h2 class="section-title" style="margin:0; border:none;">📄 Medical Certificates</h2>
+                    <button onclick="executePrint('certificate')" class="secondary" style="width:auto; border-color:var(--warning); color:var(--warning);">🖨️ Print Cert</button>
+                </div>
+                <div class="timeline-section tool-grid" style="grid-template-columns: 1fr 1.5fr;">
+                    <div>
+                        <h4 style="margin-top:0; color:var(--warning);">Universal Note Generator</h4>
+                        <label>Template Category</label>
+                        <select id="certCategory" onchange="generateCertTemplate()">
+                            <option value="none">-- Select Template --</option>
+                            <option value="leave">Medical Leave / Bed Rest</option>
+                            <option value="fitness">Fitness / Rejoining</option>
+                            <option value="attendance">Attendance / Visit Proof</option>
+                            <option value="referral">Specialist / Lab Referral</option>
+                            <option value="advice">Advice / Diet / Home Care</option>
+                            <option value="exemption">Medical Exemption</option>
+                        </select>
+                        <label style="margin-top:10px;">Document Title</label>
+                        <input type="text" id="certTitle" placeholder="e.g. FITNESS CERTIFICATE">
+                        <label style="margin-top:10px;">Relevant Dates / Days</label>
+                        <input type="text" id="certDates" placeholder="e.g. 3 days from 12-Nov" oninput="generateCertTemplate()">
+                        <button class="secondary" style="margin-top:10px; width:100%;" onclick="generateCertTemplate()">🔄 Auto-Fill Template</button>
+                    </div>
+                    <div>
+                        <h4 style="margin-top:0; color:var(--primary);">Final Document Content (Editable)</h4>
+                        <textarea id="certBody" style="width:100%; padding:1rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; font-size:0.95rem; min-height:250px; resize:vertical;"></textarea>
                     </div>
                 </div>
             </div>
-
-            <div id="prescriptionFeatureView" class="view-content">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-                    <h2 class="section-title" style="margin:0; border:none;">📝 Complete Prescription Pad</h2>
-                    <div style="display:flex; gap:10px;">
-                        <button onclick="executePrint('certificate')" class="secondary" style="width:auto; border-color:var(--warning); color:var(--warning);">🖨️ Print Cert/Note</button>
-                        <button onclick="executePrint('prescription')" class="secondary" style="width:auto; border-color:var(--primary); color:var(--primary);">🖨️ Print Rx</button>
-                    </div>
-                </div>
-                <div class="sub-tabs-nav">
-                    <button class="sub-tab-btn active" onclick="switchSubTab('rxNotesTab', this)">📝 Clinical Pad</button>
-                    <button class="sub-tab-btn" onclick="switchSubTab('rxCertTab', this)">📄 Certificates & Notes</button>
-                </div>
-                <div id="rxNotesTab" class="sub-tab-content active">
-                    <div class="timeline-section tool-grid" style="grid-template-columns: 1fr 1fr;">
-                        <div>
-                            <h4 style="margin-top:0; color:var(--primary);">Clinical Notes</h4>
-                            <label>Complaints / Differential Diagnosis</label>
-                            <input type="text" id="rxDiagnosis" placeholder="e.g. Viral URI, Acute Otitis Media" oninput="saveAndRegisterPatient(true)" style="margin-bottom:10px; font-weight:bold;">
-                            <label>Required Investigations / Scans</label>
-                            <textarea id="rxTests" placeholder="e.g. CBC, CRP, USG Abdomen" oninput="saveAndRegisterPatient(true)" style="width:100%; padding:0.65rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; margin-bottom:10px; resize:vertical; min-height:60px;"></textarea>
-                            <label>General Advice / Care Plan</label>
-                            <textarea id="rxAdvice" placeholder="e.g. Plenty of oral fluids, tepid sponging..." oninput="saveAndRegisterPatient(true)" style="width:100%; padding:0.65rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; margin-bottom:10px; resize:vertical; min-height:60px;"></textarea>
-                            <label>Next Review Date</label>
-                            <input type="date" id="rxReview" onchange="saveAndRegisterPatient(true)">
-                        </div>
-                        <div>
-                            <h4 style="margin-top:0; color:var(--primary);">Prescribed Medications</h4>
-                            <div id="rxCartList" style="background:var(--bg-surface); padding:15px; border-radius:8px; border:1px solid var(--border-soft); min-height:300px;"></div>
-                        </div>
-                    </div>
-                </div>
                 <div id="rxCertTab" class="sub-tab-content">
                     <div class="timeline-section tool-grid" style="grid-template-columns: 1fr 1.5fr;">
                         <div>
@@ -956,72 +978,43 @@
         switchMainFeature('homeDashboardView');
     });
 
-    // --- 4. CORE NAVIGATION ENGINE (FIXED) ---
-    function switchMainFeature(viewId, btnElement) {
-        // Hide ALL view contents
-        const allViews = document.querySelectorAll('.view-content');
-        allViews.forEach(view => {
-            view.style.display = 'none';
-            view.classList.remove('active-view');
-        });
-
-        // Clear active styling from bottom/sidebar buttons
-        const allBtns = document.querySelectorAll('.feature-btn');
-        allBtns.forEach(btn => btn.classList.remove('active'));
-
-        const workspace = document.getElementById('activeWorkspace');
-        const homeDash = document.getElementById('homeDashboardView');
-        const shell = document.querySelector('.app-shell');
+    // --- 4. CORE NAVIGATION ENGINE (KIDDOQ) ---
+    function switchNavTab(tabId) {
+        // 1. Hide everything
+        document.querySelectorAll('.view-content').forEach(v => { v.style.display = 'none'; v.classList.remove('active-view'); });
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        if(document.getElementById('activeWorkspace')) document.getElementById('activeWorkspace').style.display = 'none';
         
-        // Security Check
-        const needsPatient = ['trackerFeatureView', 'prescriptionFeatureView', 'nutritionFeatureView', 'malnutritionFeatureView', 'milestoneFeatureView'];
-        if (needsPatient.includes(viewId) && !activePatientId) {
-            if(typeof showSystemToast === 'function') showSystemToast("⚠️ Please select or register a patient first!");
-            viewId = 'homeDashboardView'; 
-            btnElement = document.querySelector('.feature-btn[onclick*="homeDashboardView"]'); 
-        }
-
-        // Hide/Show Global Nav on Home Screen
-        if (viewId === 'homeDashboardView') {
-            shell.classList.add('home-active');
-            if(workspace) workspace.style.display = 'none';
-            if(homeDash) {
-                homeDash.style.display = 'block';
-                setTimeout(() => homeDash.classList.add('active-view'), 10);
-            }
-        } else {
-            shell.classList.remove('home-active');
-            if(homeDash) homeDash.style.display = 'none';
-            if(workspace) workspace.style.display = 'block';
-            
-            const targetView = document.getElementById(viewId);
-            if (targetView) {
-                targetView.style.display = 'block';
-                setTimeout(() => targetView.classList.add('active-view'), 10);
-            }
-            
-            // Auto-trigger specific calculators
-            if(viewId === 'dosageFeatureView') calculateDose();
-            if(viewId === 'fluidsFeatureView') calcFluids();
-            if(viewId === 'growthFeatureView' && activePatientId) calcGrowth();
-            if(viewId === 'nutritionFeatureView') { calcNutrition(); renderDietRecall(); renderFoodDB(foodsDb); }
-            if(viewId === 'erFeatureView') calcCrash();
-            if(viewId === 'milestoneFeatureView' && activePatientId) { renderMilestoneDashboard(); buildMilestoneReference(); }
-            if(viewId === 'malnutritionFeatureView' && activePatientId) { calcMalnutrition(); renderSensory(); }
-            if(viewId === 'databaseFeatureView') renderFullDatabase();
-        }
-
-        // Highlight matching navigation button
-        if (btnElement) {
-            btnElement.classList.add('active');
-        } else {
-            const matchingBtn = document.querySelector(`.feature-btn[onclick*="${viewId}"]`);
-            if (matchingBtn) matchingBtn.classList.add('active');
-        }
+        // 2. Show the target tab
+        const target = document.getElementById(tabId);
+        if(target) { target.style.display = 'block'; setTimeout(() => target.classList.add('active-view'), 10); }
         
-        // Smooth scroll
-        const mainContent = document.querySelector('.main-content');
-        if (mainContent) mainContent.scrollTop = 0;
+        // 3. Highlight the bottom button
+        const navBtn = document.querySelector(`.nav-item[onclick*="${tabId}"]`);
+        if(navBtn) navBtn.classList.add('active');
+
+        // 4. Run contextual functions
+        if(tabId === 'homeDashboardView' && typeof updateGreeting === 'function') updateGreeting();
+        if(tabId === 'databaseFeatureView') renderFullDatabase();
+        window.scrollTo(0, 0);
+    }
+
+    function openClinicalTool(toolId) {
+        if(document.getElementById('activeWorkspace')) document.getElementById('activeWorkspace').style.display = 'block';
+        document.querySelectorAll('.view-content').forEach(v => { v.style.display = 'none'; v.classList.remove('active-view'); });
+        
+        const target = document.getElementById(toolId);
+        if(target) { target.style.display = 'block'; setTimeout(() => target.classList.add('active-view'), 10); }
+        window.scrollTo(0, 0);
+    }
+    
+    // Bridge to keep old dashboard buttons working
+    function switchMainFeature(id, btn) {
+        if(id === 'homeDashboardView' || id === 'databaseFeatureView' || id === 'aboutFeatureView') {
+            switchNavTab(id);
+        } else {
+            openClinicalTool(id);
+        }
     }
 
     function switchSubTab(subTabId, el) { 
@@ -2027,12 +2020,11 @@
         if(hour >= 12 && hour < 17) timeGreet = "Good afternoon";
         if(hour >= 17) timeGreet = "Good evening";
         
+        // Removed the truncation logic - it will now use your exact full name
         let docName = appSettings.docName || "Doctor";
-        let splitName = docName.split(" ");
-        let shortName = splitName.length > 1 ? `${splitName[0]} ${splitName[1]}` : docName;
         
         let greetingEl = document.getElementById('homeGreetingText');
-        if(greetingEl) greetingEl.innerHTML = `${timeGreet}, ${shortName} <span style="font-size:1.4rem;">👋</span>`;
+        if(greetingEl) greetingEl.innerHTML = `${timeGreet}, ${docName} <span style="font-size:1.4rem;">👋</span>`;
     }
 
     function populateHomeDrugs() {
