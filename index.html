@@ -144,65 +144,43 @@
         .sub-tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 0.75rem 1rem; cursor: pointer; font-size: 0.95rem; font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.2s;}
         .sub-tab-btn.active { color: var(--primary); border-color: var(--primary); }
 
-        /* =========================================
-           TRUE DESKTOP SAAS DASHBOARD (Edge-to-Edge)
-           ========================================= */
+        /* TAB BAR (MOBILE) / SIDEBAR (DESKTOP) */
+        .main-nav {
+            background: var(--bg-surface); border-top: 1px solid var(--border-soft); display: flex;
+            justify-content: space-around; padding: 10px 5px 25px 5px; box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 5000;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: transparent; border: none; color: var(--text-muted); gap: 4px; font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s; width: 25%;
+        }
+        .nav-item svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .nav-item.active { color: var(--primary); font-weight: 700; }
+        .nav-item.active svg { fill: rgba(91, 97, 246, 0.15); stroke-width: 2.5; }
+
+        /* FLOATING ACTION BUTTON (FAB) */
+        .fab {
+            position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px;
+            background: linear-gradient(135deg, var(--brand-cyan), var(--brand-blue)); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow-float); border: none; cursor: pointer; z-index: 5000; transition: transform 0.2s;
+        }
+        .fab svg { width: 30px; height: 30px; stroke: white; stroke-width: 2.5; }
+        .fab:active { transform: scale(0.9); }
+
+        /* DESKTOP SAAS LAYOUT (Transforms bottom tabs to left sidebar) */
         @media (min-width: 1024px) {
             .app-shell { flex-direction: row !important; }
-            .sidebar { width: 320px !important; flex-shrink: 0 !important; height: 100% !important; border-right: 1px solid var(--border-soft); overflow-y: auto; padding: 0; background: var(--bg-surface); z-index: 10; display: flex; flex-direction: column; transition: width 0.3s;}
-            .main-content { flex: 1 !important; height: 100% !important; overflow-y: auto !important; padding: 2.5rem 4rem !important; }
-            
-            .app-features-nav { display: flex; flex-direction: column; gap: 0.25rem; padding: 1.5rem; flex-shrink: 0;}
-            .feature-btn { position: relative; overflow: hidden; background: transparent; color: var(--text-muted); border: none; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s ease;}
-            .feature-btn:hover { background: var(--border-soft); color: var(--text-main); }
-            .feature-btn.active { background: var(--primary-light); color: var(--primary); font-weight: 700; border-left: 4px solid var(--primary); border-radius: 0 var(--radius-md) var(--radius-md) 0;}
-            
-            /* DYNAMIC HIDE NAV ON HOME (DESKTOP) */
-            .app-shell.home-active .sidebar { width: 0 !important; border-right: none !important; padding: 0 !important; }
-            .app-shell.home-active .app-features-nav { display: none !important; }
-
-            #doseCalcTab { display: grid !important; grid-template-columns: 400px 1fr !important; gap: 3rem !important; align-items: start !important; }
-            .tool-grid { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)) !important; gap: 2rem !important; }
-        }
-
-        /* =========================================
-           THE BULLETPROOF MOBILE NAV
-           ========================================= */
-        @media (max-width: 1023px) {
-            body, html { height: 100dvh !important; width: 100vw !important; overflow: hidden !important; margin: 0 !important; padding: 0 !important; background: var(--bg-body) !important; }
-            .app-shell { display: flex !important; flex-direction: column !important; height: calc(100dvh - 65px) !important; width: 100vw !important; margin: 0 !important; padding: 0 !important; }
-
-            .sidebar { position: relative !important; width: 100vw !important; height: auto !important; background: transparent !important; border: none !important; z-index: 10 !important; flex-shrink: 0; }
-            .main-content { flex: 1 !important; height: auto !important; overflow-y: auto !important; overflow-x: hidden !important; padding: 1rem 1rem 120px 1rem !important; width: 100vw !important; -webkit-overflow-scrolling: touch !important; }
-            
-            /* DYNAMIC HIDE NAV ON HOME (MOBILE) */
-            .app-shell.home-active .app-features-nav { display: none !important; }
-            .app-shell.home-active .main-content { padding-bottom: 2rem !important; }
-
-            .timeline-section { padding: 1.5rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);}
-            .tool-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important;}
-
-            .app-features-nav {
-                position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important;
-                width: 100vw !important; height: 80px !important;
-                background: #ffffff !important; border-top: 1px solid #e2e8f0 !important;
-                box-shadow: 0 -5px 25px rgba(0,0,0,0.08) !important; z-index: 999999 !important;
-                display: flex !important; flex-direction: row !important; gap: 12px !important;
-                overflow-x: auto !important; overflow-y: hidden !important;
-                align-items: center !important; padding: 0 15px !important; margin: 0 !important;
-                -webkit-overflow-scrolling: touch !important;
+            .main-content { padding-bottom: 40px !important; }
+            .main-nav { 
+                position: relative; width: 280px; height: 100vh; flex-direction: column; justify-content: flex-start; 
+                padding: 30px 20px; border-top: none; border-right: 1px solid var(--border-soft); align-items: stretch; gap: 10px;
             }
-            .app-features-nav::-webkit-scrollbar { display: none !important; }
-            .app-features-nav { -ms-overflow-style: none !important; scrollbar-width: none !important; }
-
-            .feature-btn {
-                flex-shrink: 0 !important; background: #f1f5f9 !important; border: none !important;
-                border-radius: 30px !important; padding: 0 20px !important; height: 48px !important;
-                font-size: 0.95rem !important; font-weight: 600 !important; color: #475569 !important;
-                display: inline-flex !important; align-items: center !important; justify-content: center !important;
-                margin: 0 !important; transition: all 0.2s ease !important; touch-action: manipulation !important;
-            }
-            .feature-btn.active { background: var(--primary) !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important; }
+            .nav-item { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 20px; border-radius: var(--radius-md); font-size: 1rem; }
+            .nav-item:hover { background: var(--bg-body); }
+            .nav-item.active { background: var(--primary-light); color: var(--primary); }
+            .fab { bottom: 30px; right: 40px; width: 70px; height: 70px; }
         }
 
         /* PRINT ENGINE SECURE HIDING */
@@ -267,23 +245,28 @@
   </div>
 
 <div class="app-shell home-active">
-    <div class="sidebar">
-        <div class="app-features-nav">
-            <button class="feature-btn alert" onclick="switchMainFeature('erFeatureView', this)">🚨 ER & NICU</button>
-            <button class="feature-btn" onclick="switchMainFeature('trackerFeatureView', this)">📅 Tracker</button>
-            <button class="feature-btn" onclick="switchMainFeature('dosageFeatureView', this)">💊 Dosage</button>
-            <button class="feature-btn" onclick="switchMainFeature('prescriptionFeatureView', this)">📝 Prescription</button>
-            <button class="feature-btn special" onclick="switchMainFeature('nutritionFeatureView', this)">🍎 Nutrition</button>
-            <button class="feature-btn" onclick="switchMainFeature('malnutritionFeatureView', this)">🩺 Triage</button>
-            <button class="feature-btn" onclick="switchMainFeature('milestoneFeatureView', this)">👶 Milestones</button>
-            <button class="feature-btn" onclick="switchMainFeature('growthFeatureView', this)">📈 Growth</button>
-            <button class="feature-btn" onclick="switchMainFeature('fluidsFeatureView', this)">💧 IV Fluids</button>
-            <button class="feature-btn" onclick="switchMainFeature('asthmaFeatureView', this)">🫁 PRAM</button>
-            <button class="feature-btn" onclick="switchMainFeature('jaundiceFeatureView', this)">🍼 Jaundice</button>
-            <button class="feature-btn" onclick="switchMainFeature('databaseFeatureView', this)">🗄️ Database</button>
-            <button class="feature-btn" onclick="switchMainFeature('aboutFeatureView', this)">⚙️ Settings</button>
-        </div>
-    </div>
+    <nav class="main-nav">
+        <button class="nav-item active" onclick="switchMainFeature('homeDashboardView', this)">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Home
+        </button>
+        <button class="nav-item" onclick="switchMainFeature('databaseFeatureView', this)">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Patients
+        </button>
+        <button class="nav-item" onclick="switchMainFeature('homeDashboardView', this)">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            Tools
+        </button>
+        <button class="nav-item" onclick="switchMainFeature('aboutFeatureView', this)">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            Settings
+        </button>
+    </nav>
+
+    <button class="fab" onclick="document.getElementById('registryPanel').classList.add('mobile-open')">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+    </button>
 
     <div class="main-content">
         <div id="homeDashboardView" class="view-content active-view">
