@@ -76,35 +76,34 @@
         .app-shell { width: 100vw; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-body); }
         .workspace { flex: 1; display: flex; overflow: hidden; position: relative; }
         .main-content { flex: 1; height: 100%; overflow-y: auto; padding: 20px 20px 100px 20px; -webkit-overflow-scrolling: touch; }
-
-        /* =========================================
-           PREMIUM APP DASHBOARD UI
+/* =========================================
+           KIDDOQ PREMIUM DASHBOARD UI
            ========================================= */
-        .dashboard-grid {
-            display: grid !important; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
-            gap: 1rem !important; padding-bottom: 2rem !important; margin-top: 1.5rem !important;
-        }
+        .greeting-box { margin-bottom: 24px; padding-top: 10px; }
+        .greeting-box h1 { font-size: 1.6rem; font-weight: 700; margin: 0; letter-spacing: -0.5px; color: var(--text-main); }
+        .greeting-box p { color: var(--text-muted); margin: 4px 0 0 0; font-size: 0.95rem; }
 
-        .app-card {
-            background: #ffffff !important; border-radius: 24px !important; padding: 1.5rem 0.5rem !important;
-            text-align: center !important; box-shadow: 0 10px 30px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02) !important;
-            border: 1px solid rgba(0,0,0,0.03) !important; cursor: pointer !important;
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s !important;
-            display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 12px !important;
-        }
-        .app-card:active { transform: scale(0.94) !important; background: #f8fafc !important; }
+        .usp-dose-card { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: white; border-radius: var(--radius-xl); padding: 24px; box-shadow: var(--shadow-float); position: relative; overflow: hidden; margin-bottom: 30px;}
+        .usp-dose-card::after { content: ''; position: absolute; top: -50%; right: -20%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border-radius: 50%; }
+        .usp-dose-card label { color: rgba(255,255,255,0.8); font-size: 0.75rem; }
+        .usp-dose-card input, .usp-dose-card select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; font-weight: 600; font-size: 1rem; border-radius: 12px; }
+        .usp-dose-card input:focus, .usp-dose-card select:focus { background: rgba(255,255,255,0.2); border-color: white; box-shadow: none; color: white; }
+        .usp-dose-card select option { background: var(--bg-surface); color: var(--text-main); }
+        .usp-dose-card input::placeholder { color: rgba(255,255,255,0.5); }
 
-        .card-icon {
-            width: 68px !important; height: 68px !important; border-radius: 50% !important;
-            display: flex !important; align-items: center !important; justify-content: center !important;
-            font-size: 34px !important; box-shadow: inset 0 -4px 8px rgba(0,0,0,0.06) !important;
-        }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .section-header h3 { margin: 0; font-size: 1.1rem; color: var(--text-main); font-weight: 700; }
+        
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .tool-btn { background: var(--bg-surface); border: 1px solid var(--border-soft); border-radius: var(--radius-lg); padding: 20px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.2s ease; text-align: center; }
+        .tool-btn:active { transform: scale(0.95); background: var(--bg-body); }
+        .tool-icon-wrapper { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+        .tool-icon-wrapper svg { width: 26px; height: 26px; }
+        .tool-btn span { font-size: 0.8rem; font-weight: 600; color: var(--text-main); line-height: 1.2; }
 
-        .app-card span { font-size: 0.9rem !important; font-weight: 700 !important; color: #334155 !important; line-height: 1.2 !important; }
-        .bg-red { background: #ffe4e6 !important; } .bg-blue { background: #dbeafe !important; }
-        .bg-green { background: #dcfce3 !important; } .bg-yellow { background: #fef3c7 !important; }
-        .bg-purple { background: #f3e8ff !important; } .bg-orange { background: #ffedd5 !important; }
-        .bg-gray { background: #f1f5f9 !important; }
+        /* Icon Colors */
+        .ic-red { background: #FFE4E6; color: #E11D48; } .ic-blue { background: #DBEAFE; color: #2563EB; }
+        .ic-purple { background: #F3E8FF; color: #9333EA; } .ic-green { background: #DCFCE3; color: #16A34A; }
         
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -183,6 +182,14 @@
             .fab { bottom: 30px; right: 40px; width: 70px; height: 70px; }
         }
 
+        /* KIDDOQ MODAL SYSTEM */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(20,20,43,0.6); z-index: 999999; display: none; backdrop-filter: blur(4px); animation: fadeIn 0.2s ease;}
+        .modal-overlay.active { display: flex; align-items: flex-end; justify-content: center; }
+        .modal-content { background: var(--bg-surface); width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; border-radius: 24px 24px 0 0; padding: 24px; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @media (min-width: 1024px) { .modal-content { border-radius: var(--radius-xl); align-self: center; } }
+        @keyframes fadeIn { 0%{opacity:0;} 100%{opacity:1;} }
+        @keyframes slideUpModal { 0%{transform:translateY(100%);} 100%{transform:translateY(0);} }
+
         /* PRINT ENGINE SECURE HIDING */
         @media screen { 
             .print-container { 
@@ -213,34 +220,35 @@
     </div>
   </header>
 
-  <div class="registry-dropdown" id="registryPanel">
-    <div class="panel" style="background: var(--bg-body);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-            <h3 style="margin:0;">Register New Patient</h3>
-            <button onclick="document.getElementById('registryPanel').classList.remove('mobile-open')" style="background:transparent; border:none; font-size:1.2rem; cursor:pointer; color:var(--text-muted);">✖</button>
+  <div class="modal-overlay" id="registryModal" onclick="if(event.target===this) this.classList.remove('active')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+            <h3 style="margin:0; font-size:1.4rem;">➕ New Patient</h3>
+            <button onclick="document.getElementById('registryModal').classList.remove('active')" style="background:var(--bg-body); border:none; width:36px; height:36px; border-radius:50%; font-size:1.2rem; cursor:pointer; color:var(--text-muted); display:flex; align-items:center; justify-content:center;">✖</button>
         </div>
         
         <label>Patient Name</label>
-        <input type="text" id="pName" placeholder="e.g., Baby of Sunita" list="savedPatientNames" autocomplete="off">
-        <datalist id="savedPatientNames"></datalist>
-        <label>Phone (For WhatsApp)</label><input type="text" id="pPhone" placeholder="e.g., 9876543210" oninput="saveAndRegisterPatient(true)">
-        <label>DOB</label><input type="date" id="dob" onchange="calculateAgeFromDob()">
-        <label>Current Age</label>
-        <div class="row-inputs"><input type="number" id="ageYrs" placeholder="Yrs" oninput="estimateWeightFromAge()"><input type="number" id="ageMos" placeholder="Mos" oninput="estimateWeightFromAge()"></div>
-        <div class="row-inputs" style="margin-top:10px;">
+        <input type="text" id="pName" placeholder="e.g., Baby of Sunita" autocomplete="off" style="margin-bottom:12px;">
+        <label>Phone</label>
+        <input type="text" id="pPhone" placeholder="e.g., 9876543210" oninput="saveAndRegisterPatient(true)" style="margin-bottom:12px;">
+        <label>DOB</label>
+        <input type="date" id="dob" onchange="calculateAgeFromDob()">
+        
+        <div class="row-inputs" style="margin-top:16px;">
+            <div><label>Age (Yrs)</label><input type="number" id="ageYrs" oninput="estimateWeightFromAge()"></div>
+            <div><label>Age (Mos)</label><input type="number" id="ageMos" oninput="estimateWeightFromAge()"></div>
+        </div>
+        <div class="row-inputs" style="margin-top:16px;">
             <div><label>Wt (kg)</label><input type="number" step="0.1" id="pWeight" oninput="saveAndRegisterPatient(true)"></div>
             <div><label>Ht (cm)</label><input type="number" step="0.1" id="htCm" oninput="saveAndRegisterPatient(true)"></div>
         </div>
-        <div class="row-inputs" style="margin-top:10px;">
+        <div class="row-inputs" style="margin-top:16px;">
             <div><label>HC (cm)</label><input type="number" step="0.1" id="hcCm" oninput="saveAndRegisterPatient(true)"></div>
             <div><label>Gender</label><select id="gender" onchange="saveAndRegisterPatient(true)"><option value="male">Male</option><option value="female">Female</option></select></div>
         </div>
-        <div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
-            <input type="checkbox" id="jeEndemic" onchange="saveAndRegisterPatient(true)" style="width:auto; margin:0;"> 
-            <label style="margin:0;">JE Endemic Area?</label>
-        </div>
-        <button class="action" onclick="saveAndRegisterPatient(false)">💾 Save Profile & Proceed</button>
-        <button class="secondary" style="margin-top:10px;" onclick="prepNewPatient()">➕ Clear Form</button>
+        
+        <button class="action" style="margin-top:24px; box-shadow: 0 4px 12px rgba(91, 97, 246, 0.25);" onclick="saveAndRegisterPatient(false)">💾 Save & Open File</button>
+        <button class="secondary" style="margin-top:12px; border:none;" onclick="prepNewPatient()">🧹 Clear Form</button>
     </div>
   </div>
 
@@ -270,44 +278,66 @@
 
     <div class="main-content">
         <div id="homeDashboardView" class="view-content active-view">
-            <div style="background: linear-gradient(135deg, var(--primary), #1e3a8a); border-radius: 24px; padding: 2rem; color: white; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);">
-                <h2 style="margin: 0; font-size: 1.6rem;">Welcome to the Hub</h2>
-                <p style="margin: 5px 0 0 0; opacity: 0.9;">Select a clinical module to begin.</p>
+            <div class="greeting-box">
+                <h1 id="homeGreetingText">Good morning, Doctor 👋</h1>
+                <p>What would you like to calculate today?</p>
             </div>
 
-            <div class="dashboard-grid">
-                <div class="app-card" onclick="switchMainFeature('erFeatureView')">
-                    <div class="card-icon bg-red">🚨</div><span>ER & NICU</span>
+            <div class="usp-dose-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; position:relative; z-index:2;">
+                    <h3 style="margin:0; font-size:1.1rem; display:flex; align-items:center; gap:8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.47 5.08a6.1 6.1 0 0 0-8.6 8.61l6.1 6.1a6.1 6.1 0 0 0 8.61-8.61l-6.1-6.1Z"></path><line x1="6.81" y1="13.19" x2="16.3" y2="3.7"></line></svg> Quick Dose Calc
+                    </h3>
                 </div>
-                <div class="app-card" onclick="switchMainFeature('dosageFeatureView')">
-                    <div class="card-icon bg-blue">💊</div><span>Dosage Calc</span>
+                
+                <div class="row-inputs" style="margin-bottom: 16px; position:relative; z-index:2;">
+                    <div>
+                        <label>Patient Weight (kg)</label>
+                        <input type="number" id="homeWeight" placeholder="e.g. 12.5" oninput="runHomeDoseCalc()" style="font-size: 1.1rem;">
+                    </div>
+                    <div>
+                        <label>Drug Category</label>
+                        <select id="homeCategory" onchange="populateHomeDrugs(); runHomeDoseCalc();">
+                            <option value="">-- Select --</option>
+                            <option value="antibiotics">Antibiotics</option>
+                            <option value="antipyretics">Antipyretics / Pain</option>
+                            <option value="antihistamines">Allergy / Cold</option>
+                            <option value="respiratory">Respiratory</option>
+                            <option value="git">Gastrointestinal</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="app-card" onclick="switchMainFeature('trackerFeatureView')">
-                    <div class="card-icon bg-purple">📅</div><span>Tracker</span>
+                
+                <div style="position:relative; z-index:2;">
+                    <label>Formulation</label>
+                    <select id="homeFormulation" onchange="runHomeDoseCalc()" style="margin-bottom: 10px;">
+                        <option value="">-- Choose Category First --</option>
+                    </select>
                 </div>
-                <div class="app-card" onclick="switchMainFeature('prescriptionFeatureView')">
-                    <div class="card-icon bg-green">📝</div><span>Prescription</span>
+
+                <div id="homeDoseResult" style="margin-top:15px; position:relative; z-index:2;"></div>
+            </div>
+
+            <div class="section-header">
+                <h3>Quick Access Tools</h3>
+            </div>
+            
+            <div class="tools-grid">
+                <div class="tool-btn" onclick="switchMainFeature('erFeatureView')">
+                    <div class="tool-icon-wrapper ic-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><path d="M19 21v-4"></path><path d="M19 17a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v4"></path><path d="M12 15v-6"></path><path d="M9 12h6"></path><path d="M12 9a2 2 0 0 0-2-2h0a2 2 0 0 0-2 2v0"></path></svg></div>
+                    <span>ER & NICU</span>
                 </div>
-                <div class="app-card" onclick="switchMainFeature('nutritionFeatureView')">
-                    <div class="card-icon bg-orange">🍎</div><span>Nutrition</span>
+                <div class="tool-btn" onclick="switchMainFeature('prescriptionFeatureView')">
+                    <div class="tool-icon-wrapper ic-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></div>
+                    <span>Prescription</span>
                 </div>
-                <div class="app-card" onclick="switchMainFeature('malnutritionFeatureView')">
-                    <div class="card-icon bg-yellow">🩺</div><span>Triage</span>
+                <div class="tool-btn" onclick="switchMainFeature('growthFeatureView')">
+                    <div class="tool-icon-wrapper ic-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
+                    <span>Growth Charts</span>
                 </div>
-                <div class="app-card" onclick="switchMainFeature('milestoneFeatureView')">
-                    <div class="card-icon bg-blue">👶</div><span>Milestones</span>
-                </div>
-                <div class="app-card" onclick="switchMainFeature('growthFeatureView')">
-                    <div class="card-icon bg-red">📈</div><span>Growth</span>
-                </div>
-                <div class="app-card" onclick="switchMainFeature('fluidsFeatureView')">
-                    <div class="card-icon bg-blue">💧</div><span>IV Fluids</span>
-                </div>
-                <div class="app-card" onclick="switchMainFeature('databaseFeatureView')">
-                    <div class="card-icon bg-purple">🗄️</div><span>Database</span>
-                </div>
-                <div class="app-card" onclick="switchMainFeature('aboutFeatureView')">
-                    <div class="card-icon bg-gray">⚙️</div><span>Settings</span>
+                <div class="tool-btn" onclick="switchMainFeature('trackerFeatureView')">
+                    <div class="tool-icon-wrapper ic-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
+                    <span>Vaccination</span>
                 </div>
             </div>
         </div>
@@ -1989,6 +2019,72 @@
         dlAnchorElem.remove();
         if(typeof showSystemToast === "function") showSystemToast("📥 Database backup downloaded successfully!");
     }
+
+    // --- KIDDOQ HOME DASHBOARD LOGIC ---
+    function updateGreeting() {
+        const hour = new Date().getHours();
+        let timeGreet = "Good morning";
+        if(hour >= 12 && hour < 17) timeGreet = "Good afternoon";
+        if(hour >= 17) timeGreet = "Good evening";
+        
+        let docName = appSettings.docName || "Doctor";
+        let splitName = docName.split(" ");
+        let shortName = splitName.length > 1 ? `${splitName[0]} ${splitName[1]}` : docName;
+        
+        let greetingEl = document.getElementById('homeGreetingText');
+        if(greetingEl) greetingEl.innerHTML = `${timeGreet}, ${shortName} <span style="font-size:1.4rem;">👋</span>`;
+    }
+
+    function populateHomeDrugs() {
+        const cat = document.getElementById('homeCategory').value; 
+        const formSelect = document.getElementById('homeFormulation');
+        formSelect.innerHTML = '<option value="">-- Choose Formulation --</option>';
+        if(cat && drugDb[cat]) {
+            let combined = [...drugDb[cat], ...(customDrugsStore[cat] || [])];
+            combined.forEach((drug, idx) => { 
+                let opt = document.createElement('option'); opt.value = idx; 
+                opt.text = drug.name + (drug.brand ? ` [${drug.brand}]` : ""); 
+                formSelect.add(opt); 
+            });
+        }
+    }
+
+    function runHomeDoseCalc() {
+        const w = parseFloat(document.getElementById('homeWeight').value); 
+        const c = document.getElementById('homeCategory').value; 
+        const i = document.getElementById('homeFormulation').value;
+        const out = document.getElementById('homeDoseResult');
+        
+        if(!w || !c || i === "") { out.innerHTML = ""; return; }
+        
+        let combined = [...(drugDb[c] || []), ...(customDrugsStore[c] || [])];
+        const drug = combined[i]; if (!drug) return;
+        
+        let volMl = 0; let details = ""; let unitStr = drug.vol === 1 ? 'Unit/Tab' : 'mL';
+        
+        if (drug.doseType === 'fixed') {
+            volMl = drug.vol;
+        } else {
+            let targetMg = drug.doseType === 'perDay' ? (w * drug.doseMg) / (drug.div || 1) : (w * drug.doseMg);
+            if (drug.maxMg && targetMg > drug.maxMg) { targetMg = drug.maxMg; details = `Max cap: ${drug.maxMg}mg`; } 
+            else { details = `${targetMg.toFixed(1)} mg/dose`; }
+            volMl = (targetMg * (drug.vol || 1)) / (drug.conc || 1); 
+        }
+        
+        out.innerHTML = `
+            <div style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.3); border-radius:12px; padding:16px; margin-top:10px;">
+                <div style="font-size:0.75rem; color:rgba(255,255,255,0.8); text-transform:uppercase;">Administer</div>
+                <div style="font-size:2.2rem; font-weight:800; color:white; line-height:1;">${volMl.toFixed(1)} <span style="font-size:1rem; font-weight:600;">${unitStr}</span></div>
+                <div style="font-size:0.95rem; font-weight:600; color:var(--brand-cyan); margin-top:5px;">${drug.freq}</div>
+                ${details ? `<div style="font-size:0.75rem; color:rgba(255,255,255,0.6); margin-top:4px;">Target: ${details}</div>` : ''}
+            </div>
+        `;
+    }
+
+    // Call updateGreeting on load
+    document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(updateGreeting, 500); 
+    });
 </script>
 </body>
 </html>
