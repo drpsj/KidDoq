@@ -411,25 +411,8 @@
                 <h3>Quick Access Tools</h3>
             </div>
             
-            <div class="tools-grid">
-                <div class="tool-btn" onclick="switchMainFeature('erFeatureView')">
-                    <div class="tool-icon-wrapper ic-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><path d="M19 21v-4"></path><path d="M19 17a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v4"></path><path d="M12 15v-6"></path><path d="M9 12h6"></path><path d="M12 9a2 2 0 0 0-2-2h0a2 2 0 0 0-2 2v0"></path></svg></div>
-                    <span>ER & NICU</span>
+            <div id="homeQuickToolsGrid" class="tools-grid">
                 </div>
-                <div class="tool-btn" onclick="switchMainFeature('prescriptionFeatureView')">
-                    <div class="tool-icon-wrapper ic-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></div>
-                    <span>Prescription</span>
-                </div>
-                <div class="tool-btn" onclick="switchMainFeature('growthFeatureView')">
-                    <div class="tool-icon-wrapper ic-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
-                    <span>Growth Charts</span>
-                </div>
-                <div class="tool-btn" onclick="switchMainFeature('trackerFeatureView')">
-                    <div class="tool-icon-wrapper ic-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
-                    <span>Vaccination</span>
-                </div>
-            </div>
-        </div>
 
         <div id="toolsTab" class="view-content">
             <div class="section-header" style="margin-bottom:20px;">
@@ -829,6 +812,10 @@
                         </div>
                     </div>
                     <div>
+                        <h4 style="margin-top:0; color:var(--primary);">📱 Dashboard Quick Access</h4>
+                        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Select which tools appear on your Home screen.</p>
+                        <div id="settingsQuickToolsList" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; background:var(--bg-body); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-soft); margin-bottom:1.5rem;">
+                            </div>
                         <h4 style="margin-top:0; color:var(--primary);">📚 Clinical Guidelines & Sources</h4>
                         <div style="font-size:0.85rem; line-height:1.6; background:var(--bg-body); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-soft); margin-bottom:1rem;">
                             <ul style="margin:0; padding-left:1.2rem; color:var(--text-main);">
@@ -1057,6 +1044,55 @@
     let wtChartInstance = null; 
     let htChartInstance = null;
 
+    // --- 2.5 QUICK ACCESS ENGINE ---
+    const masterToolRegistry = [
+        { id: 'prescriptionFeatureView', name: 'Rx & Dosing', icon: 'icon-rx.png' },
+        { id: 'certificateFeatureView', name: 'Certificates', icon: 'icon-cert.png' },
+        { id: 'growthFeatureView', name: 'Growth Curves', icon: 'icon-growth.png' },
+        { id: 'trackerFeatureView', name: 'Vaccination', icon: 'icon-vax.png' },
+        { id: 'erFeatureView', name: 'ER & Resus', icon: 'icon-er.png' },
+        { id: 'milestoneFeatureView', name: 'Milestones', icon: 'icon-miles.jpg' },
+        { id: 'malnutritionFeatureView', name: 'Triage & MAC', icon: 'icon-triage.png' },
+        { id: 'nutritionFeatureView', name: 'Diet Recall', icon: 'icon-diet.png' },
+        { id: 'jaundiceFeatureView', name: 'Jaundice', icon: 'icon-jaundice.png' },
+        { id: 'asthmaFeatureView', name: 'PRAM Score', icon: 'icon-asthma.png' }
+    ];
+
+    function renderHomeQuickTools() {
+        const grid = document.getElementById('homeQuickToolsGrid');
+        if(!grid) return;
+        let toolsToRender = appSettings.quickTools || ['erFeatureView', 'prescriptionFeatureView', 'growthFeatureView', 'trackerFeatureView'];
+        
+        let html = '';
+        toolsToRender.forEach(toolId => {
+            let tool = masterToolRegistry.find(t => t.id === toolId);
+            if(tool) {
+                html += `
+                <div class="tool-btn" onclick="openClinicalTool('${tool.id}')">
+                    <div class="tool-icon-wrapper"><img src="${tool.icon}" alt="${tool.name}"></div>
+                    <span>${tool.name}</span>
+                </div>`;
+            }
+        });
+        grid.innerHTML = html;
+    }
+
+    function renderSettingsChecklist() {
+        const container = document.getElementById('settingsQuickToolsList');
+        if(!container) return;
+        let selectedTools = appSettings.quickTools || ['erFeatureView', 'prescriptionFeatureView', 'growthFeatureView', 'trackerFeatureView'];
+        
+        let html = '';
+        masterToolRegistry.forEach(tool => {
+            let isChecked = selectedTools.includes(tool.id) ? 'checked' : '';
+            html += `
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:var(--text-main); font-weight:500; text-transform:none;">
+                <input type="checkbox" class="quick-tool-checkbox" value="${tool.id}" ${isChecked} style="width:16px; height:16px; margin:0;">
+                ${tool.name}
+            </label>`;
+        });
+        container.innerHTML = html;
+    }
     // --- 3. INITIALIZATION & UI ROUTING ---
     document.addEventListener("DOMContentLoaded", function() {
         applySettingsToUI();
@@ -2094,6 +2130,9 @@
         if(appSettings.signature && document.getElementById('sigPreview')) {
             document.getElementById('sigPreview').innerHTML = `<img src="${appSettings.signature}" style="max-height:60px; border-radius:8px;">`;
         }
+        // Render the dynamic tools
+        renderSettingsChecklist();
+        renderHomeQuickTools();
     }
 
     function saveSettings() {
@@ -2104,7 +2143,16 @@
         appSettings.tagline = document.getElementById('setTagline').value;
         appSettings.phone = document.getElementById('setPhone').value;
         appSettings.address = document.getElementById('setAddress').value;
+        
+        // NEW: Save Quick Tools selection
+        let selectedBoxes = document.querySelectorAll('.quick-tool-checkbox:checked');
+        appSettings.quickTools = Array.from(selectedBoxes).map(box => box.value);
+        
         localStorage.setItem('clinic_settings', JSON.stringify(appSettings));
+        
+        // NEW: Instantly update the home screen layout
+        renderHomeQuickTools();
+        
         if(typeof showSystemToast === 'function') showSystemToast("Settings & Profile Saved!");
     }
 
