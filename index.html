@@ -1246,6 +1246,20 @@
             rxList: globalPatientsStore[id]?.rxList || [],
             dietLogs: globalPatientsStore[id]?.dietLogs || []
         };
+        
+        localStorage.setItem('nis_patients', JSON.stringify(globalPatientsStore)); activePatientId = id;
+        if(document.getElementById('headerPatientText')) document.getElementById('headerPatientText').innerText = `👤 ${nameStr}`;
+        
+        if(!isBackgroundUpdate) {
+            let modal = document.getElementById('registryModal');
+            if(modal) modal.classList.remove('active');
+            triggerActiveWorkspaceBuild(id); 
+        } else {
+            if(document.getElementById('activeWorkspace') && document.getElementById('activeWorkspace').style.display === 'block') {
+                calculateDose(); calcGrowth(); calcMalnutrition(); calcNutrition();
+            }
+        }
+    }
 
     function triggerActiveWorkspaceBuild(pId) {
         if(document.getElementById('btnMasterPrint')) document.getElementById('btnMasterPrint').style.display = "flex";
@@ -2024,9 +2038,9 @@
         if(appSettings.signature && document.getElementById('sigPreview')) {
             document.getElementById('sigPreview').innerHTML = `<img src="${appSettings.signature}" style="max-height:60px; border-radius:8px;">`;
         }
-        // Render the dynamic tools
-        renderSettingsChecklist();
-        renderHomeQuickTools();
+        
+        if (typeof renderSettingsChecklist === 'function') renderSettingsChecklist();
+        if (typeof renderHomeQuickTools === 'function') renderHomeQuickTools();
     }
 
     function saveSettings() {
@@ -2042,9 +2056,9 @@
         appSettings.quickTools = Array.from(selectedBoxes).map(box => box.value);
         
         localStorage.setItem('clinic_settings', JSON.stringify(appSettings));
-        renderHomeQuickTools();
         
-        if(typeof showSystemToast === 'function') showSystemToast("Settings & Profile Saved!");
+        if (typeof renderHomeQuickTools === 'function') renderHomeQuickTools();
+        if (typeof showSystemToast === 'function') showSystemToast("Settings & Profile Saved!");
     }
 
     function handleSignatureUpload(input) {
@@ -2133,6 +2147,7 @@
         if(typeof showSystemToast === "function") showSystemToast("📥 Database backup downloaded successfully!");
     }
 
+    // --- 15. HOME DASHBOARD LOGIC ---
     function updateGreeting() {
         const hour = new Date().getHours();
         let timeGreet = "Good morning";
