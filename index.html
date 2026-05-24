@@ -215,14 +215,51 @@
         }
 
         /* =========================================
-           KIDDOQ PREMIUM TOOL GRID (ICON ENLARGEMENT)
+           KIDDOQ BULLETPROOF GRID & ICON FIX
            ========================================= */
-        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)) !important; gap: 16px !important; margin-bottom: 24px !important; }
-        .tool-btn { background: var(--bg-surface) !important; border: 1px solid var(--border-soft) !important; border-radius: var(--radius-lg) !important; padding: 24px 10px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 14px !important; cursor: pointer !important; box-shadow: var(--shadow-sm) !important; transition: all 0.2s ease !important; text-align: center !important; }
-        .tool-btn:active { transform: scale(0.95) !important; background: var(--bg-body) !important; }
-        .tool-icon-wrapper { width: 68px !important; height: 68px !important; border-radius: 18px !important; display: flex !important; align-items: center !important; justify-content: center !important; background: transparent !important; }
-        .tool-icon-wrapper img, .tool-icon-wrapper svg { width: 44px !important; height: 44px !important; object-fit: contain !important; }
-        .tool-btn span { font-size: 0.9rem !important; font-weight: 700 !important; color: var(--text-main) !important; line-height: 1.2 !important; }
+        .tools-grid { 
+            display: grid !important; 
+            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)) !important; 
+            gap: 16px !important; 
+            margin-bottom: 24px !important; 
+            align-items: start !important; /* This absolutely prevents vertical stretching */
+        }
+        .tool-btn { 
+            background: var(--bg-surface) !important; 
+            border: 1px solid var(--border-soft) !important; 
+            border-radius: 18px !important; 
+            padding: 20px 8px !important; 
+            display: flex !important; 
+            flex-direction: column !important; 
+            align-items: center !important; 
+            justify-content: flex-start !important; 
+            gap: 12px !important; 
+            height: auto !important; 
+        }
+        .tool-icon-wrapper { 
+            width: 64px !important; 
+            height: 64px !important; 
+            flex-shrink: 0 !important; /* Prevents the box from collapsing or exploding */
+            display: flex !important; 
+            align-items: center !important; 
+            justify-content: center !important; 
+            background: transparent !important;
+        }
+        .tool-icon-wrapper img, .tool-icon-wrapper svg { 
+            width: 100% !important; 
+            height: 100% !important; 
+            max-width: 50px !important; 
+            max-height: 50px !important; 
+            object-fit: contain !important; 
+            display: block !important;
+        }
+        .tool-btn span { 
+            font-size: 0.85rem !important; 
+            font-weight: 700 !important; 
+            color: var(--text-main) !important; 
+            line-height: 1.2 !important; 
+            text-align: center !important; 
+        }
     </style>
 </head>
 <body>
