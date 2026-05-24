@@ -301,6 +301,16 @@
             }
             @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         }
+
+        /* =========================================
+           PRINT ENGINE FIX (DARK MODE OVERRIDE)
+           ========================================= */
+        @media print {
+            body, body.dark-mode, .app-shell { background: #ffffff !important; color: #000000 !important; }
+            .dark-mode * { color: #000000 !important; border-color: #000000 !important; text-shadow: none !important; }
+            #printEngine { color: #000000 !important; background: #ffffff !important; }
+            #printEngine * { color: #000000 !important; }
+        }
     </style>
 </head>
 <body>
@@ -2142,7 +2152,19 @@
         document.getElementById('calcWeight').value = p.weight || "";
         if(document.getElementById('headerPatientText')) document.getElementById('headerPatientText').innerText = `👤 ${p.name}`;
         
-        triggerActiveWorkspaceBuild(id);
+        if (typeof triggerActiveWorkspaceBuild === 'function') triggerActiveWorkspaceBuild(id);
+        
+        // --- THE FIX: FORCE THE TOOLS TO RE-DRAW WITH SAVED DATA ---
+        if(typeof buildTimeline === 'function') buildTimeline();
+        if(typeof buildMilestoneReference === 'function') buildMilestoneReference();
+        if(typeof renderDietLogs === 'function') renderDietLogs();
+        if(typeof calculateDose === 'function') calculateDose(); 
+        if(typeof calcGrowth === 'function') calcGrowth();
+        if(typeof calcMalnutrition === 'function') calcMalnutrition();
+        
+        // --- THE FIX: INSTANTLY SWITCH BACK TO DASHBOARD ---
+        if(typeof switchNavTab === 'function') switchNavTab('homeDashboardView');
+        
         if(typeof showSystemToast === 'function') showSystemToast(`Opened file: ${p.name}`);
     }
 
