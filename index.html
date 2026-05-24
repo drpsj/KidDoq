@@ -643,7 +643,56 @@
                     </div>
                 </div>
 
+                <div id="doseReverseTab" class="sub-tab-content">
+                    <div class="timeline-section">
+                        <div class="tool-grid">
+                            <div>
+                                <label>Category</label><select id="revCategory" onchange="populateRevDrugs()"><option value="">-- Select --</option><option value="antibiotics">Antibiotics</option><option value="antipyretics">Antipyretics</option><option value="antihistamines">Antihistamines</option><option value="git">Gastrointestinal</option><option value="respiratory">Respiratory</option></select>
+                                <label>Formulation</label><select id="revFormulation" onchange="calcReverse()"><option value="">-- formulation --</option></select>
+                                <label>Volume Administered (mL/Tab)</label><input type="number" step="0.1" id="revVol" oninput="calcReverse()">
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:10px;">
+                                <div id="revOutputArea" class="tool-result neutral">Awaiting volume parameters.</div>
+                                <div id="revAddButtonArea"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <div id="doseManageTab" class="sub-tab-content">
+                    <div class="timeline-section tool-grid" style="grid-template-columns: 1.5fr 1fr;">
+                        <div>
+                            <h4 style="margin-top:0; color:var(--primary);">➕ Add Custom Formulation</h4>
+                            <div class="row-inputs">
+                                <div><label>Category</label><select id="newDrugCat"><option value="antibiotics">Antibiotics</option><option value="antipyretics">Antipyretics</option><option value="antihistamines">Antihistamines</option><option value="respiratory">Respiratory</option><option value="git">Gastrointestinal</option></select></div>
+                                <div><label>Drug Name & Brand</label><input type="text" id="newDrugName" placeholder="e.g. Paracetamol [Calpol]"></div>
+                            </div>
+                            <div class="row-inputs" style="margin-top:10px;">
+                                <div><label>Dose Amount</label><input type="number" id="newDrugDose" placeholder="e.g. 15"></div>
+                                <div><label>Dose Type</label><select id="newDrugType"><option value="perDose">mg/kg/dose</option><option value="perDay">mg/kg/day</option><option value="fixed">Fixed Volume (e.g. 1 Tab)</option></select></div>
+                            </div>
+                            <div class="row-inputs" style="margin-top:10px;">
+                                <div><label>Divided Into</label><input type="number" id="newDrugDiv" placeholder="e.g. 3 (for TID)"></div>
+                                <div><label>Frequency Label</label><input type="text" id="newDrugFreq" placeholder="e.g. TID"></div>
+                            </div>
+                            <div class="row-inputs" style="margin-top:10px;">
+                                <div><label>Concentration (mg)</label><input type="number" id="newDrugConc" placeholder="e.g. 250"></div>
+                                <div><label>Per Volume (mL)</label><input type="number" id="newDrugVol" placeholder="e.g. 5"></div>
+                            </div>
+                            <button class="action" style="margin-top:20px;" onclick="saveCustomDrug()">💾 Save to Database</button>
+                        </div>
+                        <div style="background:var(--bg-body); padding:1rem; border-radius:var(--radius-md);">
+                            <h4 style="margin-top:0;">Database Rules</h4>
+                            <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;">
+                                • <b>perDose</b>: Multiplies dose directly by weight.<br>
+                                • <b>perDay</b>: Multiplies by weight, then divides by "Divided Into".<br>
+                                • <b>fixed</b>: Ignores weight, prescribes exact "Volume".<br>
+                                • Saved drugs persist locally and appear at the bottom of dropdowns.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div id="certificateFeatureView" class="view-content">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
@@ -675,35 +724,7 @@
                     </div>
                 </div>
             </div>
-                <div id="rxCertTab" class="sub-tab-content">
-                    <div class="timeline-section tool-grid" style="grid-template-columns: 1fr 1.5fr;">
-                        <div>
-                            <h4 style="margin-top:0; color:var(--warning);">Universal Note Generator</h4>
-                            <label>Template Category</label>
-                            <select id="certCategory" onchange="generateCertTemplate()">
-                                <option value="none">-- Select Template --</option>
-                                <option value="leave">Medical Leave / Bed Rest</option>
-                                <option value="fitness">Fitness / Rejoining (School/Sports)</option>
-                                <option value="attendance">Attendance / Visit Proof</option>
-                                <option value="referral">Specialist / Lab Referral</option>
-                                <option value="advice">Advice / Diet / Home Care</option>
-                                <option value="exemption">Medical Exemption / Authorization</option>
-                            </select>
-                            <label style="margin-top:10px;">Document Title</label>
-                            <input type="text" id="certTitle" placeholder="e.g. FITNESS CERTIFICATE">
-                            <label style="margin-top:10px;">Relevant Dates / Days</label>
-                            <input type="text" id="certDates" placeholder="e.g. 3 days from 12-Nov" oninput="generateCertTemplate()">
-                            <button class="secondary" style="margin-top:10px; width:100%;" onclick="generateCertTemplate()">🔄 Auto-Fill Template</button>
-                        </div>
-                        <div>
-                            <h4 style="margin-top:0; color:var(--primary);">Final Document Content (Editable)</h4>
-                            <textarea id="certBody" style="width:100%; padding:1rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-family:inherit; font-size:0.95rem; line-height:1.6; min-height:250px; resize:vertical;" placeholder="Select a template on the left, or manually type your certificate/note here..."></textarea>
-                            <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;"><b>Note:</b> You can freely edit this text. Whatever is in this box will be printed directly above your signature.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            
             <div id="nutritionFeatureView" class="view-content">
                 <h2 class="section-title">🍎 Nutrition Tracker & 24h Recall</h2>
                 <div class="sub-tabs-nav">
