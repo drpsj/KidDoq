@@ -61,11 +61,14 @@
         
        /* KIDDOQ TOP HEADER */
         header {
-            background: var(--bg-surface); padding: 16px 20px; display: flex; justify-content: center; align-items: center;
-            box-shadow: var(--shadow-sm); z-index: 100; flex-shrink: 0; border-bottom: 1px solid var(--border-soft); position: relative;
+            background: var(--bg-surface); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: var(--shadow-sm); z-index: 100; flex-shrink: 0; border-bottom: 1px solid var(--border-soft);
         }
-        .brand-logo { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; margin: 0; background: linear-gradient(135deg, var(--brand-pink), var(--brand-cyan), var(--brand-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; cursor: pointer;}
-        .brand-logo img { width: 44px !important; height: 44px !important; }
+        .brand-logo { 
+            font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; margin: 0 auto; 
+            background: linear-gradient(135deg, var(--brand-pink), var(--brand-cyan), var(--brand-blue)); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer;
+        }
         
         .header-active-patient {
             background: var(--primary-light); color: var(--primary); padding: 6px 12px; border-radius: var(--radius-pill);
@@ -283,7 +286,7 @@
             
             /* Gradient Waves at the bottom */
             .splash-waves {
-                position: absolute; bottom: 0; left: 0; width: 100%; height: 30vh;
+                position: absolute; bottom: 0; left: 0; width: 100%; height: 35vh;
                 background: linear-gradient(135deg, var(--brand-blue), var(--brand-pink));
                 mask-image: radial-gradient(ellipse at top, transparent 50%, black 100%);
                 -webkit-mask-image: radial-gradient(ellipse at top, transparent 50%, black 100%);
@@ -291,12 +294,12 @@
             }
             
             .splash-content { z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; }
-            .splash-content h1 { color: white; font-size: 3rem; margin: 15px 0 0 0; letter-spacing: -1px; }
-            .splash-content p { color: #9CA3AF; font-size: 1rem; margin-top: 5px; }
+            .splash-content h1 { color: white; font-size: 3.5rem; margin: 0; letter-spacing: -1px; }
+            .splash-content p { color: #9CA3AF; font-size: 1.1rem; margin-top: 5px; font-weight: 500; }
             
-            /* Loading Spinner */
+            /* Modern Loading Spinner */
             .splash-loader {
-                margin-top: 40px; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1);
+                margin-top: 50px; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1);
                 border-left-color: var(--brand-cyan); border-radius: 50%; animation: spin 1s linear infinite;
             }
             @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -311,17 +314,63 @@
             #printEngine { color: #000000 !important; background: #ffffff !important; }
             #printEngine * { color: #000000 !important; }
         }
+
+        /* =========================================
+           THUMB ZONE: STICKY ACTION BAR
+           ========================================= */
+        .workspace-actions {
+            position: sticky;
+            bottom: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 12px 20px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-soft);
+            margin-top: 30px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .dark-mode .workspace-actions {
+            background: rgba(18, 24, 38, 0.85);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .workspace-actions button {
+            margin: 0 !important;
+            border-radius: 30px !important;
+            padding: 10px 20px !important;
+        }
+
+        
     </style>
 </head>
 <body>
+    <div id="splashScreen" class="splash-screen">
+        <div class="splash-content">
+            <img src="kiddoq lite.png" alt="KidDoq Logo" style="width: 90px; height: 90px; object-fit: contain; margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(0,212,255,0.4));">
+            <h1>Kid<span style="color: var(--brand-cyan);">Doq</span></h1>
+            <p>Smart Pediatric Companion</p>
+            <div class="splash-loader"></div>
+        </div>
+        <div class="splash-waves"></div>
+    </div>
+
     <div id="systemToastContainer" style="position:fixed; bottom:100px; right:30px; z-index:99999; display:flex; flex-direction:column; gap:10px; pointer-events:none;"></div>
   
-  <header>
-    <div class="brand-logo" onclick="switchNavTab('homeDashboardView')">
-        <img src="kiddoq lite.png" alt="KidDoq Logo" style="width: 32px; height: 32px; object-fit: contain;">
-        KidDoq
-    </div>
-    </header>
+    <div class="app-shell">
+        <header>
+            <div style="width: 33%;"></div> <div class="brand-logo" onclick="switchNavTab('homeDashboardView')">
+                <img src="kiddoq lite.png" alt="KidDoq Logo" style="width: 32px; height: 32px; object-fit: contain;">
+                KidDoq
+            </div>
+            <div id="headerPatientText" style="width: 33%; text-align: right; font-size: 0.9rem; font-weight: 600; color: var(--brand-cyan); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+        </header>
 
   <div class="modal-overlay" id="registryModal" onclick="if(event.target===this) this.classList.remove('active')">
     <div class="modal-content" onclick="event.stopPropagation()">
@@ -473,10 +522,10 @@
     
         <div id="activeWorkspace" style="display:none;">
             
-            <div style="display:flex; justify-content:flex-end; gap:10px; margin-bottom:1rem; border-bottom: 1px solid var(--border-soft); padding-bottom: 1rem;">
-                <button id="btnMasterWA" class="secondary" style="display:none; width:auto; border-color:#16a34a; color:#16a34a; font-weight:700;" onclick="sendWACompReport()">📱 WhatsApp Report</button>
-                <button id="btnMasterPrint" class="secondary" style="display:none; width:auto; border-color:var(--primary); color:var(--primary); font-weight:700;" onclick="executePrint('comprehensive')">🖨️ Print Comp. Report</button>
-            </div>
+    <div class="workspace-actions">
+        <button id="btnMasterPrint" onclick="executePrint('comprehensive')" class="action" style="display:none; background:var(--brand-blue); color:white; border:none; font-weight:bold;">🖨️ Print Report</button>
+        <button id="btnMasterWA" onclick="sendWACompReport()" class="action" style="display:none; background:#25D366; color:white; border:none; font-weight:bold;">📱 WhatsApp</button>
+    </div>
 
             <div id="databaseFeatureView" class="view-content">
                 <h2 class="section-title" style="margin-bottom: 0;">🗄️ Patient Master Database</h2>
@@ -1103,23 +1152,7 @@
         });
         container.innerHTML = html;
     }
-    // --- 3. INITIALIZATION & UI ROUTING ---
-    document.addEventListener("DOMContentLoaded", function() {
-        applySettingsToUI();
-        renderFoodDB(foodsDb);
-        populateFoodSelect();
-        buildMilestoneReference();
-        populateDrugs(); 
-        
-        // Hide Splash Screen after 2.5 seconds
-        setTimeout(() => {
-            const splash = document.getElementById('splashScreen');
-            if(splash) splash.classList.add('hidden');
-        }, 2500);
-
-        switchMainFeature('homeDashboardView');
-    });
-
+    
     // --- 4. CORE NAVIGATION ENGINE (KIDDOQ) ---
     function switchNavTab(tabId) {
         document.querySelectorAll('.view-content').forEach(v => { v.style.display = 'none'; v.classList.remove('active-view'); });
@@ -1286,13 +1319,24 @@
     }
 
     function triggerActiveWorkspaceBuild(pId) {
+        activePatientId = pId;
+        
+        // 1. Show the Master Action Buttons (Print & WhatsApp)
         if(document.getElementById('btnMasterPrint')) document.getElementById('btnMasterPrint').style.display = "flex";
         if(document.getElementById('btnMasterWA')) document.getElementById('btnMasterWA').style.display = "flex";
         
-        // Open tracker securely
-        switchMainFeature('trackerFeatureView'); 
+        // 2. Un-hide the clinical workspace
+        const workspace = document.getElementById('activeWorkspace');
+        if(workspace) workspace.style.display = "block";
         
-        calculateAndRenderTimeline(pId); calculateDose(); renderMilestoneDashboard(); renderRxCartList(); calcGrowth(); calcMalnutrition(); calcNutrition(); renderSensory(); renderDietRecall(); calcCrash();
+        // 3. Force all tools to recalculate using the active patient's data
+        if(typeof buildTimeline === 'function') buildTimeline();
+        if(typeof buildMilestoneReference === 'function') buildMilestoneReference();
+        if(typeof renderDietLogs === 'function') renderDietLogs();
+        if(typeof calculateDose === 'function') calculateDose(); 
+        if(typeof calcGrowth === 'function') calcGrowth();
+        if(typeof calcMalnutrition === 'function') calcMalnutrition();
+        if(typeof calcNutrition === 'function') calcNutrition();
     }
 
     // --- 6. DOSAGE ENGINE ---
@@ -1931,7 +1975,10 @@
     }
 
     function executePrint(mode) {
-        if (!activePatientId && mode !== 'prescription' && mode !== 'certificate') { alert("Please select a patient first."); return; }
+        if (!activePatientId && mode !== 'prescription' && mode !== 'certificate') { 
+            if(typeof showSystemToast === 'function') showSystemToast("⚠️ Please select or add a patient first!"); 
+            return; 
+        }
         const engine = document.getElementById('printEngine'); 
         
         let p = globalPatientsStore[activePatientId];
@@ -2018,7 +2065,10 @@
     }
 
     function sendWACompReport() {
-        if(!activePatientId) return alert("Select patient");
+        if(!activePatientId) { 
+            if(typeof showSystemToast === 'function') showSystemToast("⚠️ Please select a patient first!"); 
+            return; 
+        }
         const p = globalPatientsStore[activePatientId];
         let txt = `*Pediatric Clinical Report*\\nName: ${p.name}\\nAge: ${p.ageYrs}Y ${p.ageMos}M\\nWeight: ${p.weight} kg\\n\\n`;
         if(p.diagnosis) txt += `*Diagnosis:* ${p.diagnosis}\\n\\n`;
@@ -2106,7 +2156,15 @@
         const patientKeys = Object.keys(globalPatientsStore).reverse(); 
         
         if(patientKeys.length === 0) {
-            container.innerHTML = "<div style='color:var(--text-muted); font-size:1.1rem; padding:2rem;'>No patients found. Save a patient to build your database.</div>";
+            container.innerHTML = `
+            <div style="text-align:center; padding: 3rem 1rem; color: var(--text-muted); background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px dashed var(--border-soft);">
+                <div style="font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.7;">📂</div>
+                <h3 style="color: var(--primary-dark); margin: 0 0 0.5rem 0; font-size: 1.3rem;">No Patients Yet</h3>
+                <p style="font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;">Your patient database is empty. Add your first patient to start generating prescriptions and tracking clinical data.</p>
+                <button onclick="document.getElementById('registryModal').classList.add('active');" style="background: linear-gradient(135deg, var(--brand-blue), var(--brand-cyan)); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3); transition: transform 0.2s;">
+                    + Add First Patient
+                </button>
+            </div>`;
             return;
         }
         
@@ -2242,8 +2300,33 @@
         `;
     }
 
+    // --- MASTER INITIALIZATION ENGINE ---
     document.addEventListener("DOMContentLoaded", function() {
+        // 1. Load User Settings & Dark Mode
+        if (typeof applySettingsToUI === 'function') applySettingsToUI();
+        
+        // 2. Initialize Clinical Databases
+        if (typeof populateDrugs === 'function') populateDrugs();
+        if (typeof buildMilestoneReference === 'function') buildMilestoneReference();
+        if (typeof renderFoodDB === 'function' && typeof foodsDb !== 'undefined') renderFoodDB(foodsDb);
+        if (typeof populateFoodSelect === 'function') populateFoodSelect();
+        
+        // 3. UI/UX Enhancements
         setTimeout(updateGreeting, 500); 
+        
+        // Force mobile number pads on all number inputs globally
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.setAttribute('inputmode', 'decimal');
+        });
+
+        // 4. Handle Mobile Splash Screen (Fades after 2.5s)
+        setTimeout(() => {
+            const splash = document.getElementById('splashScreen');
+            if(splash) splash.classList.add('hidden');
+        }, 2500);
+
+        // 5. Route to Home Dashboard on load
+        if (typeof switchNavTab === 'function') switchNavTab('homeDashboardView');
     });
 </script>
 </body>
