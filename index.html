@@ -412,9 +412,8 @@
             </div>
             
             <div id="homeQuickToolsGrid" class="tools-grid">
-                </div>
-
-        <div id="toolsTab" class="view-content">
+            </div>
+        </div> <div id="toolsTab" class="view-content">
             <div class="section-header" style="margin-bottom:20px;">
                 <h3 style="font-size:1.3rem;">🧰 Clinical Modules</h3>
             </div>
@@ -1061,7 +1060,8 @@
     function renderHomeQuickTools() {
         const grid = document.getElementById('homeQuickToolsGrid');
         if(!grid) return;
-        let toolsToRender = appSettings.quickTools || ['erFeatureView', 'prescriptionFeatureView', 'growthFeatureView', 'trackerFeatureView'];
+        // FAILSFE: If the saved list is empty, default to these 4 tools
+        let toolsToRender = (appSettings.quickTools && appSettings.quickTools.length > 0) ? appSettings.quickTools : ['erFeatureView', 'prescriptionFeatureView', 'growthFeatureView', 'trackerFeatureView'];
         
         let html = '';
         toolsToRender.forEach(toolId => {
@@ -1080,7 +1080,7 @@
     function renderSettingsChecklist() {
         const container = document.getElementById('settingsQuickToolsList');
         if(!container) return;
-        let selectedTools = appSettings.quickTools || ['erFeatureView', 'prescriptionFeatureView', 'growthFeatureView', 'trackerFeatureView'];
+        let selectedTools = (appSettings.quickTools && appSettings.quickTools.length > 0) ? appSettings.quickTools : ['erFeatureView', 'prescriptionFeatureView', 'growthFeatureView', 'trackerFeatureView'];
         
         let html = '';
         masterToolRegistry.forEach(tool => {
@@ -1112,20 +1112,34 @@
 
     // --- 4. CORE NAVIGATION ENGINE (KIDDOQ) ---
     function switchNavTab(tabId) {
-        // 1. Hide everything
         document.querySelectorAll('.view-content').forEach(v => { v.style.display = 'none'; v.classList.remove('active-view'); });
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-        if(document.getElementById('activeWorkspace')) document.getElementById('activeWorkspace').style.display = 'none';
         
-        // 2. Show the target tab
         const target = document.getElementById(tabId);
+        const workspace = document.getElementById('activeWorkspace');
+        
+        if (workspace) {
+            if (target && workspace.contains(target)) {
+                workspace.style.display = 'block';
+                let waBtn = document.getElementById('btnMasterWA');
+                let prntBtn = document.getElementById('btnMasterPrint');
+                if (tabId === 'databaseFeatureView' || tabId === 'aboutFeatureView') {
+                    if(waBtn) waBtn.style.display = 'none';
+                    if(prntBtn) prntBtn.style.display = 'none';
+                } else if (activePatientId) {
+                    if(waBtn) waBtn.style.display = 'flex';
+                    if(prntBtn) prntBtn.style.display = 'flex';
+                }
+            } else {
+                workspace.style.display = 'none';
+            }
+        }
+        
         if(target) { target.style.display = 'block'; setTimeout(() => target.classList.add('active-view'), 10); }
         
-        // 3. Highlight the bottom button
         const navBtn = document.querySelector(`.nav-item[onclick*="${tabId}"]`);
         if(navBtn) navBtn.classList.add('active');
 
-        // 4. Run contextual functions
         if(tabId === 'homeDashboardView' && typeof updateGreeting === 'function') updateGreeting();
         if(tabId === 'databaseFeatureView') renderFullDatabase();
         window.scrollTo(0, 0);
