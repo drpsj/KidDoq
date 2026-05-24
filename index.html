@@ -329,16 +329,6 @@
         }
 
         /* =========================================
-           PRINT ENGINE FIX (DARK MODE OVERRIDE)
-           ========================================= */
-        @media print {
-            body, body.dark-mode, .app-shell { background: #ffffff !important; color: #000000 !important; }
-            .dark-mode * { color: #000000 !important; border-color: #000000 !important; text-shadow: none !important; }
-            #printEngine { color: #000000 !important; background: #ffffff !important; }
-            #printEngine * { color: #000000 !important; }
-        }
-
-        /* =========================================
            THUMB ZONE: FIXED ACTION BAR
            ========================================= */
         .workspace-actions {
@@ -2119,8 +2109,15 @@
         engine.innerHTML = ""; 
         engine.innerHTML = html; 
         
+        // THE FIX: Temporarily disable Dark Mode for the printer
+        const wasDarkMode = document.body.classList.contains('dark-mode');
+        if (wasDarkMode) document.body.classList.remove('dark-mode');
+
         setTimeout(() => {
             window.print();
+            
+            // Restore Dark Mode the millisecond the print dialog closes
+            if (wasDarkMode) document.body.classList.add('dark-mode');
         }, 500);
     }
 
