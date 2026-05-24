@@ -724,7 +724,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div id="nutritionFeatureView" class="view-content">
                 <h2 class="section-title">🍎 Nutrition Tracker & 24h Recall</h2>
                 <div class="sub-tabs-nav">
@@ -831,6 +831,25 @@
                 <div id="msProgressTab" class="sub-tab-content"><div class="timeline-section"><h3 style="color:var(--primary); margin-top:0;">Developmental Dashboard</h3><div class="tool-grid"><div id="msCompletedContainer"></div><div id="msUpcomingContainer"></div></div></div></div>
                 <div id="msMissedTab" class="sub-tab-content"><div class="timeline-section"><h3 style="color:var(--primary); margin-top:0;">Red Flags</h3><div id="msMissedContainer"></div></div></div>
                 <div id="msReferenceTab" class="sub-tab-content"><div class="timeline-section" style="overflow-x:auto;"><h3 style="color:var(--primary); margin-top:0;">Standard Milestones</h3><div id="msReferenceContainer"></div></div></div>
+            </div>
+
+            <div id="trackerFeatureView" class="view-content">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h2 class="section-title" style="margin:0; border:none;">💉 Immunization Tracker</h2>
+                    <button onclick="executePrint('tracker')" class="secondary" style="width:auto; border-color:var(--primary); color:var(--primary);">🖨️ Print Schedule</button>
+                </div>
+                <div class="sub-tabs-nav">
+                    <button class="sub-tab-btn active" onclick="switchSubTab('vaxTimelineTab', this)">📅 Master Timeline</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('vaxAuditTab', this)">📊 Audit & Status</button>
+                </div>
+                <div id="vaxTimelineTab" class="sub-tab-content active">
+                    <div id="timelineOutput"></div>
+                </div>
+                <div id="vaxAuditTab" class="sub-tab-content">
+                    <div class="timeline-section">
+                        <div id="auditOutput" class="tool-grid"></div>
+                    </div>
+                </div>
             </div>
 
             <div id="growthFeatureView" class="view-content">
@@ -1349,13 +1368,15 @@
         const workspace = document.getElementById('activeWorkspace');
         if(workspace) workspace.style.display = "block";
         
-        // 3. Force all tools to recalculate using the active patient's data
-        if(typeof buildTimeline === 'function') buildTimeline();
+        // 3. WAKE UP ALL MODULES WITH CORRECT FUNCTION NAMES
+        if(typeof calculateAndRenderTimeline === 'function') calculateAndRenderTimeline(pId);
         if(typeof buildMilestoneReference === 'function') buildMilestoneReference();
-        if(typeof renderDietLogs === 'function') renderDietLogs();
+        if(typeof renderMilestoneDashboard === 'function') renderMilestoneDashboard();
+        if(typeof renderDietRecall === 'function') renderDietRecall();
         if(typeof calculateDose === 'function') calculateDose(); 
         if(typeof calcGrowth === 'function') calcGrowth();
         if(typeof calcMalnutrition === 'function') calcMalnutrition();
+        if(typeof renderSensory === 'function') renderSensory();
         if(typeof calcNutrition === 'function') calcNutrition();
     }
 
