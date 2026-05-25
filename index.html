@@ -65,9 +65,22 @@
             box-shadow: var(--shadow-sm); z-index: 100; flex-shrink: 0; border-bottom: 1px solid var(--border-soft);
         }
         .brand-logo { 
-            font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; margin: 0 auto; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; /* Adjusts the space between the icon and text */
+            margin: 0 auto; 
+            cursor: pointer;
+        }
+        
+        .brand-text {
+            font-size: 1.6rem; /* Slightly scaled down to fit horizontally */
+            font-weight: 800; 
+            letter-spacing: -0.5px; 
+            margin: 0;
             background: linear-gradient(135deg, var(--brand-pink), var(--brand-cyan), var(--brand-blue)); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer;
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
         }
         
         .header-active-patient {
@@ -374,7 +387,7 @@
         <div style="width: 33%;"></div>
         <div class="brand-logo" onclick="switchNavTab('homeDashboardView')">
             <img src="kiddoq lite.png" alt="KidDoq Logo" style="width: 32px; height: 32px; object-fit: contain;">
-            KidDoq
+            <span class="brand-text">KidDoq</span>
         </div>
         <div id="headerPatientText" style="width: 33%; text-align: right; font-size: 0.9rem; font-weight: 600; color: var(--brand-cyan); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
     </header>
